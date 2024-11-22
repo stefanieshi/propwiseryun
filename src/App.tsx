@@ -70,7 +70,7 @@ const App = () => {
                   isAuthenticated ? (
                     <div className="flex min-h-screen">
                       <SideNav />
-                      <main className="flex-1 ml-64 p-8">
+                      <main className="flex-1 transition-all duration-300 ml-16 lg:ml-64 p-8">
                         <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/viewed-properties" element={<ViewedProperties />} />
