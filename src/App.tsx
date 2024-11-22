@@ -92,7 +92,7 @@ const App = () => {
                 session ? (
                   <div className="flex min-h-screen">
                     <SideNav />
-                    <main className="flex-1 ml-64 p-8">
+                    <main className="flex-1 p-8 transition-all duration-300" style={{ marginLeft: "4rem" }}>
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
