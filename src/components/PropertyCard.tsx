@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Property } from "@/types";
-import { Home, Bed, Bath, Square, TrendingUp, Calculator } from "lucide-react";
+import { Home, Bed, Bath, Square, TrendingUp, Calculator, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useComparison } from "@/contexts/ComparisonContext";
 
 interface PropertyCardProps {
   property: Property;
@@ -10,9 +11,25 @@ interface PropertyCardProps {
 
 const PropertyCard = ({ property }: PropertyCardProps) => {
   const navigate = useNavigate();
+  const { togglePropertySelection, isSelected } = useComparison();
 
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group">
+    <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group relative">
+      <Button
+        variant={isSelected(property.id) ? "default" : "outline"}
+        size="sm"
+        className="absolute top-2 right-2 z-10"
+        onClick={() => togglePropertySelection(property)}
+      >
+        {isSelected(property.id) ? (
+          <>
+            <Check className="h-4 w-4 mr-2" />
+            Selected
+          </>
+        ) : (
+          "Compare"
+        )}
+      </Button>
       <div className="relative">
         <img
           src={property.image_url}

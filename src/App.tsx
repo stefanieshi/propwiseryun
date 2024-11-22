@@ -5,10 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
+import { ComparisonProvider } from "./contexts/ComparisonContext";
 import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
+import ComparisonPage from "./pages/ComparisonPage";
 import AuthPage from "./pages/AuthPage";
+import { ComparisonButton } from "./components/ComparisonButton";
 
 const queryClient = new QueryClient();
 
@@ -40,36 +43,40 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="/auth"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
-              }
-            />
-            <Route
-              path="/*"
-              element={
-                isAuthenticated ? (
-                  <div className="flex min-h-screen">
-                    <SideNav />
-                    <main className="flex-1 ml-64 p-8">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/viewed-properties" element={<ViewedProperties />} />
-                      </Routes>
-                    </main>
-                  </div>
-                ) : (
-                  <Navigate to="/auth" replace />
-                )
-              }
-            />
-          </Routes>
-        </BrowserRouter>
+        <ComparisonProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/auth"
+                element={
+                  isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
+                }
+              />
+              <Route
+                path="/*"
+                element={
+                  isAuthenticated ? (
+                    <div className="flex min-h-screen">
+                      <SideNav />
+                      <main className="flex-1 ml-64 p-8">
+                        <Routes>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/viewed-properties" element={<ViewedProperties />} />
+                          <Route path="/comparison" element={<ComparisonPage />} />
+                        </Routes>
+                      </main>
+                      <ComparisonButton />
+                    </div>
+                  ) : (
+                    <Navigate to="/auth" replace />
+                  )
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </ComparisonProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
