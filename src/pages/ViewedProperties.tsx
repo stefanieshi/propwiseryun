@@ -9,6 +9,8 @@ import FilterBar from "@/components/properties/FilterBar";
 import PropertyGrid from "@/components/properties/PropertyGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import ComparisonView from "@/components/ComparisonView";
+import MetricsChart from "@/components/MetricsChart";
 
 const ViewedProperties = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,6 +21,8 @@ const ViewedProperties = () => {
   const [loading, setLoading] = useState(true);
   const [savingProperty, setSavingProperty] = useState(false);
   const [propertyUrl, setPropertyUrl] = useState("");
+  const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,6 +90,20 @@ const ViewedProperties = () => {
     }
   };
 
+  const togglePropertySelection = (property: Property) => {
+    if (selectedProperties.find(p => p.id === property.id)) {
+      setSelectedProperties(selectedProperties.filter(p => p.id !== property.id));
+    } else if (selectedProperties.length < 3) {
+      setSelectedProperties([...selectedProperties, property]);
+    } else {
+      toast({
+        title: "Maximum properties selected",
+        description: "You can compare up to 3 properties at a time",
+        variant: "destructive",
+      });
+    }
+  };
+
   const resetFilters = () => {
     setSearchQuery("");
     setPriceFilter("all");
@@ -132,7 +150,22 @@ const ViewedProperties = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
               Saved Properties
             </h1>
+            {selectedProperties.length > 1 && (
+              <Button onClick={() => setShowComparison(!showComparison)}>
+                {showComparison ? "Hide Comparison" : "Compare Selected"}
+              </Button>
+            )}
           </div>
+
+          {showComparison && selectedProperties.length > 1 && (
+            <div className="space-y-6">
+              <ComparisonView properties={selectedProperties} />
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Price and Size Analysis</h2>
+                <MetricsChart properties={selectedProperties} />
+              </Card>
+            </div>
+          )}
 
           <Card className="p-6">
             <form onSubmit={saveExternalProperty} className="flex gap-4 mb-6">
@@ -167,7 +200,12 @@ const ViewedProperties = () => {
             </TabsList>
             
             <TabsContent value="internal">
-              <PropertyGrid properties={filteredProperties} loading={loading} />
+              <PropertyGrid 
+                properties={filteredProperties} 
+                loading={loading}
+                selectedProperties={selectedProperties}
+                onPropertySelect={togglePropertySelection}
+              />
             </TabsContent>
             
             <TabsContent value="external">
@@ -176,7 +214,9 @@ const ViewedProperties = () => {
                   ...p,
                   source_url: p.url
                 }))} 
-                loading={loading} 
+                loading={loading}
+                selectedProperties={selectedProperties}
+                onPropertySelect={togglePropertySelection}
               />
             </TabsContent>
           </Tabs>

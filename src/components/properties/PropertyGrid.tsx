@@ -5,9 +5,11 @@ import { Card } from "@/components/ui/card";
 interface PropertyGridProps {
   properties: Property[];
   loading: boolean;
+  selectedProperties?: Property[];
+  onPropertySelect?: (property: Property) => void;
 }
 
-const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
+const PropertyGrid = ({ properties, loading, selectedProperties = [], onPropertySelect }: PropertyGridProps) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -38,7 +40,17 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {properties.map((property) => (
-        <PropertyCard key={property.id} property={property} />
+        <div
+          key={property.id}
+          className={`relative ${
+            selectedProperties.find((p) => p.id === property.id)
+              ? "ring-2 ring-primary ring-offset-2"
+              : ""
+          }`}
+          onClick={() => onPropertySelect?.(property)}
+        >
+          <PropertyCard property={property} />
+        </div>
       ))}
     </div>
   );
