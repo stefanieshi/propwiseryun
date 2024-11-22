@@ -12,17 +12,37 @@ import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import AuthPage from "./pages/AuthPage";
 import { ComparisonButton } from "./components/ComparisonButton";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const queryClient = new QueryClient();
+
+const AppLayout = ({ children }) => {
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      <SideNav onCollapsedChange={setIsMenuCollapsed} />
+      <motion.main
+        initial={false}
+        animate={{
+          marginLeft: isMenuCollapsed ? "4.5rem" : "16rem",
+          width: isMenuCollapsed ? "calc(100% - 4.5rem)" : "calc(100% - 16rem)"
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="flex-1 p-8"
+      >
+        {children}
+      </motion.main>
+      <ComparisonButton />
+    </div>
+  );
+};
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
   useEffect(() => {
-    // Check current session
     const checkSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -38,7 +58,6 @@ const App = () => {
 
     checkSession();
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -49,7 +68,7 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (
@@ -70,25 +89,13 @@ const App = () => {
                 path="/*"
                 element={
                   isAuthenticated ? (
-                    <div className="flex min-h-screen bg-background">
-                      <SideNav onCollapsedChange={setIsMenuCollapsed} />
-                      <motion.main
-                        initial={false}
-                        animate={{
-                          marginLeft: isMenuCollapsed ? "4rem" : "16rem",
-                          width: isMenuCollapsed ? "calc(100% - 4rem)" : "calc(100% - 16rem)"
-                        }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="flex-1 p-8"
-                      >
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/viewed-properties" element={<ViewedProperties />} />
-                          <Route path="/comparison" element={<ComparisonPage />} />
-                        </Routes>
-                      </motion.main>
-                      <ComparisonButton />
-                    </div>
+                    <AppLayout>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/viewed-properties" element={<ViewedProperties />} />
+                        <Route path="/comparison" element={<ComparisonPage />} />
+                      </Routes>
+                    </AppLayout>
                   ) : (
                     <Navigate to="/auth" replace />
                   )
