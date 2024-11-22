@@ -83,37 +83,41 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Progress Tracker */}
-        <Card className="p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Your Home Buying Journey</h2>
-          <Progress value={calculateProgress()} className="mb-4" />
-          <div className="grid grid-cols-4 gap-4">
-            {progressSteps.map((step, index) => {
-              const StepIcon = step.icon;
-              const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
-              const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
-              
-              return (
-                <div
-                  key={step.title}
-                  className={`flex flex-col items-center p-4 rounded-lg ${
-                    isActive ? "bg-primary/10" : ""
-                  }`}
-                >
-                  <StepIcon
-                    className={`h-8 w-8 mb-2 ${
-                      isCompleted ? "text-primary" : "text-gray-400"
+    <div className="min-h-screen bg-background pt-24">
+      {/* Fixed Progress Tracker */}
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-background/80 backdrop-blur-sm border-b border-border">
+        <div className="max-w-3xl mx-auto">
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold mb-2">Your Home Buying Journey</h2>
+            <Progress value={calculateProgress()} className="mb-3" />
+            <div className="grid grid-cols-4 gap-2">
+              {progressSteps.map((step, index) => {
+                const StepIcon = step.icon;
+                const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
+                const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
+                
+                return (
+                  <div
+                    key={step.title}
+                    className={`flex flex-col items-center p-2 rounded-lg ${
+                      isActive ? "bg-primary/10" : ""
                     }`}
-                  />
-                  <span className="text-sm font-medium">{step.title}</span>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
+                  >
+                    <StepIcon
+                      className={`h-4 w-4 mb-1 ${
+                        isCompleted ? "text-primary" : "text-gray-400"
+                      }`}
+                    />
+                    <span className="text-xs font-medium">{step.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        </div>
+      </div>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6">
