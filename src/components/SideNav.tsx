@@ -45,8 +45,8 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               )}
             >
               <Icon className={cn(
-                "h-6 w-6 transition-transform duration-300",
-                isActive ? 'text-primary' : '',
+                "h-5 w-5 transition-transform duration-300",
+                isActive ? 'scale-110' : '',
                 !isCollapsed && 'group-hover:translate-x-1'
               )} />
               <AnimatePresence>
@@ -106,9 +106,9 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
             className="text-gray-400 hover:text-white hover:bg-white/5"
           >
             {isCollapsed ? (
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4 animate-pulse" />
             ) : (
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
             )}
           </Button>
         </div>
@@ -134,7 +134,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               onClick={() => setIsCollapsed(false)}
               className="rounded-full shadow-lg hover:shadow-xl transition-shadow bg-purple-500/20 hover:bg-purple-500/30"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </motion.div>
         )}
