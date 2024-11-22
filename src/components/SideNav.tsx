@@ -32,7 +32,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
         initial={false}
         animate={{ width: isCollapsed ? "4rem" : "16rem" }}
         className={cn(
-          "fixed left-0 top-0 h-full bg-[#1A1F2C] p-4 border-r border-[#2A2F3C] backdrop-blur-lg z-50 flex flex-col",
+          "fixed left-0 top-0 h-full bg-gradient-tech p-4 border-r border-white/10 backdrop-blur-lg z-50 flex flex-col",
           "transition-all duration-300 ease-in-out"
         )}
       >
@@ -43,9 +43,9 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+                className="text-2xl font-bold text-gradient animate-glow"
               >
-                PropertyAI
+                Propwiser
               </motion.h1>
             )}
           </AnimatePresence>
@@ -70,7 +70,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
                   isActive
-                    ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white animate-glow"
+                    ? "bg-gradient-purple text-white shadow-lg shadow-primary/20 hover-glow"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -109,7 +109,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               variant="secondary"
               size="icon"
               onClick={() => setIsCollapsed(false)}
-              className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
+              className="rounded-full shadow-lg hover:shadow-xl transition-shadow bg-gradient-blue hover:bg-gradient-purple"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
