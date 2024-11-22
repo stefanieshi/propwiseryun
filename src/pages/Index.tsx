@@ -6,7 +6,6 @@ import PropertyCard from "@/components/PropertyCard";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   Home,
   TrendingUp,
@@ -16,13 +15,65 @@ import {
   PlusCircle,
 } from "lucide-react";
 
+// Extract ProgressTracker into a separate component for better organization
+const ProgressTracker = ({ userProgress }: { userProgress: UserProgress | null }) => {
+  const progressSteps = [
+    { title: "Research", icon: Home },
+    { title: "Financial Analysis", icon: Calculator },
+    { title: "Legal Check", icon: FileText },
+    { title: "Final Steps", icon: CheckCircle },
+  ];
+
+  const calculateProgress = () => {
+    if (!userProgress) return 0;
+    const totalSteps = progressSteps.length;
+    const currentStepIndex = progressSteps.findIndex(
+      (step) => step.title.toLowerCase() === userProgress.stage.toLowerCase()
+    );
+    return ((currentStepIndex + 1) / totalSteps) * 100;
+  };
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+      <div className="max-w-xl mx-auto px-4 py-2">
+        <Card className="p-2">
+          <h2 className="text-xs font-semibold mb-1.5">Your Home Buying Journey</h2>
+          <Progress value={calculateProgress()} className="mb-1.5 h-1.5" />
+          <div className="grid grid-cols-4 gap-1">
+            {progressSteps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
+              const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
+              
+              return (
+                <div
+                  key={step.title}
+                  className={`flex flex-col items-center p-1 rounded-lg ${
+                    isActive ? "bg-primary/10" : ""
+                  }`}
+                >
+                  <StepIcon
+                    className={`h-3 w-3 mb-0.5 ${
+                      isCompleted ? "text-primary" : "text-gray-400"
+                    }`}
+                  />
+                  <span className="text-[9px] font-medium">{step.title}</span>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -83,57 +134,10 @@ const Index = () => {
     }
   };
 
-  const progressSteps = [
-    { title: "Research", icon: Home },
-    { title: "Financial Analysis", icon: Calculator },
-    { title: "Legal Check", icon: FileText },
-    { title: "Final Steps", icon: CheckCircle },
-  ];
-
-  const calculateProgress = () => {
-    if (!userProgress) return 0;
-    const totalSteps = progressSteps.length;
-    const currentStepIndex = progressSteps.findIndex(
-      (step) => step.title.toLowerCase() === userProgress.stage.toLowerCase()
-    );
-    return ((currentStepIndex + 1) / totalSteps) * 100;
-  };
-
   return (
-    <div className="min-h-screen bg-background pt-24">
-      {/* Fixed Progress Tracker */}
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="max-w-2xl mx-auto">
-          <Card className="p-3">
-            <h2 className="text-sm font-semibold mb-2">Your Home Buying Journey</h2>
-            <Progress value={calculateProgress()} className="mb-2 h-2" />
-            <div className="grid grid-cols-4 gap-1">
-              {progressSteps.map((step, index) => {
-                const StepIcon = step.icon;
-                const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
-                const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
-                
-                return (
-                  <div
-                    key={step.title}
-                    className={`flex flex-col items-center p-1.5 rounded-lg ${
-                      isActive ? "bg-primary/10" : ""
-                    }`}
-                  >
-                    <StepIcon
-                      className={`h-3.5 w-3.5 mb-0.5 ${
-                        isCompleted ? "text-primary" : "text-gray-400"
-                      }`}
-                    />
-                    <span className="text-[10px] font-medium">{step.title}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-background pt-16">
+      <ProgressTracker userProgress={userProgress} />
+      
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
