@@ -1,48 +1,25 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Property } from "@/types";
-import { Home, Bed, Bath, Square, TrendingUp, Calculator, Check } from "lucide-react";
+import { Home, Bed, Bath, Square, TrendingUp, Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface PropertyCardProps {
   property: Property;
-  isSelectable?: boolean;
-  isSelected?: boolean;
-  onSelect?: (property: Property) => void;
 }
 
-const PropertyCard = ({ 
-  property, 
-  isSelectable = false, 
-  isSelected = false,
-  onSelect 
-}: PropertyCardProps) => {
+const PropertyCard = ({ property }: PropertyCardProps) => {
   const navigate = useNavigate();
 
   return (
-    <Card className={`
-      overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group
-      ${isSelectable ? 'cursor-pointer' : ''}
-      ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}
-    `}
-    onClick={() => {
-      if (isSelectable && onSelect) {
-        onSelect(property);
-      }
-    }}
-    >
+    <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group">
       <div className="relative">
         <img
-          src={property.imageUrl}
+          src={property.image_url}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        {isSelected && (
-          <div className="absolute top-2 right-2 bg-primary text-white p-1 rounded-full">
-            <Check className="h-4 w-4" />
-          </div>
-        )}
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold text-white mb-2">
@@ -66,28 +43,26 @@ const PropertyCard = ({
             <span className="text-sm">{property.sqft} ft²</span>
           </div>
         </div>
-        {!isSelectable && (
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              variant="default"
-              size="sm"
-              className="w-full"
-              onClick={() => navigate(`/property/${property.id}/analytics`)}
-            >
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Analytics
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={() => navigate(`/property/${property.id}/calculator`)}
-            >
-              <Calculator className="h-4 w-4 mr-2" />
-              ROI
-            </Button>
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="w-full"
+            onClick={() => navigate(`/property/${property.id}/analytics`)}
+          >
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Analytics
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => navigate(`/property/${property.id}/calculator`)}
+          >
+            <Calculator className="h-4 w-4 mr-2" />
+            ROI
+          </Button>
+        </div>
       </div>
     </Card>
   );

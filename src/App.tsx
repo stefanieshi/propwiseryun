@@ -9,69 +9,32 @@ import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import AuthPage from "./pages/AuthPage";
-import { Session } from "@supabase/supabase-js";
-import { toast } from "sonner";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   useEffect(() => {
-    // Initialize auth state
-    const initializeAuth = async () => {
-      try {
-        // First clear any potentially invalid sessions
-        await supabase.auth.signOut();
-        
-        // Then check for a valid session
-        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error("Error getting session:", sessionError.message);
-          toast.error("Authentication error. Please try logging in again.");
-          setSession(null);
-        } else if (initialSession) {
-          setSession(initialSession);
-        }
-      } catch (error) {
-        console.error("Auth initialization error:", error);
-        toast.error("Authentication error. Please try logging in again.");
-        setSession(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Set up auth state listener
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (_event === 'SIGNED_OUT') {
-        setSession(null);
-        toast.info("You have been signed out");
-      } else if (_event === 'SIGNED_IN') {
-        setSession(session);
-        toast.success("Successfully signed in!");
-      } else if (_event === 'TOKEN_REFRESHED') {
-        setSession(session);
-      }
+    // Check current auth status
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
       setLoading(false);
     });
 
-    // Initialize auth
-    initializeAuth();
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
 
-    // Cleanup subscription on unmount
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   if (loading) {
-    return null;
+    return null; // Or a loading spinner
   }
 
   return (
@@ -84,19 +47,16 @@ const App = () => {
             <Route
               path="/auth"
               element={
-                session ? <Navigate to="/" replace /> : <AuthPage />
+                isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
               }
             />
             <Route
               path="/*"
               element={
-                session ? (
+                isAuthenticated ? (
                   <div className="flex min-h-screen">
-                    <SideNav isExpanded={isNavExpanded} onExpandedChange={setIsNavExpanded} />
-                    <main 
-                      className="flex-1 p-8 transition-all duration-300"
-                      style={{ marginLeft: isNavExpanded ? "256px" : "64px" }}
-                    >
+                    <SideNav />
+                    <main className="flex-1 ml-64 p-8">
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/viewed-properties" element={<ViewedProperties />} />

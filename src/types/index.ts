@@ -1,22 +1,5 @@
-export interface Property {
-  id: string;
-  title: string;
-  price: number;
-  location: string;
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
-  type: string;
-  description: string;
-  imageUrl: string;
-  source_url: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Tables } from "@/integrations/supabase/types";
 
-export interface UserProgress {
-  stage: string;
-  completed_steps?: string[];
-  current_step?: string;
-  notes?: string;
-}
+export type Profile = Tables<"profiles">
+export type Property = Tables<"properties">
+export type UserProgress = Tables<"user_progress">
