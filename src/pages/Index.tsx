@@ -13,7 +13,6 @@ import {
   Calculator,
   FileText,
   CheckCircle,
-  PlusCircle,
 } from "lucide-react";
 
 const Index = () => {
@@ -118,7 +117,7 @@ const Index = () => {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -145,21 +144,6 @@ const Index = () => {
               </div>
               <Button variant="outline" onClick={() => navigate("/calculator")}>
                 Calculate
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <PlusCircle className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Add Property</h3>
-                <p className="text-sm text-muted-foreground">
-                  Save a new property
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/add-property")}>
-                Add
               </Button>
             </div>
           </Card>
