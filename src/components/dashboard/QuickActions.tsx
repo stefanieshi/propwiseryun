@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, Calculator, PlusCircle } from "lucide-react";
+import { TrendingUp, Calculator } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -19,16 +19,10 @@ const QuickActions = () => {
       description: "Calculate potential returns",
       href: "/calculator",
     },
-    {
-      icon: PlusCircle,
-      title: "Add Property",
-      description: "Save a new property",
-      href: "/add-property",
-    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       {actions.map((action) => {
         const Icon = action.icon;
         return (
