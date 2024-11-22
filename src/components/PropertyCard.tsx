@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Property } from "@/types";
-import { Home, Bed, Bath, Square, TrendingUp, Calculator, Check } from "lucide-react";
+import { Home, Bed, Bath, Square, TrendingUp, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useComparison } from "@/contexts/ComparisonContext";
 
@@ -60,26 +60,15 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <span className="text-sm">{property.sqft} ft²</span>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="default"
-            size="sm"
-            className="w-full"
-            onClick={() => navigate(`/property/${property.id}/analytics`)}
-          >
-            <TrendingUp className="h-4 w-4 mr-2" />
-            Analytics
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => navigate(`/property/${property.id}/calculator`)}
-          >
-            <Calculator className="h-4 w-4 mr-2" />
-            ROI
-          </Button>
-        </div>
+        <Button
+          variant="default"
+          size="sm"
+          className="w-full"
+          onClick={() => navigate(`/property/${property.id}/analytics`)}
+        >
+          <TrendingUp className="h-4 w-4 mr-2" />
+          Analytics & ROI
+        </Button>
       </div>
     </Card>
   );
