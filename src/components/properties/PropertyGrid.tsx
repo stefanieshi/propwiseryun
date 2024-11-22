@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GitCompare } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,7 +16,6 @@ interface PropertyGridProps {
 const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
   const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const togglePropertySelection = (property: Property) => {
@@ -27,10 +25,8 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
       setSelectedProperties(selectedProperties.filter(p => p.id !== property.id));
     } else {
       if (selectedProperties.length >= 4) {
-        toast({
-          title: "Maximum properties reached",
-          description: "You can compare up to 4 properties at a time",
-          variant: "destructive",
+        toast("Maximum properties reached", {
+          description: "You can compare up to 4 properties at a time"
         });
         return;
       }
@@ -43,23 +39,22 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        toast.error("Please sign in to compare properties");
+        toast("Authentication required", {
+          description: "Please sign in to compare properties"
+        });
         navigate("/auth");
         return;
       }
 
       if (!isSelectionMode) {
         setIsSelectionMode(true);
-        toast({
-          title: "Selection mode enabled",
-          description: "Click on properties to select them for comparison",
+        toast("Selection mode enabled", {
+          description: "Click on properties to select them for comparison"
         });
       } else {
         if (selectedProperties.length < 2) {
-          toast({
-            title: "Not enough properties selected",
-            description: "Please select at least 2 properties to compare",
-            variant: "destructive",
+          toast("Not enough properties", {
+            description: "Please select at least 2 properties to compare"
           });
           return;
         }
@@ -73,7 +68,9 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
       }
     } catch (error) {
       console.error("Error checking session:", error);
-      toast.error("An error occurred. Please try again.");
+      toast("Error", {
+        description: "An error occurred. Please try again."
+      });
     }
   };
 
