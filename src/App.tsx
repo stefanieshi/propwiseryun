@@ -22,16 +22,8 @@ const App = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get current session first
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        // If there's no valid session, clear it
-        if (!currentSession) {
-          await supabase.auth.signOut();
-          setSession(null);
-        } else {
-          setSession(currentSession);
-        }
+        setSession(currentSession);
       } catch (error) {
         console.error("Auth initialization error:", error);
         setSession(null);
@@ -63,21 +55,18 @@ const App = () => {
           }
           break;
         case 'USER_UPDATED':
-          // Re-fetch session to ensure we have the latest state
-          const { data: { session: latestSession } } = await supabase.auth.getSession();
-          setSession(latestSession);
+          if (currentSession) {
+            setSession(currentSession);
+          } else {
+            const { data: { session: latestSession } } = await supabase.auth.getSession();
+            setSession(latestSession);
+          }
           break;
         default:
-          // For any other events, verify the session
-          const { data: { session: verifiedSession } } = await supabase.auth.getSession();
-          if (!verifiedSession) {
-            setSession(null);
-          } else {
-            setSession(verifiedSession);
+          if (currentSession) {
+            setSession(currentSession);
           }
       }
-      
-      setLoading(false);
     });
 
     // Initialize auth
