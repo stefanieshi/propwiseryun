@@ -39,9 +39,9 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
       defaultValue: Math.floor(Math.random() * 100),
       highlight: false,
       formatValue: (value: number) => {
-        if (value <= 10) return <span className="text-green-500">{value}</span>;
-        if (value <= 30) return <span className="text-yellow-500">{value}</span>;
-        return <span className="text-red-500">{value}</span>;
+        if (value <= 10) return <span className="text-green-500 font-semibold">{value}</span>;
+        if (value <= 30) return <span className="text-yellow-500 font-semibold">{value}</span>;
+        return <span className="text-red-500 font-semibold">{value}</span>;
       }
     },
     { 
@@ -131,9 +131,6 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
 
   return (
     <Card className="p-6 overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-6 bg-gradient-to-r from-primary/80 to-accent/80 bg-clip-text text-transparent">
-        Compare Properties
-      </h2>
       <div className="min-w-[800px]">
         <table className="w-full border-collapse">
           <tbody>
