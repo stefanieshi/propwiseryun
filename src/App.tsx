@@ -9,17 +9,18 @@ import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import AuthPage from "./pages/AuthPage";
+import { Session } from "@supabase/supabase-js";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check current auth status
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
+      setSession(session);
       setLoading(false);
     });
 
@@ -27,7 +28,8 @@ const App = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
+      setSession(session);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -47,13 +49,13 @@ const App = () => {
             <Route
               path="/auth"
               element={
-                isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
+                session ? <Navigate to="/" replace /> : <AuthPage />
               }
             />
             <Route
               path="/*"
               element={
-                isAuthenticated ? (
+                session ? (
                   <div className="flex min-h-screen">
                     <SideNav />
                     <main className="flex-1 ml-64 p-8">
