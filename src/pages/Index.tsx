@@ -84,12 +84,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Progress Tracker */}
-        <Card className="p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Your Home Buying Journey</h2>
-          <Progress value={calculateProgress()} className="mb-4" />
-          <div className="grid grid-cols-4 gap-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        {/* Enhanced Progress Tracker */}
+        <Card className="p-4 mb-6 sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold">Home Buying Progress</h2>
+            <span className="text-sm text-muted-foreground">{Math.round(calculateProgress())}% Complete</span>
+          </div>
+          <Progress value={calculateProgress()} className="h-2 mb-3" />
+          <div className="grid grid-cols-4 gap-2">
             {progressSteps.map((step, index) => {
               const StepIcon = step.icon;
               const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
@@ -98,16 +101,16 @@ const Index = () => {
               return (
                 <div
                   key={step.title}
-                  className={`flex flex-col items-center p-4 rounded-lg ${
+                  className={`flex items-center p-2 rounded-lg ${
                     isActive ? "bg-primary/10" : ""
                   }`}
                 >
                   <StepIcon
-                    className={`h-8 w-8 mb-2 ${
+                    className={`h-4 w-4 mr-1.5 ${
                       isCompleted ? "text-primary" : "text-gray-400"
                     }`}
                   />
-                  <span className="text-sm font-medium">{step.title}</span>
+                  <span className="text-xs font-medium">{step.title}</span>
                 </div>
               );
             })}
