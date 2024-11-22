@@ -23,12 +23,18 @@ const App = () => {
     // Initialize auth state
     const initializeAuth = async () => {
       try {
+        // Clear any potentially invalid session data
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) {
+          console.error("Error clearing session:", signOutError);
+        }
+
+        // Get fresh session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error("Error getting session:", sessionError.message);
           toast.error("Authentication error. Please try logging in again.");
-          await supabase.auth.signOut();
           setSession(null);
         } else if (initialSession) {
           setSession(initialSession);
@@ -36,7 +42,6 @@ const App = () => {
       } catch (error) {
         console.error("Auth initialization error:", error);
         toast.error("Authentication error. Please try logging in again.");
-        await supabase.auth.signOut();
         setSession(null);
       } finally {
         setLoading(false);
@@ -46,15 +51,19 @@ const App = () => {
     // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
       if (_event === 'SIGNED_OUT') {
         setSession(null);
         toast.info("You have been signed out");
-      } else if (_event === 'SIGNED_IN' && session) {
-        setSession(session);
+      } else if (_event === 'SIGNED_IN' && currentSession) {
+        setSession(currentSession);
         toast.success("Successfully signed in!");
-      } else if (_event === 'TOKEN_REFRESHED' && session) {
-        setSession(session);
+      } else if (_event === 'TOKEN_REFRESHED' && currentSession) {
+        setSession(currentSession);
+      } else if (_event === 'USER_DELETED' || _event === 'USER_UPDATED') {
+        // Re-fetch session to ensure we have the latest state
+        const { data: { session: latestSession } } = await supabase.auth.getSession();
+        setSession(latestSession);
       }
       setLoading(false);
     });
