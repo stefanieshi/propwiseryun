@@ -17,6 +17,7 @@ const queryClient = new QueryClient();
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   useEffect(() => {
     // Initialize auth state
@@ -70,7 +71,7 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (
@@ -91,8 +92,11 @@ const App = () => {
               element={
                 session ? (
                   <div className="flex min-h-screen">
-                    <SideNav />
-                    <main className="flex-1 p-8 transition-all duration-300" style={{ marginLeft: "4rem" }}>
+                    <SideNav isExpanded={isNavExpanded} onExpandedChange={setIsNavExpanded} />
+                    <main 
+                      className="flex-1 p-8 transition-all duration-300"
+                      style={{ marginLeft: isNavExpanded ? "256px" : "64px" }}
+                    >
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
