@@ -19,19 +19,32 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error("Error getting session:", error.message);
+    // Initialize auth state
+    const initializeAuth = async () => {
+      try {
+        // First clear any potentially invalid sessions
+        await supabase.auth.signOut();
+        
+        // Then check for a valid session
+        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Error getting session:", sessionError.message);
+          toast.error("Authentication error. Please try logging in again.");
+          setSession(null);
+        } else if (initialSession) {
+          setSession(initialSession);
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
         toast.error("Authentication error. Please try logging in again.");
         setSession(null);
-      } else {
-        setSession(session);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    };
 
-    // Listen for auth changes
+    // Set up auth state listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -46,6 +59,9 @@ const App = () => {
       }
       setLoading(false);
     });
+
+    // Initialize auth
+    initializeAuth();
 
     // Cleanup subscription on unmount
     return () => {
