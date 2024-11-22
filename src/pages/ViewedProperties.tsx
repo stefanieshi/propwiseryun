@@ -110,6 +110,22 @@ const ViewedProperties = () => {
     setBedroomFilter("all");
   };
 
+  const mapToProperty = (p: any): Property => ({
+    id: p.id,
+    title: p.title,
+    price: p.price,
+    location: p.location,
+    bedrooms: p.bedrooms || 0,
+    bathrooms: p.bathrooms || 0,
+    sqft: p.sqft || 0,
+    type: p.property_type || 'Unknown',
+    imageUrl: p.image_url || '',
+    description: p.description,
+    source_url: p.source_url || p.url,
+    created_at: p.created_at,
+    updated_at: p.updated_at
+  });
+
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
       property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -201,7 +217,7 @@ const ViewedProperties = () => {
             
             <TabsContent value="internal">
               <PropertyGrid 
-                properties={filteredProperties} 
+                properties={filteredProperties.map(mapToProperty)} 
                 loading={loading}
                 selectedProperties={selectedProperties}
                 onPropertySelect={togglePropertySelection}
@@ -210,10 +226,7 @@ const ViewedProperties = () => {
             
             <TabsContent value="external">
               <PropertyGrid 
-                properties={filteredExternalProperties.map(p => ({
-                  ...p,
-                  source_url: p.url
-                }))} 
+                properties={filteredExternalProperties.map(mapToProperty)} 
                 loading={loading}
                 selectedProperties={selectedProperties}
                 onPropertySelect={togglePropertySelection}

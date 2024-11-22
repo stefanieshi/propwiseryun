@@ -7,7 +7,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -15,67 +14,85 @@ serve(async (req) => {
   try {
     const { url } = await req.json()
     
-    // Basic URL validation
     if (!url || (!url.includes('rightmove.co.uk') && !url.includes('zoopla.co.uk'))) {
       throw new Error('Invalid URL. Must be from Rightmove or Zoopla')
     }
 
-    // Create Supabase client
+    console.log('Fetching property data from:', url)
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get user ID from the request
     const authHeader = req.headers.get('Authorization')?.split('Bearer ')[1]
     if (!authHeader) throw new Error('No authorization header')
 
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(authHeader)
     if (userError || !user) throw new Error('Error getting user')
 
-    // Fetch HTML content
-    const response = await fetch(url)
+    // Fetch HTML content with proper headers
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch property page: ${response.status}`)
+    }
+    
     const html = await response.text()
+    console.log('Successfully fetched HTML content')
 
-    // Extract property data based on the source
     const source = url.includes('rightmove.co.uk') ? 'rightmove' : 'zoopla'
     let propertyData
 
-    if (source === 'rightmove') {
-      // Basic scraping for Rightmove (this is a simplified version)
-      const titleMatch = html.match(/<title>(.*?)<\/title>/)
-      const priceMatch = html.match(/property-header-price">\s*£([\d,]+)/)
-      const locationMatch = html.match(/property-header-location">(.*?)</)
-      
-      if (!titleMatch || !priceMatch || !locationMatch) {
-        throw new Error('Could not extract property data')
+    try {
+      if (source === 'rightmove') {
+        const titleMatch = html.match(/<meta property="og:title" content="([^"]*)"/)
+        const priceMatch = html.match(/£([0-9,]+)/)
+        const locationMatch = html.match(/<meta property="og:street-address" content="([^"]*)"/)
+        const imageMatch = html.match(/<meta property="og:image" content="([^"]*)"/)
+        
+        if (!titleMatch || !priceMatch || !locationMatch) {
+          throw new Error('Could not extract required property data from Rightmove')
+        }
+
+        propertyData = {
+          title: titleMatch[1].split(' - ')[0].trim(),
+          price: parseInt(priceMatch[1].replace(/,/g, '')),
+          location: locationMatch[1].trim(),
+          image_url: imageMatch ? imageMatch[1] : null,
+          property_type: 'House', // Default value
+          external_id: url.split('/').pop()?.split('.')[0] || '',
+        }
+      } else {
+        const titleMatch = html.match(/<meta property="og:title" content="([^"]*)"/)
+        const priceMatch = html.match(/£([0-9,]+)/)
+        const locationMatch = html.match(/<meta property="og:locality" content="([^"]*)"/)
+        const imageMatch = html.match(/<meta property="og:image" content="([^"]*)"/)
+        
+        if (!titleMatch || !priceMatch || !locationMatch) {
+          throw new Error('Could not extract required property data from Zoopla')
+        }
+
+        propertyData = {
+          title: titleMatch[1].split(' - ')[0].trim(),
+          price: parseInt(priceMatch[1].replace(/,/g, '')),
+          location: locationMatch[1].trim(),
+          image_url: imageMatch ? imageMatch[1] : null,
+          property_type: 'House', // Default value
+          external_id: url.split('/').pop()?.split('.')[0] || '',
+        }
       }
 
-      propertyData = {
-        title: titleMatch[1].split('|')[0].trim(),
-        price: parseInt(priceMatch[1].replace(/,/g, '')),
-        location: locationMatch[1].trim(),
-        external_id: url.split('/').pop()?.split('.')[0] || '',
-      }
-    } else {
-      // Basic scraping for Zoopla (this is a simplified version)
-      const titleMatch = html.match(/<title>(.*?)<\/title>/)
-      const priceMatch = html.match(/£([\d,]+)/)
-      const locationMatch = html.match(/property-header-location">(.*?)</)
-      
-      if (!titleMatch || !priceMatch || !locationMatch) {
-        throw new Error('Could not extract property data')
-      }
-
-      propertyData = {
-        title: titleMatch[1].split('|')[0].trim(),
-        price: parseInt(priceMatch[1].replace(/,/g, '')),
-        location: locationMatch[1].trim(),
-        external_id: url.split('/').pop()?.split('.')[0] || '',
-      }
+      console.log('Extracted property data:', propertyData)
+    } catch (error) {
+      console.error('Error extracting property data:', error)
+      throw new Error(`Could not extract property data: ${error.message}`)
     }
 
-    // Save to database
     const { error: insertError } = await supabaseClient
       .from('external_properties')
       .insert({
@@ -85,13 +102,17 @@ serve(async (req) => {
         ...propertyData,
       })
 
-    if (insertError) throw insertError
+    if (insertError) {
+      console.error('Error inserting property:', insertError)
+      throw insertError
+    }
 
     return new Response(
-      JSON.stringify({ message: 'Property saved successfully' }),
+      JSON.stringify({ message: 'Property saved successfully', data: propertyData }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('Function error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
