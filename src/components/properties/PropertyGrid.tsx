@@ -2,7 +2,7 @@ import { Property } from "@/types";
 import PropertyCard from "@/components/PropertyCard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CompareIcon } from "lucide-react";
+import { GitCompare } from "lucide-react";
 import { useState } from "react";
 import ComparisonView from "@/components/ComparisonView";
 import { useToast } from "@/hooks/use-toast";
@@ -72,7 +72,7 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
             onClick={() => setShowComparison(!showComparison)}
             className="flex items-center gap-2"
           >
-            <CompareIcon className="h-4 w-4" />
+            <GitCompare className="h-4 w-4" />
             {showComparison ? "Hide Comparison" : "Compare Properties"}
           </Button>
         </div>
