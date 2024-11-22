@@ -66,7 +66,7 @@ const ViewedProperties = () => {
         <div className="flex flex-col space-y-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-              Viewed Properties
+              Saved Properties
             </h1>
             <Button variant="outline" onClick={() => fetchProperties()}>
               Refresh
