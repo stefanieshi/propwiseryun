@@ -2,20 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Property, UserProgress } from "@/types";
-import PropertyCard from "@/components/PropertyCard";
-import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import QuickActions from "@/components/dashboard/QuickActions";
+import SavedProperties from "@/components/dashboard/SavedProperties";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import {
-  Home,
-  TrendingUp,
-  Calculator,
-  FileText,
-  CheckCircle,
-  PlusCircle,
-} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Home, Calculator, FileText, CheckCircle } from "lucide-react";
 
-// Extract ProgressTracker into a separate component for better organization
+// Extract ProgressTracker into a separate component
 const ProgressTracker = ({ userProgress }: { userProgress: UserProgress | null }) => {
   const progressSteps = [
     { title: "Research", icon: Home },
@@ -37,14 +31,16 @@ const ProgressTracker = ({ userProgress }: { userProgress: UserProgress | null }
     <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
       <div className="max-w-xl mx-auto px-4 py-2">
         <Card className="p-2">
-          <h2 className="text-xs font-semibold mb-1.5">Your Home Buying Journey</h2>
+          <h2 className="text-xs font-semibold mb-1.5 text-center">Your Home Buying Journey</h2>
           <Progress value={calculateProgress()} className="mb-1.5 h-1.5" />
           <div className="grid grid-cols-4 gap-1">
             {progressSteps.map((step, index) => {
               const StepIcon = step.icon;
-              const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
-              const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
-              
+              const isActive =
+                userProgress?.stage.toLowerCase() === step.title.toLowerCase();
+              const isCompleted =
+                calculateProgress() > ((index + 1) / progressSteps.length) * 100;
+
               return (
                 <div
                   key={step.title}
@@ -73,7 +69,8 @@ const Index = () => {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
+  const { toast } = useToast();
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -81,7 +78,7 @@ const Index = () => {
   const fetchUserData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         navigate("/auth");
         return;
@@ -96,7 +93,7 @@ const Index = () => {
       if (propertiesError) throw propertiesError;
 
       // Map the properties data to match our Property interface
-      const mappedProperties: Property[] = (propertiesData || []).map(p => ({
+      const mappedProperties: Property[] = (propertiesData || []).map((p) => ({
         id: p.id,
         title: p.title,
         price: p.price,
@@ -105,11 +102,11 @@ const Index = () => {
         bathrooms: p.bathrooms,
         sqft: p.sqft,
         type: p.property_type,
-        description: p.description || '',
-        imageUrl: p.image_url || '',
+        description: p.description || "",
+        imageUrl: p.image_url || "",
         source_url: p.source_url,
         created_at: p.created_at,
-        updated_at: p.updated_at
+        updated_at: p.updated_at,
       }));
 
       // Fetch user progress
@@ -137,70 +134,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background pt-16">
       <ProgressTracker userProgress={userProgress} />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <TrendingUp className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Market Analysis</h3>
-                <p className="text-sm text-muted-foreground">
-                  View current market trends and analytics
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/market-analysis")}>
-                View
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <Calculator className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">ROI Calculator</h3>
-                <p className="text-sm text-muted-foreground">
-                  Calculate potential returns
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/calculator")}>
-                Calculate
-              </Button>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <PlusCircle className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Add Property</h3>
-                <p className="text-sm text-muted-foreground">
-                  Save a new property
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/add-property")}>
-                Add
-              </Button>
-            </div>
-          </Card>
-        </div>
-
-        {/* Saved Properties */}
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">Saved Properties</h2>
-            <Button onClick={() => navigate("/viewed-properties")}>
-              View All
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
+        <QuickActions />
+        <SavedProperties properties={properties} loading={loading} />
       </main>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Property } from "@/types";
 import PropertyCard from "@/components/PropertyCard";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const ViewedProperties = () => {
   const [properties, setProperties] = useState<Property[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProperties();
@@ -47,9 +49,15 @@ const ViewedProperties = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">Viewed Properties</h2>
-            <Button onClick={() => navigate("/viewed-properties")}>
-              View All
+            <h2 className="text-2xl font-semibold bg-gradient-to-r from-primary/80 to-accent/80 bg-clip-text text-transparent">
+              Viewed Properties
+            </h2>
+            <Button
+              onClick={() => navigate(-1)}
+              variant="outline"
+              className="hover:scale-105 transition-transform"
+            >
+              Back
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
