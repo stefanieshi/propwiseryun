@@ -1,5 +1,5 @@
 import { Property } from "@/types";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyCard from "../PropertyCard";
 import { Card } from "@/components/ui/card";
 
 interface PropertyGridProps {
