@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Property, UserProgress } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import QuickActions from "@/components/dashboard/QuickActions";
-import SavedProperties from "@/components/dashboard/SavedProperties";
+import PropertyGrid from "@/components/properties/PropertyGrid";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
 import { Home, Calculator, FileText, CheckCircle } from "lucide-react";
@@ -84,11 +84,10 @@ const Index = () => {
         return;
       }
 
-      // Fetch saved properties
+      // Fetch properties
       const { data: propertiesData, error: propertiesError } = await supabase
         .from("properties")
-        .select("*")
-        .limit(6);
+        .select("*");
 
       if (propertiesError) throw propertiesError;
 
@@ -136,7 +135,12 @@ const Index = () => {
       <ProgressTracker userProgress={userProgress} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
         <QuickActions />
-        <SavedProperties properties={properties} loading={loading} />
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-primary/80 to-accent/80 bg-clip-text text-transparent">
+            Available Properties
+          </h2>
+          <PropertyGrid properties={properties} loading={loading} />
+        </div>
       </main>
     </div>
   );
