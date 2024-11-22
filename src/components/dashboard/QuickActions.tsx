@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, Calculator, PlusCircle } from "lucide-react";
+import { TrendingUp, Calculator, GitCompare } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -20,10 +20,10 @@ const QuickActions = () => {
       href: "/calculator",
     },
     {
-      icon: PlusCircle,
-      title: "Add Property",
-      description: "Save a new property",
-      href: "/add-property",
+      icon: GitCompare,
+      title: "Select Properties to Compare",
+      description: "Compare multiple properties",
+      href: "/viewed-properties?mode=compare",
     },
   ];
 
