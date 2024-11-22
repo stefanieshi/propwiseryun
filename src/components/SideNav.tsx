@@ -27,73 +27,96 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   ];
 
   return (
-    <motion.nav
-      initial={false}
-      animate={{ width: isCollapsed ? "4rem" : "16rem" }}
-      className={cn(
-        "fixed left-0 top-0 h-full bg-[#1A1F2C] p-4 border-r border-[#2A2F3C] backdrop-blur-lg z-50 flex flex-col",
-        "transition-all duration-300 ease-in-out"
-      )}
-    >
-      <div className="flex items-center justify-between mb-8">
-        <AnimatePresence>
-          {!isCollapsed && (
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
-            >
-              PropertyAI
-            </motion.h1>
-          )}
-        </AnimatePresence>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-400 hover:text-white hover:bg-white/5"
-        >
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
-      </div>
-      <div className="space-y-2">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.href;
-          
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
-                isActive
-                  ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white animate-glow"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <Icon className={cn(
-                "h-5 w-5 transition-transform duration-300",
-                isActive ? 'scale-110' : ''
-              )} />
-              <AnimatePresence>
-                {!isCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="font-medium"
-                  >
-                    {item.label}
-                  </motion.span>
+    <>
+      <motion.nav
+        initial={false}
+        animate={{ width: isCollapsed ? "4rem" : "16rem" }}
+        className={cn(
+          "fixed left-0 top-0 h-full bg-[#1A1F2C] p-4 border-r border-[#2A2F3C] backdrop-blur-lg z-50 flex flex-col",
+          "transition-all duration-300 ease-in-out"
+        )}
+      >
+        <div className="flex items-center justify-between mb-8">
+          <AnimatePresence>
+            {!isCollapsed && (
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+              >
+                PropertyAI
+              </motion.h1>
+            )}
+          </AnimatePresence>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="text-gray-400 hover:text-white hover:bg-white/5"
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
+                  isActive
+                    ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white animate-glow"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
                 )}
-              </AnimatePresence>
-            </Link>
-          );
-        })}
-      </div>
-    </motion.nav>
+              >
+                <Icon className={cn(
+                  "h-5 w-5 transition-transform duration-300",
+                  isActive ? 'scale-110' : ''
+                )} />
+                <AnimatePresence>
+                  {!isCollapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
+            );
+          })}
+        </div>
+      </motion.nav>
+      
+      {/* Floating collapse button when menu is hidden */}
+      <AnimatePresence>
+        {isCollapsed && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="fixed left-4 bottom-4 z-50"
+          >
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => setIsCollapsed(false)}
+              className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
