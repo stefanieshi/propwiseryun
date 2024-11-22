@@ -28,6 +28,7 @@ const App = () => {
         if (sessionError) {
           console.error("Error getting session:", sessionError.message);
           toast.error("Authentication error. Please try logging in again.");
+          await supabase.auth.signOut();
           setSession(null);
         } else if (initialSession) {
           setSession(initialSession);
@@ -35,6 +36,7 @@ const App = () => {
       } catch (error) {
         console.error("Auth initialization error:", error);
         toast.error("Authentication error. Please try logging in again.");
+        await supabase.auth.signOut();
         setSession(null);
       } finally {
         setLoading(false);
@@ -44,14 +46,14 @@ const App = () => {
     // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (_event === 'SIGNED_OUT') {
         setSession(null);
         toast.info("You have been signed out");
-      } else if (_event === 'SIGNED_IN') {
+      } else if (_event === 'SIGNED_IN' && session) {
         setSession(session);
         toast.success("Successfully signed in!");
-      } else if (_event === 'TOKEN_REFRESHED') {
+      } else if (_event === 'TOKEN_REFRESHED' && session) {
         setSession(session);
       }
       setLoading(false);
