@@ -6,6 +6,8 @@ import { GitCompare } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface PropertyGridProps {
   properties: Property[];
@@ -36,24 +38,42 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
     }
   };
 
-  const handleCompareClick = () => {
-    if (!isSelectionMode) {
-      setIsSelectionMode(true);
-      toast({
-        title: "Selection mode enabled",
-        description: "Click on properties to select them for comparison",
-      });
-    } else {
-      if (selectedProperties.length < 2) {
-        toast({
-          title: "Not enough properties selected",
-          description: "Please select at least 2 properties to compare",
-          variant: "destructive",
-        });
+  const handleCompareClick = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Please sign in to compare properties");
+        navigate("/auth");
         return;
       }
-      // Navigate to the comparison dashboard with selected properties
-      navigate("/viewed-properties", { state: { properties: selectedProperties } });
+
+      if (!isSelectionMode) {
+        setIsSelectionMode(true);
+        toast({
+          title: "Selection mode enabled",
+          description: "Click on properties to select them for comparison",
+        });
+      } else {
+        if (selectedProperties.length < 2) {
+          toast({
+            title: "Not enough properties selected",
+            description: "Please select at least 2 properties to compare",
+            variant: "destructive",
+          });
+          return;
+        }
+        // Navigate to the comparison dashboard with selected properties
+        navigate("/viewed-properties", { 
+          state: { 
+            properties: selectedProperties,
+            userId: session.user.id 
+          } 
+        });
+      }
+    } catch (error) {
+      console.error("Error checking session:", error);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
