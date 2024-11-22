@@ -7,9 +7,11 @@ export interface Property {
   bathrooms: number;
   sqft: number;
   property_type: string;
-  description?: string;
-  image_url?: string;
-  source_url?: string;
+  description: string;
+  image_url: string;
+  source_url: string;
+  created_at: string;
+  updated_at: string;
   crime_rate: number;
   mortgage: number;
   cost_of_living: number;
@@ -18,7 +20,15 @@ export interface Property {
   avg_monthly_rent: number;
   service_charge: number;
   ground_rent: number;
-  time_on_market?: string;
+}
+
+export interface UserProgress {
+  id: string;
+  user_id: string;
+  stage: string;
+  completed_steps: string[];
+  current_step: string;
+  notes: string;
   created_at: string;
   updated_at: string;
 }
