@@ -30,19 +30,13 @@ const App = () => {
     const initializeAuth = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
         if (currentSession) {
-          const { data: { session: refreshedSession }, error: refreshError } = 
-            await supabase.auth.refreshSession();
-          
-          if (refreshError) {
-            console.error("Session refresh error:", refreshError);
-            setSession(null);
-            return;
-          }
-          
-          if (refreshedSession) {
-            setSession(refreshedSession);
-          }
+          await supabase.auth.setSession({
+            access_token: currentSession.access_token,
+            refresh_token: currentSession.refresh_token,
+          });
+          setSession(currentSession);
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
@@ -65,19 +59,17 @@ const App = () => {
       
       if (currentSession) {
         try {
-          const { data: { session: refreshedSession }, error: refreshError } = 
-            await supabase.auth.refreshSession();
+          await supabase.auth.setSession({
+            access_token: currentSession.access_token,
+            refresh_token: currentSession.refresh_token,
+          });
+          setSession(currentSession);
           
-          if (refreshError) throw refreshError;
-          
-          if (refreshedSession) {
-            setSession(refreshedSession);
-            if (event === 'SIGNED_IN') {
-              toast.success("Successfully signed in!");
-            }
+          if (event === 'SIGNED_IN') {
+            toast.success("Successfully signed in!");
           }
         } catch (error) {
-          console.error("Session refresh error:", error);
+          console.error("Session update error:", error);
           setSession(null);
         }
       }
