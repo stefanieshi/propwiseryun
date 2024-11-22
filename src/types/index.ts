@@ -12,14 +12,14 @@ export interface Property {
   source_url: string;
   created_at: string;
   updated_at: string;
-  crime_rate: number;
-  mortgage: number;
-  cost_of_living: number;
-  council_tax: number;
-  roi: number;
-  avg_monthly_rent: number;
-  service_charge: number;
-  ground_rent: number;
+  crime_rate?: number;
+  mortgage?: number;
+  cost_of_living?: number;
+  council_tax?: number;
+  roi?: number;
+  avg_monthly_rent?: number;
+  service_charge?: number;
+  ground_rent?: number;
 }
 
 export interface UserProgress {
