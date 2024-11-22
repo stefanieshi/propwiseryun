@@ -44,6 +44,23 @@ const Index = () => {
 
       if (propertiesError) throw propertiesError;
 
+      // Map the properties data to match our Property interface
+      const mappedProperties: Property[] = (propertiesData || []).map(p => ({
+        id: p.id,
+        title: p.title,
+        price: p.price,
+        location: p.location,
+        bedrooms: p.bedrooms,
+        bathrooms: p.bathrooms,
+        sqft: p.sqft,
+        type: p.property_type,
+        description: p.description || '',
+        imageUrl: p.image_url || '',
+        source_url: p.source_url,
+        created_at: p.created_at,
+        updated_at: p.updated_at
+      }));
+
       // Fetch user progress
       const { data: progressData, error: progressError } = await supabase
         .from("user_progress")
@@ -53,7 +70,7 @@ const Index = () => {
 
       if (progressError && progressError.code !== "PGRST116") throw progressError;
 
-      setProperties(propertiesData || []);
+      setProperties(mappedProperties);
       setUserProgress(progressData);
       setLoading(false);
     } catch (error: any) {
@@ -86,11 +103,11 @@ const Index = () => {
     <div className="min-h-screen bg-background pt-24">
       {/* Fixed Progress Tracker */}
       <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-background/80 backdrop-blur-sm border-b border-border">
-        <div className="max-w-3xl mx-auto">
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold mb-2">Your Home Buying Journey</h2>
-            <Progress value={calculateProgress()} className="mb-3" />
-            <div className="grid grid-cols-4 gap-2">
+        <div className="max-w-2xl mx-auto">
+          <Card className="p-3">
+            <h2 className="text-sm font-semibold mb-2">Your Home Buying Journey</h2>
+            <Progress value={calculateProgress()} className="mb-2 h-2" />
+            <div className="grid grid-cols-4 gap-1">
               {progressSteps.map((step, index) => {
                 const StepIcon = step.icon;
                 const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
@@ -99,16 +116,16 @@ const Index = () => {
                 return (
                   <div
                     key={step.title}
-                    className={`flex flex-col items-center p-2 rounded-lg ${
+                    className={`flex flex-col items-center p-1.5 rounded-lg ${
                       isActive ? "bg-primary/10" : ""
                     }`}
                   >
                     <StepIcon
-                      className={`h-4 w-4 mb-1 ${
+                      className={`h-3.5 w-3.5 mb-0.5 ${
                         isCompleted ? "text-primary" : "text-gray-400"
                       }`}
                     />
-                    <span className="text-xs font-medium">{step.title}</span>
+                    <span className="text-[10px] font-medium">{step.title}</span>
                   </div>
                 );
               })}

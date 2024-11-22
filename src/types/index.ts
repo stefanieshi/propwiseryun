@@ -1,7 +1,4 @@
-import { Tables } from "@/integrations/supabase/types";
-
-export type Profile = Tables<"profiles">
-export type Property = {
+export interface Property {
   id: string;
   title: string;
   price: number;
@@ -10,11 +7,20 @@ export type Property = {
   bathrooms: number;
   sqft: number;
   type: string;
+  description: string;
   imageUrl: string;
-  description?: string | null;
-  source_url?: string | null;
+  source_url?: string;
   created_at?: string;
   updated_at?: string;
 }
-export type ExternalProperty = Tables<"external_properties">
-export type UserProgress = Tables<"user_progress">
+
+export interface UserProgress {
+  id: string;
+  user_id: string;
+  stage: string;
+  completed_steps?: string[];
+  current_step?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
