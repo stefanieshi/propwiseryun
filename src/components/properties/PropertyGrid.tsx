@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GitCompare } from "lucide-react";
 import { useState } from "react";
-import ComparisonView from "@/components/ComparisonView";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface PropertyGridProps {
   properties: Property[];
@@ -14,9 +14,9 @@ interface PropertyGridProps {
 
 const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
   const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
-  const [showComparison, setShowComparison] = useState(false);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const togglePropertySelection = (property: Property) => {
     if (!isSelectionMode) return;
@@ -52,7 +52,8 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
         });
         return;
       }
-      setShowComparison(true);
+      // Navigate to the comparison dashboard with selected properties
+      navigate("/viewed-properties", { state: { properties: selectedProperties } });
     }
   };
 
@@ -98,10 +99,6 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
           {isSelectionMode ? "Compare Selected" : "Select Properties to Compare"}
         </Button>
       </div>
-
-      {showComparison && selectedProperties.length > 0 && (
-        <ComparisonView properties={selectedProperties} />
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {properties.map((property) => (
