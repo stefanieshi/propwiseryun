@@ -4,7 +4,7 @@ import { MapPin, X, Info } from "lucide-react";
 import { Property } from "@/types";
 import { useComparison } from "@/contexts/ComparisonContext";
 import { motion } from "framer-motion";
-import { Tooltip } from "@/components/ui/tooltip";
+import { TooltipWrapper } from "@/components/ui/tooltip-wrapper";
 
 interface ComparisonViewProps {
   properties: Property[];
@@ -67,11 +67,6 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
       label: "Ground Rent", 
       key: "ground_rent",
       render: (value: number) => `£${value}/year`
-    },
-    {
-      label: "Time on Market",
-      key: "time_on_market",
-      render: (value: string) => value
     }
   ];
 
@@ -109,9 +104,8 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
                 className="w-full h-48 object-cover rounded-lg"
               />
             </div>
-            <div className="text-sm text-muted-foreground mb-4">
-              {property.description}
-            </div>
+            <h3 className="text-lg font-semibold mb-2">{property.title}</h3>
+            <p className="text-sm text-muted-foreground">{property.description}</p>
           </motion.div>
         ))}
 
@@ -125,20 +119,20 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
           >
             <div className="flex items-center gap-2 font-medium text-muted-foreground py-4 border-t">
               {label}
-              <Tooltip content="More information about this metric">
+              <TooltipWrapper content={`More information about ${label.toLowerCase()}`}>
                 <Info className="h-4 w-4 text-muted-foreground/70" />
-              </Tooltip>
+              </TooltipWrapper>
             </div>
             {properties.map((property) => (
               <div
                 key={`${property.id}-${key}`}
                 className={`text-center flex justify-center items-center py-4 border-t
-                  ${key === 'crime_rate' ? getCrimeRateColor(property[key as keyof Property] as number) : ''}`}
+                  ${key === 'crime_rate' ? getCrimeRateColor(property[key]) : ''}`}
               >
                 {Icon && <Icon className="h-4 w-4 mr-1 text-muted-foreground" />}
                 {render
-                  ? render(property[key as keyof Property] as number)
-                  : property[key as keyof Property]}
+                  ? render(property[key])
+                  : property[key]}
               </div>
             ))}
           </motion.div>
