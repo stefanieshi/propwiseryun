@@ -1,164 +1,181 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Property, UserProgress } from "@/types";
 import PropertyCard from "@/components/PropertyCard";
-import ComparisonView from "@/components/ComparisonView";
-import MetricsChart from "@/components/MetricsChart";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
-  LayoutDashboard,
   Home,
-  ArrowRightLeft,
-  Save,
   TrendingUp,
-  Eye,
+  Calculator,
+  FileText,
+  CheckCircle,
+  PlusCircle,
 } from "lucide-react";
 
 const Index = () => {
-  const [selectedView, setSelectedView] = useState<"dashboard" | "comparison">(
-    "dashboard"
-  );
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // Mock data - in a real app this would come from your backend
-  const savedProperties = [
-    {
-      id: 1,
-      title: "Modern City Apartment",
-      price: 450000,
-      location: "Manchester City Center",
-      bedrooms: 2,
-      bathrooms: 2,
-      sqft: 850,
-      type: "Apartment",
-      imageUrl: "https://placehold.co/600x400",
-    },
-    {
-      id: 2,
-      title: "Suburban Family Home",
-      price: 650000,
-      location: "South Manchester",
-      bedrooms: 4,
-      bathrooms: 3,
-      sqft: 1800,
-      type: "House",
-      imageUrl: "https://placehold.co/600x400",
-    },
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      // Fetch saved properties
+      const { data: propertiesData, error: propertiesError } = await supabase
+        .from("properties")
+        .select("*")
+        .limit(6);
+
+      if (propertiesError) throw propertiesError;
+
+      // Fetch user progress
+      const { data: progressData, error: progressError } = await supabase
+        .from("user_progress")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (progressError && progressError.code !== "PGRST116") throw progressError;
+
+      setProperties(propertiesData || []);
+      setUserProgress(progressData);
+      setLoading(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      setLoading(false);
+    }
+  };
+
+  const progressSteps = [
+    { title: "Research", icon: Home },
+    { title: "Financial Analysis", icon: Calculator },
+    { title: "Legal Check", icon: FileText },
+    { title: "Final Steps", icon: CheckCircle },
   ];
 
+  const calculateProgress = () => {
+    if (!userProgress) return 0;
+    const totalSteps = progressSteps.length;
+    const currentStepIndex = progressSteps.findIndex(
+      (step) => step.title.toLowerCase() === userProgress.stage.toLowerCase()
+    );
+    return ((currentStepIndex + 1) / totalSteps) * 100;
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Home className="h-8 w-8 text-primary" />
-              <span className="ml-2 text-xl font-semibold text-gray-900">
-                PropertyAI
-              </span>
+    <div className="min-h-screen bg-background">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Progress Tracker */}
+        <Card className="p-6 mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Your Home Buying Journey</h2>
+          <Progress value={calculateProgress()} className="mb-4" />
+          <div className="grid grid-cols-4 gap-4">
+            {progressSteps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = userProgress?.stage.toLowerCase() === step.title.toLowerCase();
+              const isCompleted = calculateProgress() > ((index + 1) / progressSteps.length) * 100;
+              
+              return (
+                <div
+                  key={step.title}
+                  className={`flex flex-col items-center p-4 rounded-lg ${
+                    isActive ? "bg-primary/10" : ""
+                  }`}
+                >
+                  <StepIcon
+                    className={`h-8 w-8 mb-2 ${
+                      isCompleted ? "text-primary" : "text-gray-400"
+                    }`}
+                  />
+                  <span className="text-sm font-medium">{step.title}</span>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <TrendingUp className="h-8 w-8 text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Market Analysis</h3>
+                <p className="text-sm text-muted-foreground">
+                  View current market trends and analytics
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => navigate("/market-analysis")}>
+                View
+              </Button>
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setSelectedView("dashboard")}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  selectedView === "dashboard"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                <LayoutDashboard className="h-5 w-5 inline-block mr-1" />
-                Dashboard
-              </button>
-              <button
-                onClick={() => setSelectedView("comparison")}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  selectedView === "comparison"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                <ArrowRightLeft className="h-5 w-5 inline-block mr-1" />
-                Compare
-              </button>
-              <Link
-                to="/viewed-properties"
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100"
-              >
-                <Eye className="h-5 w-5 inline-block mr-1" />
-                Viewed Properties
-              </Link>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <Calculator className="h-8 w-8 text-primary mb-2" />
+                <h3 className="text-lg font-semibold">ROI Calculator</h3>
+                <p className="text-sm text-muted-foreground">
+                  Calculate potential returns
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => navigate("/calculator")}>
+                Calculate
+              </Button>
             </div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <PlusCircle className="h-8 w-8 text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Add Property</h3>
+                <p className="text-sm text-muted-foreground">
+                  Save a new property
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => navigate("/add-property")}>
+                Add
+              </Button>
+            </div>
+          </Card>
+        </div>
+
+        {/* Saved Properties */}
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">Saved Properties</h2>
+            <Button onClick={() => navigate("/viewed-properties")}>
+              View All
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
           </div>
         </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 animate-fade-in">
-            <div className="flex items-center">
-              <Save className="h-8 w-8 text-primary" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Saved Properties
-                </p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {savedProperties.length}
-                </p>
-              </div>
-            </div>
-          </Card>
-          <Card className="p-6 animate-fade-in">
-            <div className="flex items-center">
-              <TrendingUp className="h-8 w-8 text-accent" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Average Property Value
-                </p>
-                <p className="text-2xl font-semibold text-gray-900">£550,000</p>
-              </div>
-            </div>
-          </Card>
-          <Card className="p-6 animate-fade-in">
-            <div className="flex items-center">
-              <Home className="h-8 w-8 text-secondary" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Most Common Type
-                </p>
-                <p className="text-2xl font-semibold text-gray-900">Apartment</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {selectedView === "dashboard" ? (
-          <>
-            {/* Charts Section */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Property Metrics
-              </h2>
-              <Card className="p-6">
-                <MetricsChart properties={savedProperties} />
-              </Card>
-            </div>
-
-            {/* Saved Properties */}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Saved Properties
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {savedProperties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))}
-              </div>
-            </div>
-          </>
-        ) : (
-          <ComparisonView properties={savedProperties} />
-        )}
       </main>
     </div>
   );

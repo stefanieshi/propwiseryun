@@ -1,28 +1,21 @@
 import { Card } from "@/components/ui/card";
-import { Home, Bed, Bath, Square } from "lucide-react";
-
-interface Property {
-  id: number;
-  title: string;
-  price: number;
-  location: string;
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
-  type: string;
-  imageUrl: string;
-}
+import { Button } from "@/components/ui/button";
+import { Property } from "@/types";
+import { Home, Bed, Bath, Square, TrendingUp, Calculator } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PropertyCardProps {
   property: Property;
 }
 
 const PropertyCard = ({ property }: PropertyCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group">
       <div className="relative">
         <img
-          src={property.imageUrl}
+          src={property.image_url}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -36,7 +29,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           £{property.price.toLocaleString()}
         </p>
         <p className="text-sm text-gray-400 mb-4">{property.location}</p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="flex items-center text-gray-300">
             <Bed className="h-4 w-4 mr-1" />
             <span className="text-sm">{property.bedrooms}</span>
@@ -49,6 +42,26 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <Square className="h-4 w-4 mr-1" />
             <span className="text-sm">{property.sqft} ft²</span>
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="w-full"
+            onClick={() => navigate(`/property/${property.id}/analytics`)}
+          >
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Analytics
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => navigate(`/property/${property.id}/calculator`)}
+          >
+            <Calculator className="h-4 w-4 mr-2" />
+            ROI
+          </Button>
         </div>
       </div>
     </Card>
