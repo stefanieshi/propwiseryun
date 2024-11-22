@@ -68,7 +68,7 @@ const App = () => {
                 path="/*"
                 element={
                   isAuthenticated ? (
-                    <div className="flex min-h-screen">
+                    <div className="flex min-h-screen bg-background">
                       <SideNav />
                       <main className="flex-1 transition-all duration-300 ml-16 lg:ml-64 p-8">
                         <Routes>
