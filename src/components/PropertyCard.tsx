@@ -15,7 +15,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group">
       <div className="relative">
         <img
-          src={property.image_url}
+          src={property.imageUrl}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />

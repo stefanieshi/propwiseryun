@@ -120,7 +120,7 @@ const ViewedProperties = () => {
     sqft: p.sqft || 0,
     type: p.property_type || 'Unknown',
     imageUrl: p.image_url || '',
-    description: p.description,
+    description: p.description || '',
     source_url: p.source_url || p.url,
     created_at: p.created_at,
     updated_at: p.updated_at
