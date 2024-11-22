@@ -15,21 +15,6 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group relative">
-      <Button
-        variant={isSelected(property.id) ? "default" : "outline"}
-        size="sm"
-        className="absolute top-2 right-2 z-10"
-        onClick={() => togglePropertySelection(property)}
-      >
-        {isSelected(property.id) ? (
-          <>
-            <Check className="h-4 w-4 mr-2" />
-            Selected
-          </>
-        ) : (
-          "Compare"
-        )}
-      </Button>
       <div className="relative">
         <img
           src={property.image_url || ''}
@@ -37,6 +22,21 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <Button
+          variant={isSelected(property.id) ? "default" : "outline"}
+          size="sm"
+          className="absolute top-4 right-4 z-10 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20"
+          onClick={() => togglePropertySelection(property)}
+        >
+          {isSelected(property.id) ? (
+            <>
+              <Check className="h-4 w-4 mr-2" />
+              Selected
+            </>
+          ) : (
+            "Compare"
+          )}
+        </Button>
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold text-white mb-2">
@@ -67,7 +67,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           onClick={() => navigate(`/property/${property.id}/analytics`)}
         >
           <TrendingUp className="h-4 w-4 mr-2" />
-          Analytics & ROI
+          Analyze Property
         </Button>
       </div>
     </Card>
