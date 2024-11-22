@@ -27,17 +27,30 @@ const App = () => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   useEffect(() => {
-    // Initialize session from stored session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setLoading(false);
-    });
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession) {
+          await supabase.auth.setSession(currentSession);
+          setSession(currentSession);
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        setSession(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     // Set up auth state listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state changed:", event, currentSession);
+      
+      if (currentSession) {
+        await supabase.auth.setSession(currentSession);
+      }
       
       switch (event) {
         case 'SIGNED_OUT':
@@ -51,10 +64,6 @@ const App = () => {
           }
           break;
         case 'TOKEN_REFRESHED':
-          if (currentSession) {
-            setSession(currentSession);
-          }
-          break;
         case 'USER_UPDATED':
           if (currentSession) {
             setSession(currentSession);
@@ -66,6 +75,9 @@ const App = () => {
           }
       }
     });
+
+    // Initialize auth
+    initializeAuth();
 
     return () => {
       subscription.unsubscribe();
