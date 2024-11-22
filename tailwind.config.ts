@@ -25,7 +25,7 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#6366f1",
+          DEFAULT: "#8B5CF6",
           foreground: "#ffffff",
         },
         secondary: {
@@ -33,7 +33,7 @@ export default {
           foreground: "#ffffff",
         },
         accent: {
-          DEFAULT: "#0ea5e9",
+          DEFAULT: "#D946EF",
           foreground: "#ffffff",
         },
         destructive: {
@@ -53,11 +53,10 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-tech': 'linear-gradient(135deg, #1a1f2c 0%, #2d3748 100%)',
-        'gradient-purple': 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-        'gradient-blue': 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)',
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
@@ -73,18 +72,8 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         glow: {
-          "0%, 100%": { 
-            boxShadow: "0 0 15px rgba(99, 102, 241, 0.5)",
-            transform: "scale(1)"
-          },
-          "50%": { 
-            boxShadow: "0 0 30px rgba(99, 102, 241, 0.8)",
-            transform: "scale(1.02)"
-          },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-5px)" },
+          "0%, 100%": { boxShadow: "0 0 15px rgba(139, 92, 246, 0.5)" },
+          "50%": { boxShadow: "0 0 30px rgba(139, 92, 246, 0.8)" },
         },
       },
       animation: {
@@ -92,7 +81,6 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         glow: "glow 2s ease-in-out infinite",
-        float: "float 3s ease-in-out infinite",
       },
     },
   },

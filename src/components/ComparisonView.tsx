@@ -79,9 +79,7 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
 
   return (
     <Card className="p-6 glass-effect">
-      <div className="grid auto-cols-fr gap-4" style={{
-        gridTemplateColumns: `200px repeat(${properties.length}, minmax(200px, 1fr))`
-      }}>
+      <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(200px,1fr))] gap-4">
         {/* Headers */}
         <div className="col-span-1"></div>
         {properties.map((property) => (
@@ -106,12 +104,8 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
                 className="w-full h-48 object-cover rounded-lg"
               />
             </div>
-            <h3 className="text-lg font-semibold mb-2 truncate" title={property.title}>
-              {property.title}
-            </h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {property.description}
-            </p>
+            <h3 className="text-lg font-semibold mb-2">{property.title}</h3>
+            <p className="text-sm text-muted-foreground">{property.description}</p>
           </motion.div>
         ))}
 
