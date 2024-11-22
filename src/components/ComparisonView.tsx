@@ -1,17 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Bed, Bath, Square, MapPin } from "lucide-react";
-
-interface Property {
-  id: number;
-  title: string;
-  price: number;
-  location: string;
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
-  type: string;
-  imageUrl: string;
-}
+import { Property } from "@/types";
 
 interface ComparisonViewProps {
   properties: Property[];
@@ -29,7 +18,7 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
         {properties.map((property) => (
           <div key={property.id} className="text-center">
             <img
-              src={property.imageUrl}
+              src={property.image_url || ''}
               alt={property.title}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
@@ -85,7 +74,7 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
         <div className="font-medium text-gray-600">Property Type</div>
         {properties.map((property) => (
           <div key={property.id} className="text-center">
-            {property.type}
+            {property.property_type}
           </div>
         ))}
       </div>

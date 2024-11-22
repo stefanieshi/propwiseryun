@@ -32,7 +32,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
       </Button>
       <div className="relative">
         <img
-          src={property.image_url}
+          src={property.image_url || ''}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
