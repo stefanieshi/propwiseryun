@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import AuthPage from "./pages/AuthPage";
 import { Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -19,16 +20,30 @@ const App = () => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("Error getting session:", error.message);
+        toast.error("Authentication error. Please try logging in again.");
+        setSession(null);
+      } else {
+        setSession(session);
+      }
       setLoading(false);
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (_event === 'SIGNED_OUT') {
+        setSession(null);
+        toast.info("You have been signed out");
+      } else if (_event === 'SIGNED_IN') {
+        setSession(session);
+        toast.success("Successfully signed in!");
+      } else if (_event === 'TOKEN_REFRESHED') {
+        setSession(session);
+      }
       setLoading(false);
     });
 
