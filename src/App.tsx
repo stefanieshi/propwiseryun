@@ -6,8 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
 
@@ -23,15 +22,9 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route
-              path="/login"
+              path="/auth"
               element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Login />
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Register />
+                isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
               }
             />
             <Route
@@ -48,7 +41,7 @@ const App = () => {
                     </main>
                   </div>
                 ) : (
-                  <Navigate to="/login" replace />
+                  <Navigate to="/auth" replace />
                 )
               }
             />
