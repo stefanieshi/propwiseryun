@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, Calculator, GitCompare } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const QuickActions = () => {
   const navigate = useNavigate();
@@ -34,23 +33,15 @@ const QuickActions = () => {
         return (
           <Card
             key={action.href}
-            className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+            onClick={() => navigate(action.href)}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <Icon className="h-8 w-8 text-primary mb-2 animate-fade-in" />
-                <h3 className="text-lg font-semibold">{action.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {action.description}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => navigate(action.href)}
-                className="hover:bg-primary hover:text-white transition-colors"
-              >
-                View
-              </Button>
+            <div>
+              <Icon className="h-8 w-8 text-primary mb-2 animate-fade-in" />
+              <h3 className="text-lg font-semibold">{action.title}</h3>
+              <p className="text-sm text-muted-foreground">
+                {action.description}
+              </p>
             </div>
           </Card>
         );
