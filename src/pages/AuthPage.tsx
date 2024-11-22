@@ -11,54 +11,74 @@ import {
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) {
-      toast.error(error.message);
-    } else {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      navigate("/");
       toast.success("Successfully logged in!");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
         },
-      },
-    });
-    
-    if (error) {
+      });
+      
+      if (error) throw error;
+      
+      toast.success("Registration successful! Please check your email for verification.");
+    } catch (error: any) {
       toast.error(error.message);
-    } else {
-      toast.success("Registration successful!");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+      
+      if (error) throw error;
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -68,10 +88,10 @@ const AuthPage = () => {
       <Card className="w-full max-w-md glass-effect">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            Welcome to PropertyAI
+            Welcome to Propwise
           </CardTitle>
           <CardDescription>
-            Sign in to your account or create a new one
+            Your AI-powered real estate advisor
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,6 +100,7 @@ const AuthPage = () => {
               variant="outline"
               className="w-full flex items-center justify-center gap-2"
               onClick={handleGoogleLogin}
+              disabled={loading}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -129,6 +150,7 @@ const AuthPage = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       className="bg-secondary/50"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -139,9 +161,10 @@ const AuthPage = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       className="bg-secondary/50"
                       required
+                      disabled={loading}
                     />
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full" disabled={loading}>
                     Sign in
                   </Button>
                 </form>
@@ -157,6 +180,7 @@ const AuthPage = () => {
                       onChange={(e) => setName(e.target.value)}
                       className="bg-secondary/50"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -167,6 +191,7 @@ const AuthPage = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       className="bg-secondary/50"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -177,9 +202,10 @@ const AuthPage = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       className="bg-secondary/50"
                       required
+                      disabled={loading}
                     />
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full" disabled={loading}>
                     Create account
                   </Button>
                 </form>
