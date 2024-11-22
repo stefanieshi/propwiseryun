@@ -12,7 +12,14 @@ import AuthPage from "./pages/AuthPage";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -20,17 +27,11 @@ const App = () => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
-      } catch (error) {
-        console.error("Auth initialization error:", error);
-        setSession(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Initialize session from stored session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setLoading(false);
+    });
 
     // Set up auth state listener
     const {
@@ -57,9 +58,6 @@ const App = () => {
         case 'USER_UPDATED':
           if (currentSession) {
             setSession(currentSession);
-          } else {
-            const { data: { session: latestSession } } = await supabase.auth.getSession();
-            setSession(latestSession);
           }
           break;
         default:
@@ -69,10 +67,6 @@ const App = () => {
       }
     });
 
-    // Initialize auth
-    initializeAuth();
-
-    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
