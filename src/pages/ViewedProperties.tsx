@@ -1,30 +1,35 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Property } from "@/types";
 import FilterBar from "@/components/properties/FilterBar";
 import PropertyGrid from "@/components/properties/PropertyGrid";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2 } from "lucide-react";
 
 const ViewedProperties = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [bedroomFilter, setBedroomFilter] = useState("all");
   const [properties, setProperties] = useState<Property[]>([]);
+  const [externalProperties, setExternalProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [savingProperty, setSavingProperty] = useState(false);
+  const [propertyUrl, setPropertyUrl] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
     fetchProperties();
+    fetchExternalProperties();
   }, []);
 
   const fetchProperties = async () => {
     try {
       const { data, error } = await supabase.from("properties").select("*");
-
       if (error) throw error;
-
       setProperties(data || []);
       setLoading(false);
     } catch (error: any) {
@@ -34,6 +39,50 @@ const ViewedProperties = () => {
         variant: "destructive",
       });
       setLoading(false);
+    }
+  };
+
+  const fetchExternalProperties = async () => {
+    try {
+      const { data, error } = await supabase.from("external_properties").select("*");
+      if (error) throw error;
+      setExternalProperties(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching external properties",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const saveExternalProperty = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!propertyUrl) return;
+
+    setSavingProperty(true);
+    try {
+      const { error } = await supabase.functions.invoke('save-external-property', {
+        body: { url: propertyUrl }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Property saved successfully",
+      });
+
+      setPropertyUrl("");
+      fetchExternalProperties();
+    } catch (error: any) {
+      toast({
+        title: "Error saving property",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSavingProperty(false);
     }
   };
 
@@ -60,6 +109,21 @@ const ViewedProperties = () => {
     return matchesSearch && matchesPrice && matchesBedrooms;
   });
 
+  const filteredExternalProperties = externalProperties.filter((property) => {
+    const matchesSearch =
+      property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      property.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPrice =
+      priceFilter === "all" ||
+      (priceFilter === "under1m" && property.price < 1000000) ||
+      (priceFilter === "1m-2m" &&
+        property.price >= 1000000 &&
+        property.price < 2000000) ||
+      (priceFilter === "over2m" && property.price >= 2000000);
+
+    return matchesSearch && matchesPrice;
+  });
+
   return (
     <div className="min-h-screen bg-background animate-fade-in">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -68,12 +132,23 @@ const ViewedProperties = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
               Saved Properties
             </h1>
-            <Button variant="outline" onClick={() => fetchProperties()}>
-              Refresh
-            </Button>
           </div>
 
-          <Card className="p-6 glass-effect">
+          <Card className="p-6">
+            <form onSubmit={saveExternalProperty} className="flex gap-4 mb-6">
+              <Input
+                type="url"
+                placeholder="Paste Rightmove or Zoopla property URL..."
+                value={propertyUrl}
+                onChange={(e) => setPropertyUrl(e.target.value)}
+                className="flex-1"
+              />
+              <Button type="submit" disabled={savingProperty}>
+                {savingProperty && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save Property
+              </Button>
+            </form>
+
             <FilterBar
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -85,7 +160,26 @@ const ViewedProperties = () => {
             />
           </Card>
 
-          <PropertyGrid properties={filteredProperties} loading={loading} />
+          <Tabs defaultValue="internal" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="internal">Your Properties</TabsTrigger>
+              <TabsTrigger value="external">Saved from Web</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="internal">
+              <PropertyGrid properties={filteredProperties} loading={loading} />
+            </TabsContent>
+            
+            <TabsContent value="external">
+              <PropertyGrid 
+                properties={filteredExternalProperties.map(p => ({
+                  ...p,
+                  source_url: p.url
+                }))} 
+                loading={loading} 
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
