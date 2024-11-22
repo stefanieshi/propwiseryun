@@ -31,8 +31,18 @@ const App = () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         if (currentSession) {
-          await supabase.auth.setSession(currentSession);
-          setSession(currentSession);
+          const { data: { session: refreshedSession }, error: refreshError } = 
+            await supabase.auth.refreshSession();
+          
+          if (refreshError) {
+            console.error("Session refresh error:", refreshError);
+            setSession(null);
+            return;
+          }
+          
+          if (refreshedSession) {
+            setSession(refreshedSession);
+          }
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
@@ -42,41 +52,37 @@ const App = () => {
       }
     };
 
-    // Set up auth state listener
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state changed:", event, currentSession);
       
-      if (currentSession) {
-        await supabase.auth.setSession(currentSession);
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+        toast.info("You have been signed out");
+        return;
       }
       
-      switch (event) {
-        case 'SIGNED_OUT':
+      if (currentSession) {
+        try {
+          const { data: { session: refreshedSession }, error: refreshError } = 
+            await supabase.auth.refreshSession();
+          
+          if (refreshError) throw refreshError;
+          
+          if (refreshedSession) {
+            setSession(refreshedSession);
+            if (event === 'SIGNED_IN') {
+              toast.success("Successfully signed in!");
+            }
+          }
+        } catch (error) {
+          console.error("Session refresh error:", error);
           setSession(null);
-          toast.info("You have been signed out");
-          break;
-        case 'SIGNED_IN':
-          if (currentSession) {
-            setSession(currentSession);
-            toast.success("Successfully signed in!");
-          }
-          break;
-        case 'TOKEN_REFRESHED':
-        case 'USER_UPDATED':
-          if (currentSession) {
-            setSession(currentSession);
-          }
-          break;
-        default:
-          if (currentSession) {
-            setSession(currentSession);
-          }
+        }
       }
     });
 
-    // Initialize auth
     initializeAuth();
 
     return () => {
