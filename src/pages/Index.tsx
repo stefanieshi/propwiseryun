@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Property, UserProgress } from "@/types";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 import QuickActions from "@/components/dashboard/QuickActions";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyGrid from "@/components/properties/PropertyGrid";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
 import { Home, Calculator, FileText, CheckCircle } from "lucide-react";
@@ -71,6 +71,7 @@ const Index = () => {
   const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
   const [isCompareMode, setIsCompareMode] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchUserData();
@@ -90,10 +91,7 @@ const Index = () => {
         .from("properties")
         .select("*");
 
-      if (propertiesError) {
-        toast.error(propertiesError.message);
-        return;
-      }
+      if (propertiesError) throw propertiesError;
 
       // Map the properties data to match our Property interface
       const mappedProperties: Property[] = (propertiesData || []).map((p) => ({
@@ -119,16 +117,17 @@ const Index = () => {
         .eq("user_id", user.id)
         .single();
 
-      if (progressError && progressError.code !== "PGRST116") {
-        toast.error(progressError.message);
-        return;
-      }
+      if (progressError && progressError.code !== "PGRST116") throw progressError;
 
       setProperties(mappedProperties);
       setUserProgress(progressData);
       setLoading(false);
     } catch (error: any) {
-      toast.error(error.message);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
@@ -149,7 +148,12 @@ const Index = () => {
     <div className="min-h-screen bg-background pt-16">
       <ProgressTracker userProgress={userProgress} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
-        <QuickActions />
+        <QuickActions 
+          isCompareMode={isCompareMode}
+          setIsCompareMode={setIsCompareMode}
+          selectedProperties={selectedProperties}
+          onCompare={() => navigate("/viewed-properties", { state: { properties: selectedProperties } })}
+        />
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-primary/80 to-accent/80 bg-clip-text text-transparent">
             Available Properties

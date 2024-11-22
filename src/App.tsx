@@ -12,14 +12,7 @@ import AuthPage from "./pages/AuthPage";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -27,56 +20,51 @@ const App = () => {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   useEffect(() => {
+    // Initialize auth state
     const initializeAuth = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        // First clear any potentially invalid sessions
+        await supabase.auth.signOut();
         
-        if (currentSession) {
-          await supabase.auth.setSession({
-            access_token: currentSession.access_token,
-            refresh_token: currentSession.refresh_token,
-          });
-          setSession(currentSession);
+        // Then check for a valid session
+        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Error getting session:", sessionError.message);
+          toast.error("Authentication error. Please try logging in again.");
+          setSession(null);
+        } else if (initialSession) {
+          setSession(initialSession);
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
+        toast.error("Authentication error. Please try logging in again.");
         setSession(null);
       } finally {
         setLoading(false);
       }
     };
 
+    // Set up auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log("Auth state changed:", event, currentSession);
-      
-      if (event === 'SIGNED_OUT') {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (_event === 'SIGNED_OUT') {
         setSession(null);
         toast.info("You have been signed out");
-        return;
+      } else if (_event === 'SIGNED_IN') {
+        setSession(session);
+        toast.success("Successfully signed in!");
+      } else if (_event === 'TOKEN_REFRESHED') {
+        setSession(session);
       }
-      
-      if (currentSession) {
-        try {
-          await supabase.auth.setSession({
-            access_token: currentSession.access_token,
-            refresh_token: currentSession.refresh_token,
-          });
-          setSession(currentSession);
-          
-          if (event === 'SIGNED_IN') {
-            toast.success("Successfully signed in!");
-          }
-        } catch (error) {
-          console.error("Session update error:", error);
-          setSession(null);
-        }
-      }
+      setLoading(false);
     });
 
+    // Initialize auth
     initializeAuth();
 
+    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };

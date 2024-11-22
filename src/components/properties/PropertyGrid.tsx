@@ -4,9 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GitCompare } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import ComparisonView from "@/components/ComparisonView";
+import { useToast } from "@/hooks/use-toast";
 
 interface PropertyGridProps {
   properties: Property[];
@@ -15,62 +14,22 @@ interface PropertyGridProps {
 
 const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
   const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const navigate = useNavigate();
+  const [showComparison, setShowComparison] = useState(false);
+  const { toast } = useToast();
 
   const togglePropertySelection = (property: Property) => {
-    if (!isSelectionMode) return;
-    
     if (selectedProperties.find(p => p.id === property.id)) {
       setSelectedProperties(selectedProperties.filter(p => p.id !== property.id));
     } else {
       if (selectedProperties.length >= 4) {
-        toast("Maximum properties reached", {
-          description: "You can compare up to 4 properties at a time"
+        toast({
+          title: "Maximum properties reached",
+          description: "You can compare up to 4 properties at a time",
+          variant: "destructive",
         });
         return;
       }
       setSelectedProperties([...selectedProperties, property]);
-    }
-  };
-
-  const handleCompareClick = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast("Authentication required", {
-          description: "Please sign in to compare properties"
-        });
-        navigate("/auth");
-        return;
-      }
-
-      if (!isSelectionMode) {
-        setIsSelectionMode(true);
-        toast("Selection mode enabled", {
-          description: "Click on properties to select them for comparison"
-        });
-      } else {
-        if (selectedProperties.length < 2) {
-          toast("Not enough properties", {
-            description: "Please select at least 2 properties to compare"
-          });
-          return;
-        }
-        // Navigate to the comparison dashboard with selected properties
-        navigate("/viewed-properties", { 
-          state: { 
-            properties: selectedProperties,
-            userId: session.user.id 
-          } 
-        });
-      }
-    } catch (error) {
-      console.error("Error checking session:", error);
-      toast("Error", {
-        description: "An error occurred. Please try again."
-      });
     }
   };
 
@@ -103,29 +62,39 @@ const PropertyGrid = ({ properties, loading }: PropertyGridProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {isSelectionMode ? `${selectedProperties.length} properties selected` : ""}
-        </p>
-        <Button
-          variant={isSelectionMode ? "secondary" : "default"}
-          onClick={handleCompareClick}
-          className="flex items-center gap-2"
-        >
-          <GitCompare className="h-4 w-4" />
-          {isSelectionMode ? "Compare Selected" : "Select Properties to Compare"}
-        </Button>
-      </div>
+      {selectedProperties.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {selectedProperties.length} properties selected
+          </p>
+          <Button
+            variant={showComparison ? "secondary" : "default"}
+            onClick={() => setShowComparison(!showComparison)}
+            className="flex items-center gap-2"
+          >
+            <GitCompare className="h-4 w-4" />
+            {showComparison ? "Hide Comparison" : "Compare Properties"}
+          </Button>
+        </div>
+      )}
+
+      {showComparison && selectedProperties.length > 0 && (
+        <ComparisonView properties={selectedProperties} />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {properties.map((property) => (
-          <PropertyCard
+          <div
             key={property.id}
-            property={property}
-            isSelectable={isSelectionMode}
-            isSelected={selectedProperties.some((p) => p.id === property.id)}
-            onSelect={() => togglePropertySelection(property)}
-          />
+            className={`relative cursor-pointer transition-all duration-300 ${
+              selectedProperties.find((p) => p.id === property.id)
+                ? "ring-2 ring-primary ring-offset-2 scale-[1.02]"
+                : ""
+            }`}
+            onClick={() => togglePropertySelection(property)}
+          >
+            <PropertyCard property={property} />
+          </div>
         ))}
       </div>
     </div>
