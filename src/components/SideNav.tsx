@@ -1,13 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, User, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const SideNav = () => {
+interface SideNavProps {
+  onCollapsedChange?: (collapsed: boolean) => void;
+}
+
+const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    onCollapsedChange?.(isCollapsed);
+  }, [isCollapsed, onCollapsedChange]);
 
   const menuItems = [
     { icon: Home, label: "Property research", href: "/" },

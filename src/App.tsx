@@ -12,12 +12,14 @@ import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import AuthPage from "./pages/AuthPage";
 import { ComparisonButton } from "./components/ComparisonButton";
+import { motion, AnimatePresence } from "framer-motion";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
   useEffect(() => {
     // Check current session
@@ -69,14 +71,22 @@ const App = () => {
                 element={
                   isAuthenticated ? (
                     <div className="flex min-h-screen bg-background">
-                      <SideNav />
-                      <main className="flex-1 transition-all duration-300 ml-16 lg:ml-64 p-8">
+                      <SideNav onCollapsedChange={setIsMenuCollapsed} />
+                      <motion.main
+                        initial={false}
+                        animate={{
+                          marginLeft: isMenuCollapsed ? "4rem" : "16rem",
+                          width: isMenuCollapsed ? "calc(100% - 4rem)" : "calc(100% - 16rem)"
+                        }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="flex-1 p-8"
+                      >
                         <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/viewed-properties" element={<ViewedProperties />} />
                           <Route path="/comparison" element={<ComparisonPage />} />
                         </Routes>
-                      </main>
+                      </motion.main>
                       <ComparisonButton />
                     </div>
                   ) : (
