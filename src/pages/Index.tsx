@@ -68,6 +68,8 @@ const Index = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
+  const [isCompareMode, setIsCompareMode] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -130,16 +132,43 @@ const Index = () => {
     }
   };
 
+  const handlePropertySelect = (property: Property) => {
+    if (selectedProperties.find(p => p.id === property.id)) {
+      setSelectedProperties(selectedProperties.filter(p => p.id !== property.id));
+    } else {
+      if (selectedProperties.length >= 4) {
+        toast.error("You can only compare up to 4 properties");
+        return;
+      }
+      setSelectedProperties([...selectedProperties, property]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pt-16">
       <ProgressTracker userProgress={userProgress} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
-        <QuickActions />
+        <QuickActions 
+          isCompareMode={isCompareMode}
+          setIsCompareMode={setIsCompareMode}
+          selectedProperties={selectedProperties}
+          onCompare={() => navigate("/viewed-properties", { state: { properties: selectedProperties } })}
+        />
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-primary/80 to-accent/80 bg-clip-text text-transparent">
             Available Properties
           </h2>
-          <PropertyGrid properties={properties} loading={loading} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                isSelectable={isCompareMode}
+                isSelected={selectedProperties.some(p => p.id === property.id)}
+                onSelect={handlePropertySelect}
+              />
+            ))}
+          </div>
         </div>
       </main>
     </div>
