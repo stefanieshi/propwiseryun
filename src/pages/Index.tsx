@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import PropertyCard from "@/components/PropertyCard";
+import ComparisonView from "@/components/ComparisonView";
+import MetricsChart from "@/components/MetricsChart";
 import { Card } from "@/components/ui/card";
 import {
   LayoutDashboard,
@@ -6,10 +10,8 @@ import {
   ArrowRightLeft,
   Save,
   TrendingUp,
+  Eye,
 } from "lucide-react";
-import PropertyCard from "@/components/PropertyCard";
-import ComparisonView from "@/components/ComparisonView";
-import MetricsChart from "@/components/MetricsChart";
 
 const Index = () => {
   const [selectedView, setSelectedView] = useState<"dashboard" | "comparison">(
@@ -77,6 +79,13 @@ const Index = () => {
                 <ArrowRightLeft className="h-5 w-5 inline-block mr-1" />
                 Compare
               </button>
+              <Link
+                to="/viewed-properties"
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                <Eye className="h-5 w-5 inline-block mr-1" />
+                Viewed Properties
+              </Link>
             </div>
           </div>
         </div>
