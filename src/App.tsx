@@ -23,10 +23,6 @@ const App = () => {
     // Initialize auth state
     const initializeAuth = async () => {
       try {
-        // First clear any potentially invalid sessions
-        await supabase.auth.signOut();
-        
-        // Then check for a valid session
         const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
