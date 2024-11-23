@@ -8,6 +8,7 @@ import PriceHistoryChart from "@/components/analytics/PriceHistoryChart";
 import RentalAnalysis from "@/components/analytics/RentalAnalysis";
 import AreaStats from "@/components/analytics/AreaStats";
 import AIRecommendations from "@/components/analytics/AIRecommendations";
+import { motion } from "framer-motion";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
@@ -53,14 +54,33 @@ const PropertyAnalytics = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Property Analysis</h1>
-        <h2 className="text-xl text-muted-foreground">{property.title}</h2>
+        <motion.h1 
+          className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          Property Analysis
+        </motion.h1>
+        <motion.h2 
+          className="text-xl text-muted-foreground"
+          initial={{ x: 20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {property.title}
+        </motion.h2>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-4 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="rental">Rental Analysis</TabsTrigger>
           <TabsTrigger value="area">Area Stats</TabsTrigger>
@@ -68,10 +88,7 @@ const PropertyAnalytics = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Price History</h3>
-            <PriceHistoryChart data={analytics.price_history} />
-          </Card>
+          <PriceHistoryChart data={analytics.price_history} />
         </TabsContent>
 
         <TabsContent value="rental">
@@ -86,7 +103,7 @@ const PropertyAnalytics = () => {
           <AIRecommendations recommendations={analytics.ai_recommendations} />
         </TabsContent>
       </Tabs>
-    </div>
+    </motion.div>
   );
 };
 
