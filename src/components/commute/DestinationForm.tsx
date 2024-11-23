@@ -21,6 +21,12 @@ export const DestinationForm = ({ onSuccess }: DestinationFormProps) => {
     setLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+
       // In a real app, we would use a geocoding service here
       // For demo purposes, using mock coordinates
       const mockLat = 40.7128;
@@ -31,6 +37,7 @@ export const DestinationForm = ({ onSuccess }: DestinationFormProps) => {
         address,
         latitude: mockLat,
         longitude: mockLng,
+        user_id: user.id,
       });
 
       if (error) throw error;
