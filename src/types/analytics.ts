@@ -1,3 +1,5 @@
+import { Json } from "@/integrations/supabase/types";
+
 export interface PriceHistoryData {
   date: string;
   'Property Price': number;
@@ -25,13 +27,30 @@ export interface SustainabilityData {
   environmental_impact: number;
 }
 
+export interface AreaStats {
+  population_growth: number;
+  median_income: number;
+  school_ratings: number;
+  crime_rate: number;
+}
+
+export interface RentalEstimates {
+  monthly_rent: number;
+  yearly_rent: number;
+  occupancy_rate: number;
+}
+
 export interface PropertyAnalytics {
   id: string;
   property_id: string;
-  price_history: PriceHistoryData[];
-  market_trends: MarketTrendsData;
-  investment_metrics: InvestmentMetricsData;
-  sustainability_score: SustainabilityData;
+  price_history: PriceHistoryData[] | Json;
+  market_trends: MarketTrendsData | Json;
+  investment_metrics: InvestmentMetricsData | Json;
+  sustainability_score: SustainabilityData | Json;
+  area_stats: AreaStats | Json;
+  rental_estimates: RentalEstimates | Json;
+  ai_recommendations: string[] | null;
+  neighborhood_insights: Json | null;
   created_at: string;
   updated_at: string;
 }
