@@ -12,7 +12,6 @@ import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
 import AuthPage from "./pages/AuthPage";
-import CommutePage from "./pages/CommutePage";
 import { ComparisonButton } from "./components/ComparisonButton";
 import { motion } from "framer-motion";
 
@@ -97,7 +96,6 @@ const App = () => {
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
                         <Route path="/comparison" element={<ComparisonPage />} />
                         <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
-                        <Route path="/commute" element={<CommutePage />} />
                       </Routes>
                     </AppLayout>
                   ) : (

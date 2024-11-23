@@ -22,21 +22,7 @@ import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
 import { Json } from "@/integrations/supabase/types";
-
-interface PropertyAnalytics {
-  id: string;
-  property_id: string;
-  price_history: Json;
-  rental_estimates: Json;
-  area_stats: Json;
-  ai_recommendations: string[] | null;
-  market_trends: Json;
-  investment_metrics: Json;
-  neighborhood_insights: Json;
-  sustainability_score: Json;
-  created_at: string;
-  updated_at: string;
-}
+import { CommuteAnalysis } from "@/components/analytics/CommuteAnalysis";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +87,7 @@ const PropertyAnalytics = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{property.title}</BreadcrumbPage>
+              <BreadcrumbPage>{property?.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -121,48 +107,53 @@ const PropertyAnalytics = () => {
             animate={{ x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {property.title}
+            {property?.title}
           </motion.h2>
         </div>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-secondary/50 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-8 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="market">Market</TabsTrigger>
           <TabsTrigger value="investment">Investment</TabsTrigger>
           <TabsTrigger value="rental">Rental</TabsTrigger>
           <TabsTrigger value="area">Area</TabsTrigger>
+          <TabsTrigger value="commute">Commute</TabsTrigger>
           <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
           <TabsTrigger value="ai">AI Insights</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
-          <PriceHistoryChart data={analytics.price_history as any} />
+          <PriceHistoryChart data={analytics?.price_history as any} />
         </TabsContent>
 
         <TabsContent value="market">
-          <MarketTrends data={analytics.market_trends as any} />
+          <MarketTrends data={analytics?.market_trends as any} />
         </TabsContent>
 
         <TabsContent value="investment">
-          <InvestmentMetrics data={analytics.investment_metrics as any} />
+          <InvestmentMetrics data={analytics?.investment_metrics as any} />
         </TabsContent>
 
         <TabsContent value="rental">
-          <RentalAnalysis data={analytics.rental_estimates as any} />
+          <RentalAnalysis data={analytics?.rental_estimates as any} />
         </TabsContent>
 
         <TabsContent value="area">
-          <AreaStats data={analytics.area_stats as any} />
+          <AreaStats data={analytics?.area_stats as any} />
+        </TabsContent>
+
+        <TabsContent value="commute">
+          <CommuteAnalysis propertyId={id as string} />
         </TabsContent>
 
         <TabsContent value="sustainability">
-          <SustainabilityScore data={analytics.sustainability_score as any} />
+          <SustainabilityScore data={analytics?.sustainability_score as any} />
         </TabsContent>
 
         <TabsContent value="ai">
-          <AIRecommendations recommendations={analytics.ai_recommendations || []} />
+          <AIRecommendations recommendations={analytics?.ai_recommendations || []} />
         </TabsContent>
       </Tabs>
     </motion.div>

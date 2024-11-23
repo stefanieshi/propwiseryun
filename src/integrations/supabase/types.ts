@@ -238,6 +238,51 @@ export type Database = {
           },
         ]
       }
+      property_commute_analysis: {
+        Row: {
+          commute_distance: number | null
+          commute_time: number | null
+          created_at: string
+          destination_id: string | null
+          id: string
+          property_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          commute_distance?: number | null
+          commute_time?: number | null
+          created_at?: string
+          destination_id?: string | null
+          id?: string
+          property_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          commute_distance?: number | null
+          commute_time?: number | null
+          created_at?: string
+          destination_id?: string | null
+          id?: string
+          property_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_commute_analysis_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "user_destinations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_commute_analysis_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       property_comparisons: {
         Row: {
           created_at: string
