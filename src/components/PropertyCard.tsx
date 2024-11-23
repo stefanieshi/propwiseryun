@@ -60,15 +60,17 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             <span className="text-sm">{property.sqft} ft²</span>
           </div>
         </div>
-        <Button
-          variant="default"
-          size="sm"
-          className="w-full"
-          onClick={() => navigate(`/property/${property.id}/analytics`)}
-        >
-          <TrendingUp className="h-4 w-4 mr-2" />
-          Analyze Property
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1"
+            onClick={() => navigate(`/property/${property.id}/analytics`)}
+          >
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Analyze Property
+          </Button>
+        </div>
       </div>
     </Card>
   );

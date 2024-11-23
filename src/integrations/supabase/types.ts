@@ -143,6 +143,47 @@ export type Database = {
         }
         Relationships: []
       }
+      property_analytics: {
+        Row: {
+          ai_recommendations: string[] | null
+          area_stats: Json | null
+          created_at: string
+          id: string
+          price_history: Json | null
+          property_id: string
+          rental_estimates: Json | null
+          updated_at: string
+        }
+        Insert: {
+          ai_recommendations?: string[] | null
+          area_stats?: Json | null
+          created_at?: string
+          id?: string
+          price_history?: Json | null
+          property_id: string
+          rental_estimates?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          ai_recommendations?: string[] | null
+          area_stats?: Json | null
+          created_at?: string
+          id?: string
+          price_history?: Json | null
+          property_id?: string
+          rental_estimates?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_analytics_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       property_comparisons: {
         Row: {
           created_at: string
