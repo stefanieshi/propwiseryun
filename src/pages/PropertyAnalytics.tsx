@@ -1,153 +1,81 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import PriceHistoryChart from "@/components/analytics/PriceHistoryChart";
+import PriceChart from "@/components/analytics/PriceChart";
 import RentalAnalysis from "@/components/analytics/RentalAnalysis";
 import AreaStats from "@/components/analytics/AreaStats";
-import AIRecommendations from "@/components/analytics/AIRecommendations";
 import MarketTrends from "@/components/analytics/MarketTrends";
+import AIRecommendations from "@/components/analytics/AIRecommendations";
 import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import SustainabilityScore from "@/components/analytics/SustainabilityScore";
-import { motion } from "framer-motion";
-import { Json } from "@/integrations/supabase/types";
-
-interface PropertyAnalytics {
-  id: string;
-  property_id: string;
-  price_history: Json;
-  rental_estimates: Json;
-  area_stats: Json;
-  ai_recommendations: string[] | null;
-  market_trends: Json;
-  investment_metrics: Json;
-  neighborhood_insights: Json;
-  sustainability_score: Json;
-  created_at: string;
-  updated_at: string;
-}
+import MarketNews from "@/components/analytics/MarketNews";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: property, isLoading: propertyLoading } = useQuery({
-    queryKey: ["property", id],
+    queryKey: ['property', id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("id", id)
+        .from('properties')
+        .select('*')
+        .eq('id', id)
         .single();
+
       if (error) throw error;
       return data;
     },
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
-    queryKey: ["property-analytics", id],
+    queryKey: ['property-analytics', id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("property_analytics")
-        .select("*")
-        .eq("property_id", id)
+        .from('property_analytics')
+        .select('*')
+        .eq('property_id', id)
         .single();
+
       if (error) throw error;
-      return data as PropertyAnalytics;
+      return data;
     },
   });
 
   if (propertyLoading || analyticsLoading) {
-    return <AnalyticsSkeleton />;
+    return <div className="space-y-8">
+      <Skeleton className="h-[300px] w-full" />
+      <Skeleton className="h-[200px] w-full" />
+    </div>;
   }
 
   if (!property || !analytics) {
-    return (
-      <Card className="p-6">
-        <p className="text-center text-muted-foreground">
-          No analytics data available for this property
-        </p>
-      </Card>
-    );
+    return <div>Property not found</div>;
   }
 
   return (
-    <motion.div 
-      className="space-y-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="flex justify-between items-center">
-        <motion.h1 
-          className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
-          initial={{ x: -20 }}
-          animate={{ x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Property Analysis
-        </motion.h1>
-        <motion.h2 
-          className="text-xl text-muted-foreground"
-          initial={{ x: 20 }}
-          animate={{ x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {property.title}
-        </motion.h2>
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <PriceChart data={analytics.price_history} />
+        <RentalAnalysis data={analytics.rental_estimates} />
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-secondary/50 backdrop-blur-sm">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="market">Market</TabsTrigger>
-          <TabsTrigger value="investment">Investment</TabsTrigger>
-          <TabsTrigger value="rental">Rental</TabsTrigger>
-          <TabsTrigger value="area">Area</TabsTrigger>
-          <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
-          <TabsTrigger value="ai">AI Insights</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <AreaStats data={analytics.area_stats} />
+        <MarketTrends data={analytics.market_trends} />
+      </div>
 
-        <TabsContent value="overview">
-          <PriceHistoryChart data={analytics.price_history as any} />
-        </TabsContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <InvestmentMetrics data={analytics.investment_metrics} />
+        <SustainabilityScore data={analytics.sustainability_score} />
+      </div>
 
-        <TabsContent value="market">
-          <MarketTrends data={analytics.market_trends as any} />
-        </TabsContent>
-
-        <TabsContent value="investment">
-          <InvestmentMetrics data={analytics.investment_metrics as any} />
-        </TabsContent>
-
-        <TabsContent value="rental">
-          <RentalAnalysis data={analytics.rental_estimates as any} />
-        </TabsContent>
-
-        <TabsContent value="area">
-          <AreaStats data={analytics.area_stats as any} />
-        </TabsContent>
-
-        <TabsContent value="sustainability">
-          <SustainabilityScore data={analytics.sustainability_score as any} />
-        </TabsContent>
-
-        <TabsContent value="ai">
-          <AIRecommendations recommendations={analytics.ai_recommendations || []} />
-        </TabsContent>
-      </Tabs>
-    </motion.div>
+      <div className="grid grid-cols-1 gap-8">
+        <MarketNews location={property.location} />
+        <AIRecommendations recommendations={analytics.ai_recommendations} />
+      </div>
+    </div>
   );
 };
-
-const AnalyticsSkeleton = () => (
-  <div className="space-y-6">
-    <Skeleton className="h-8 w-64" />
-    <Card className="p-6">
-      <Skeleton className="h-[300px]" />
-    </Card>
-  </div>
-);
 
 export default PropertyAnalytics;

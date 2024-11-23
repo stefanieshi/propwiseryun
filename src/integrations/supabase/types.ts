@@ -74,6 +74,48 @@ export type Database = {
           },
         ]
       }
+      market_news: {
+        Row: {
+          ai_analysis: string | null
+          category: string
+          created_at: string | null
+          id: string
+          impact_score: number | null
+          location: string
+          published_at: string | null
+          source_url: string | null
+          summary: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          category: string
+          created_at?: string | null
+          id?: string
+          impact_score?: number | null
+          location: string
+          published_at?: string | null
+          source_url?: string | null
+          summary: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          category?: string
+          created_at?: string | null
+          id?: string
+          impact_score?: number | null
+          location?: string
+          published_at?: string | null
+          source_url?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
