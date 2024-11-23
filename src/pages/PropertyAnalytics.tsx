@@ -13,6 +13,33 @@ import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
 
+interface PropertyAnalytics {
+  id: string;
+  property_id: string;
+  price_history: {
+    property_prices?: Array<{ date: string; price: number }>;
+    area_avg_prices?: Array<{ date: string; price: number }>;
+    city_avg_prices?: Array<{ date: string; price: number }>;
+  };
+  market_trends: {
+    price_per_sqft_trend: Array<{ date: string; value: number }>;
+    days_on_market: Array<{ date: string; value: number }>;
+    market_health_index: number;
+    supply_demand_ratio: number;
+  };
+  investment_metrics: {
+    roi_5_years: number;
+    cash_flow_potential: number;
+    cap_rate: number;
+    break_even_period: number;
+  };
+  sustainability_score: {
+    energy_efficiency: number;
+    green_features: string[];
+    environmental_impact: number;
+  };
+}
+
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -38,7 +65,7 @@ const PropertyAnalytics = () => {
         .eq("property_id", id)
         .single();
       if (error) throw error;
-      return data;
+      return data as PropertyAnalytics;
     },
   });
 
