@@ -1,9 +1,18 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { ChevronLeft } from "lucide-react";
 import PriceHistoryChart from "@/components/analytics/PriceHistoryChart";
 import RentalAnalysis from "@/components/analytics/RentalAnalysis";
 import AreaStats from "@/components/analytics/AreaStats";
@@ -79,23 +88,42 @@ const PropertyAnalytics = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex justify-between items-center">
-        <motion.h1 
-          className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
-          initial={{ x: -20 }}
-          animate={{ x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          Property Analysis
-        </motion.h1>
-        <motion.h2 
-          className="text-xl text-muted-foreground"
-          initial={{ x: 20 }}
-          animate={{ x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {property.title}
-        </motion.h2>
+      <div className="space-y-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/" className="flex items-center text-muted-foreground hover:text-primary">
+                  <ChevronLeft className="mr-1 h-4 w-4" />
+                  Back to Properties
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{property.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <div className="flex justify-between items-center">
+          <motion.h1 
+            className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Property Analysis
+          </motion.h1>
+          <motion.h2 
+            className="text-xl text-muted-foreground"
+            initial={{ x: 20 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {property.title}
+          </motion.h2>
+        </div>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
