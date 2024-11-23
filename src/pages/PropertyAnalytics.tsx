@@ -10,6 +10,17 @@ import AreaStats from "@/components/analytics/AreaStats";
 import AIRecommendations from "@/components/analytics/AIRecommendations";
 import { motion } from "framer-motion";
 
+interface AnalyticsData {
+  price_history: {
+    property_prices?: Array<{ date: string; price: number }>;
+    area_avg_prices?: Array<{ date: string; price: number }>;
+    city_avg_prices?: Array<{ date: string; price: number }>;
+  };
+  rental_estimates: any;
+  area_stats: any;
+  ai_recommendations: string[];
+}
+
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -35,7 +46,7 @@ const PropertyAnalytics = () => {
         .eq("property_id", id)
         .single();
       if (error) throw error;
-      return data;
+      return data as AnalyticsData;
     },
   });
 
