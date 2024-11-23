@@ -10,6 +10,8 @@ import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import MarketNews from "@/components/analytics/MarketNews";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PropertyAnalytics as PropertyAnalyticsType } from "@/types/analytics";
+import { Property } from "@/types";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +26,7 @@ const PropertyAnalytics = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Property;
     },
   });
 
@@ -38,7 +40,7 @@ const PropertyAnalytics = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as PropertyAnalyticsType;
     },
   });
 
