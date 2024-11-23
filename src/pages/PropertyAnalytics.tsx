@@ -19,7 +19,6 @@ import AreaStats from "@/components/analytics/AreaStats";
 import AIRecommendations from "@/components/analytics/AIRecommendations";
 import MarketTrends from "@/components/analytics/MarketTrends";
 import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
-import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
 import { Json } from "@/integrations/supabase/types";
 import { CommuteAnalysis } from "@/components/analytics/CommuteAnalysis";
@@ -32,7 +31,6 @@ interface PropertyAnalyticsData {
   ai_recommendations: string[];
   market_trends: any;
   investment_metrics: any;
-  sustainability_score: any;
 }
 
 const PropertyAnalytics = () => {
@@ -124,15 +122,13 @@ const PropertyAnalytics = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-9 bg-secondary/50 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-7 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="market">Market</TabsTrigger>
-          <TabsTrigger value="news">News</TabsTrigger>
+          <TabsTrigger value="market">Market & News</TabsTrigger>
           <TabsTrigger value="investment">Investment</TabsTrigger>
           <TabsTrigger value="rental">Rental</TabsTrigger>
           <TabsTrigger value="area">Area</TabsTrigger>
           <TabsTrigger value="commute">Commute</TabsTrigger>
-          <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
           <TabsTrigger value="ai">AI Insights</TabsTrigger>
         </TabsList>
 
@@ -141,11 +137,10 @@ const PropertyAnalytics = () => {
         </TabsContent>
 
         <TabsContent value="market">
-          <MarketTrends data={analytics?.market_trends as any} />
-        </TabsContent>
-
-        <TabsContent value="news">
-          <MarketNews location={property.location} />
+          <div className="space-y-6">
+            <MarketTrends data={analytics?.market_trends as any} />
+            <MarketNews location={property.location} />
+          </div>
         </TabsContent>
 
         <TabsContent value="investment">
@@ -162,10 +157,6 @@ const PropertyAnalytics = () => {
 
         <TabsContent value="commute">
           <CommuteAnalysis propertyId={id as string} />
-        </TabsContent>
-
-        <TabsContent value="sustainability">
-          <SustainabilityScore data={analytics?.sustainability_score as any} />
         </TabsContent>
 
         <TabsContent value="ai">
