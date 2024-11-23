@@ -23,6 +23,7 @@ import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
 import { Json } from "@/integrations/supabase/types";
 import { CommuteAnalysis } from "@/components/analytics/CommuteAnalysis";
+import { MarketNews } from "@/components/analytics/MarketNews";
 
 interface PropertyAnalyticsData {
   price_history: any;
@@ -123,9 +124,10 @@ const PropertyAnalytics = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-8 bg-secondary/50 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-9 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="market">Market</TabsTrigger>
+          <TabsTrigger value="news">News</TabsTrigger>
           <TabsTrigger value="investment">Investment</TabsTrigger>
           <TabsTrigger value="rental">Rental</TabsTrigger>
           <TabsTrigger value="area">Area</TabsTrigger>
@@ -140,6 +142,10 @@ const PropertyAnalytics = () => {
 
         <TabsContent value="market">
           <MarketTrends data={analytics?.market_trends as any} />
+        </TabsContent>
+
+        <TabsContent value="news">
+          <MarketNews location={property.location} />
         </TabsContent>
 
         <TabsContent value="investment">
