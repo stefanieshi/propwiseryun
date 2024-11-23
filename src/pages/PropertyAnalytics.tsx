@@ -12,32 +12,21 @@ import MarketTrends from "@/components/analytics/MarketTrends";
 import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
+import { Json } from "@/integrations/supabase/types";
 
 interface PropertyAnalytics {
   id: string;
   property_id: string;
-  price_history: {
-    property_prices?: Array<{ date: string; price: number }>;
-    area_avg_prices?: Array<{ date: string; price: number }>;
-    city_avg_prices?: Array<{ date: string; price: number }>;
-  };
-  market_trends: {
-    price_per_sqft_trend: Array<{ date: string; value: number }>;
-    days_on_market: Array<{ date: string; value: number }>;
-    market_health_index: number;
-    supply_demand_ratio: number;
-  };
-  investment_metrics: {
-    roi_5_years: number;
-    cash_flow_potential: number;
-    cap_rate: number;
-    break_even_period: number;
-  };
-  sustainability_score: {
-    energy_efficiency: number;
-    green_features: string[];
-    environmental_impact: number;
-  };
+  price_history: Json;
+  rental_estimates: Json;
+  area_stats: Json;
+  ai_recommendations: string[] | null;
+  market_trends: Json;
+  investment_metrics: Json;
+  neighborhood_insights: Json;
+  sustainability_score: Json;
+  created_at: string;
+  updated_at: string;
 }
 
 const PropertyAnalytics = () => {
@@ -121,31 +110,31 @@ const PropertyAnalytics = () => {
         </TabsList>
 
         <TabsContent value="overview">
-          <PriceHistoryChart data={analytics.price_history} />
+          <PriceHistoryChart data={analytics.price_history as any} />
         </TabsContent>
 
         <TabsContent value="market">
-          <MarketTrends data={analytics.market_trends} />
+          <MarketTrends data={analytics.market_trends as any} />
         </TabsContent>
 
         <TabsContent value="investment">
-          <InvestmentMetrics data={analytics.investment_metrics} />
+          <InvestmentMetrics data={analytics.investment_metrics as any} />
         </TabsContent>
 
         <TabsContent value="rental">
-          <RentalAnalysis data={analytics.rental_estimates} />
+          <RentalAnalysis data={analytics.rental_estimates as any} />
         </TabsContent>
 
         <TabsContent value="area">
-          <AreaStats data={analytics.area_stats} />
+          <AreaStats data={analytics.area_stats as any} />
         </TabsContent>
 
         <TabsContent value="sustainability">
-          <SustainabilityScore data={analytics.sustainability_score} />
+          <SustainabilityScore data={analytics.sustainability_score as any} />
         </TabsContent>
 
         <TabsContent value="ai">
-          <AIRecommendations recommendations={analytics.ai_recommendations} />
+          <AIRecommendations recommendations={analytics.ai_recommendations || []} />
         </TabsContent>
       </Tabs>
     </motion.div>
