@@ -149,9 +149,13 @@ export type Database = {
           area_stats: Json | null
           created_at: string
           id: string
+          investment_metrics: Json | null
+          market_trends: Json | null
+          neighborhood_insights: Json | null
           price_history: Json | null
           property_id: string
           rental_estimates: Json | null
+          sustainability_score: Json | null
           updated_at: string
         }
         Insert: {
@@ -159,9 +163,13 @@ export type Database = {
           area_stats?: Json | null
           created_at?: string
           id?: string
+          investment_metrics?: Json | null
+          market_trends?: Json | null
+          neighborhood_insights?: Json | null
           price_history?: Json | null
           property_id: string
           rental_estimates?: Json | null
+          sustainability_score?: Json | null
           updated_at?: string
         }
         Update: {
@@ -169,9 +177,13 @@ export type Database = {
           area_stats?: Json | null
           created_at?: string
           id?: string
+          investment_metrics?: Json | null
+          market_trends?: Json | null
+          neighborhood_insights?: Json | null
           price_history?: Json | null
           property_id?: string
           rental_estimates?: Json | null
+          sustainability_score?: Json | null
           updated_at?: string
         }
         Relationships: [

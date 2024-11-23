@@ -8,6 +8,9 @@ import PriceHistoryChart from "@/components/analytics/PriceHistoryChart";
 import RentalAnalysis from "@/components/analytics/RentalAnalysis";
 import AreaStats from "@/components/analytics/AreaStats";
 import AIRecommendations from "@/components/analytics/AIRecommendations";
+import MarketTrends from "@/components/analytics/MarketTrends";
+import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
+import SustainabilityScore from "@/components/analytics/SustainabilityScore";
 import { motion } from "framer-motion";
 
 const PropertyAnalytics = () => {
@@ -80,15 +83,26 @@ const PropertyAnalytics = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-secondary/50 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-7 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="rental">Rental Analysis</TabsTrigger>
-          <TabsTrigger value="area">Area Stats</TabsTrigger>
+          <TabsTrigger value="market">Market</TabsTrigger>
+          <TabsTrigger value="investment">Investment</TabsTrigger>
+          <TabsTrigger value="rental">Rental</TabsTrigger>
+          <TabsTrigger value="area">Area</TabsTrigger>
+          <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
           <TabsTrigger value="ai">AI Insights</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent value="overview">
           <PriceHistoryChart data={analytics.price_history} />
+        </TabsContent>
+
+        <TabsContent value="market">
+          <MarketTrends data={analytics.market_trends} />
+        </TabsContent>
+
+        <TabsContent value="investment">
+          <InvestmentMetrics data={analytics.investment_metrics} />
         </TabsContent>
 
         <TabsContent value="rental">
@@ -97,6 +111,10 @@ const PropertyAnalytics = () => {
 
         <TabsContent value="area">
           <AreaStats data={analytics.area_stats} />
+        </TabsContent>
+
+        <TabsContent value="sustainability">
+          <SustainabilityScore data={analytics.sustainability_score} />
         </TabsContent>
 
         <TabsContent value="ai">
