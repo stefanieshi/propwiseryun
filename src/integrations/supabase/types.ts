@@ -270,6 +270,50 @@ export type Database = {
           },
         ]
       }
+      user_destinations: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          importance: string | null
+          latitude: number
+          longitude: number
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          id?: string
+          importance?: string | null
+          latitude: number
+          longitude: number
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          importance?: string | null
+          latitude?: number
+          longitude?: number
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_destinations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_progress: {
         Row: {
           completed_steps: string[] | null
