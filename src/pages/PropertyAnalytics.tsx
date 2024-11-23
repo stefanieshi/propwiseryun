@@ -24,6 +24,16 @@ import { motion } from "framer-motion";
 import { Json } from "@/integrations/supabase/types";
 import { CommuteAnalysis } from "@/components/analytics/CommuteAnalysis";
 
+interface PropertyAnalyticsData {
+  price_history: any;
+  rental_estimates: any;
+  area_stats: any;
+  ai_recommendations: string[];
+  market_trends: any;
+  investment_metrics: any;
+  sustainability_score: any;
+}
+
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -49,7 +59,7 @@ const PropertyAnalytics = () => {
         .eq("property_id", id)
         .single();
       if (error) throw error;
-      return data as PropertyAnalytics;
+      return data as PropertyAnalyticsData;
     },
   });
 

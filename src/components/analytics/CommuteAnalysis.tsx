@@ -4,7 +4,6 @@ import { DestinationForm } from "./DestinationForm";
 import { DestinationList } from "./DestinationList";
 import { CommuteMap } from "./CommuteMap";
 import { supabase } from "@/integrations/supabase/client";
-import { UserDestination } from "@/types";
 import { Card } from "@/components/ui/card";
 
 interface CommuteAnalysisProps {
@@ -12,7 +11,7 @@ interface CommuteAnalysisProps {
 }
 
 export const CommuteAnalysis = ({ propertyId }: CommuteAnalysisProps) => {
-  const [destinations, setDestinations] = useState<UserDestination[]>([]);
+  const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
