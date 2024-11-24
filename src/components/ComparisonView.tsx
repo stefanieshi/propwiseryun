@@ -1,10 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, X, Info } from "lucide-react";
+import { MapPin, X, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { Property } from "@/types";
 import { useComparison } from "@/contexts/ComparisonContext";
 import { motion } from "framer-motion";
 import { TooltipWrapper } from "@/components/ui/tooltip-wrapper";
+import { useState } from "react";
 
 interface ComparisonViewProps {
   properties: Property[];
@@ -12,8 +13,9 @@ interface ComparisonViewProps {
 
 const ComparisonView = ({ properties }: ComparisonViewProps) => {
   const { togglePropertySelection } = useComparison();
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const compareItems = [
+  const mainCompareItems = [
     { 
       label: "Price", 
       key: "price", 
@@ -48,11 +50,18 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
       key: "council_tax",
       render: (value: number) => `£${value}/year`
     },
+  ];
+
+  const roiCompareItems = [
     { 
       label: "ROI", 
       key: "roi",
-      render: (value: number) => `${value}%`
-    },
+      render: (value: number) => `${value}%`,
+      highlight: true
+    }
+  ];
+
+  const expandedRoiItems = [
     { 
       label: "Average Monthly Rent", 
       key: "avg_monthly_rent",
@@ -76,6 +85,20 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
     if (rate <= 50) return "text-orange-500";
     return "text-red-500";
   };
+
+  const ComparisonRow = ({ item, property }: { item: any, property: Property }) => (
+    <div
+      key={`${property.id}-${item.key}`}
+      className={`text-center flex justify-center items-center py-4 border-t
+        ${item.key === 'crime_rate' ? getCrimeRateColor(property[item.key]) : ''}
+        ${item.highlight ? 'bg-primary/5 font-medium' : ''}`}
+    >
+      {item.icon && <item.icon className="h-4 w-4 mr-1 text-muted-foreground" />}
+      {item.render
+        ? item.render(property[item.key])
+        : property[item.key]}
+    </div>
+  );
 
   return (
     <Card className="p-6 glass-effect">
@@ -115,8 +138,8 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
           </motion.div>
         ))}
 
-        {/* Comparison Rows */}
-        {compareItems.map(({ label, key, icon: Icon, render }) => (
+        {/* Main Comparison Rows */}
+        {mainCompareItems.map(({ label, key, icon: Icon, render }) => (
           <motion.div
             key={key}
             initial={{ opacity: 0, x: -20 }}
@@ -130,16 +153,64 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
               </TooltipWrapper>
             </div>
             {properties.map((property) => (
-              <div
-                key={`${property.id}-${key}`}
-                className={`text-center flex justify-center items-center py-4 border-t
-                  ${key === 'crime_rate' ? getCrimeRateColor(property[key]) : ''}`}
+              <ComparisonRow key={`${property.id}-${key}`} item={{ key, icon: Icon, render }} property={property} />
+            ))}
+          </motion.div>
+        ))}
+
+        {/* ROI Section */}
+        {roiCompareItems.map(({ label, key, render }) => (
+          <motion.div
+            key={key}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="contents"
+          >
+            <div className="flex items-center gap-2 font-medium text-primary py-4 border-t">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-0 h-auto hover:bg-transparent"
+                onClick={() => setIsExpanded(!isExpanded)}
               >
-                {Icon && <Icon className="h-4 w-4 mr-1 text-muted-foreground" />}
-                {render
-                  ? render(property[key])
-                  : property[key]}
-              </div>
+                {label}
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4 ml-1" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                )}
+              </Button>
+              <TooltipWrapper content="Return on Investment calculation">
+                <Info className="h-4 w-4 text-primary/70" />
+              </TooltipWrapper>
+            </div>
+            {properties.map((property) => (
+              <ComparisonRow 
+                key={`${property.id}-${key}`} 
+                item={{ key, render, highlight: true }} 
+                property={property} 
+              />
+            ))}
+          </motion.div>
+        ))}
+
+        {/* Expanded ROI Details */}
+        {isExpanded && expandedRoiItems.map(({ label, key, render }) => (
+          <motion.div
+            key={key}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="contents"
+          >
+            <div className="flex items-center gap-2 font-medium text-muted-foreground py-4 border-t pl-6">
+              {label}
+              <TooltipWrapper content={`More information about ${label.toLowerCase()}`}>
+                <Info className="h-4 w-4 text-muted-foreground/70" />
+              </TooltipWrapper>
+            </div>
+            {properties.map((property) => (
+              <ComparisonRow key={`${property.id}-${key}`} item={{ key, render }} property={property} />
             ))}
           </motion.div>
         ))}
