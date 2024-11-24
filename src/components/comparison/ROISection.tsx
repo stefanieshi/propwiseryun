@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { TooltipWrapper } from "@/components/ui/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { ComparisonRow } from "./ComparisonRow";
+import { TimelineMetrics } from "./TimelineMetrics";
 import { useState } from "react";
 
 interface ROISectionProps {
