@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Home,
-  TrendingUp,
-  Calculator,
   FileText,
+  LayoutDashboard,
   CheckCircle,
 } from "lucide-react";
 
@@ -67,7 +66,7 @@ const Index = () => {
 
   const progressSteps = [
     { title: "Research", icon: Home },
-    { title: "Financial Analysis", icon: Calculator },
+    { title: "Analysis", icon: FileText },
     { title: "Legal Check", icon: FileText },
     { title: "Final Steps", icon: CheckCircle },
   ];
@@ -84,7 +83,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {/* Enhanced Progress Tracker */}
+        {/* Progress Tracker */}
         <Card className="p-4 mb-6 sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold">Home Buying Progress</h2>
@@ -121,14 +120,14 @@ const Index = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <TrendingUp className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Market Analysis</h3>
+                <FileText className="h-8 w-8 text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Saved Reports</h3>
                 <p className="text-sm text-muted-foreground">
-                  View current market trends and analytics
+                  View your saved AI analysis reports
                 </p>
               </div>
-              <Button variant="outline" onClick={() => navigate("/market-analysis")}>
-                View
+              <Button variant="outline" onClick={() => navigate("/saved-reports")}>
+                View Reports
               </Button>
             </div>
           </Card>
@@ -136,14 +135,14 @@ const Index = () => {
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <Calculator className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">ROI Calculator</h3>
+                <LayoutDashboard className="h-8 w-8 text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Comparison Dashboards</h3>
                 <p className="text-sm text-muted-foreground">
-                  Calculate potential returns
+                  View saved property comparisons
                 </p>
               </div>
-              <Button variant="outline" onClick={() => navigate("/calculator")}>
-                Calculate
+              <Button variant="outline" onClick={() => navigate("/comparison")}>
+                View Dashboards
               </Button>
             </div>
           </Card>
