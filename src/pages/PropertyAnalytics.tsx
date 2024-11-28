@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import BackButton from "@/components/BackButton";
 import {
   Breadcrumb,
@@ -22,6 +24,7 @@ import InvestmentMetrics from "@/components/analytics/InvestmentMetrics";
 import { motion } from "framer-motion";
 import { CommuteAnalysis } from "@/components/analytics/CommuteAnalysis";
 import { MarketNews } from "@/components/analytics/MarketNews";
+import { FileText } from "lucide-react";
 
 interface PropertyAnalyticsData {
   price_history: any;
@@ -34,6 +37,7 @@ interface PropertyAnalyticsData {
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
 
   const { data: property, isLoading: propertyLoading } = useQuery({
     queryKey: ["property", id],
@@ -61,6 +65,41 @@ const PropertyAnalytics = () => {
     },
   });
 
+  const handleGenerateReport = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to generate an AI report",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch('/api/create-report-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          propertyId: id,
+          userId: user.id,
+          returnUrl: window.location.href,
+        }),
+      });
+
+      const { url } = await response.json();
+      window.location.href = url;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (propertyLoading || analyticsLoading) {
     return <AnalyticsSkeleton />;
   }
@@ -84,23 +123,32 @@ const PropertyAnalytics = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <BackButton />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to="/" className="text-muted-foreground hover:text-primary">
-                    Properties
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{property?.title}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/" className="text-muted-foreground hover:text-primary">
+                      Properties
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{property?.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <Button 
+            onClick={handleGenerateReport}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Generate Full AI Report (£10)
+          </Button>
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
