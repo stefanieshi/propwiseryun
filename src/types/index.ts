@@ -45,3 +45,14 @@ export interface UserDestination {
   created_at: string;
   updated_at: string;
 }
+
+export interface AreaAnalytics {
+  average_price: number;
+  city: string;
+  rental_yields: any;
+  price_history: any;
+  postcode: string;
+  id: string;
+  property_types: any;
+  historical_prices: Record<string, number>;
+}

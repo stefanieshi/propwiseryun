@@ -9,18 +9,8 @@ import AreaFilters from "@/components/area-research/AreaFilters";
 import AreaInsights from "@/components/area-research/AreaInsights";
 import AreaPriceChart from "@/components/area-research/AreaPriceChart";
 import AreaResearchHeader from "@/components/area-research/AreaResearchHeader";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface AreaAnalytics {
-  average_price: number;
-  city: string;
-  rental_yields: any;
-  price_history: any;
-  postcode: string;
-  id: string;
-  property_types: any;
-  historical_prices: Record<string, number>;
-}
+import AreaSearchResults from "@/components/area-research/AreaSearchResults";
+import { AreaAnalytics } from "@/types";
 
 const AreaResearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,8 +48,9 @@ const AreaResearch = () => {
     const { data, error } = await supabase
       .from("area_analytics")
       .select("postcode, city")
-      .or(`city.ilike.%${searchTerm}%, postcode.ilike.%${searchTerm}%`)
-      .limit(10); // Increased limit to show more results
+      .or(`city.ilike.${searchTerm}%, postcode.ilike.${searchTerm}%`)
+      .order('postcode', { ascending: true })
+      .limit(20); // Increased limit to show more results
 
     if (error || !data || data.length === 0) {
       toast.error("No areas found");
@@ -67,8 +58,13 @@ const AreaResearch = () => {
       return;
     }
 
-    setSearchResults(data);
-    toast.success(`Found ${data.length} areas matching "${searchTerm}"`);
+    // Filter unique postcodes
+    const uniqueResults = data.filter((item, index, self) =>
+      index === self.findIndex((t) => t.postcode === item.postcode)
+    );
+
+    setSearchResults(uniqueResults);
+    toast.success(`Found ${uniqueResults.length} areas matching "${searchTerm}"`);
   };
 
   const addArea = (postcode: string, city: string) => {
@@ -137,37 +133,10 @@ const AreaResearch = () => {
           onRemoveArea={removeArea}
         />
 
-        {/* Search Results */}
-        {searchResults.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4"
-          >
-            <ScrollArea className="h-40 rounded-md border p-4">
-              <div className="space-y-2">
-                {searchResults.map((result) => (
-                  <motion.div
-                    key={result.postcode}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center justify-between p-2 hover:bg-secondary/50 rounded-lg transition-colors"
-                  >
-                    <span className="text-sm">
-                      {result.city} ({result.postcode})
-                    </span>
-                    <button
-                      onClick={() => addArea(result.postcode, result.city)}
-                      className="text-sm text-primary hover:text-primary/80 transition-colors"
-                    >
-                      Add to comparison
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-            </ScrollArea>
-          </motion.div>
-        )}
+        <AreaSearchResults 
+          searchResults={searchResults}
+          onAddArea={addArea}
+        />
 
         {isLoading ? (
           <div className="h-[400px] flex items-center justify-center">
