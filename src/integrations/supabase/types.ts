@@ -57,6 +57,45 @@ export type Database = {
           },
         ]
       }
+      area_analytics: {
+        Row: {
+          average_price: number
+          city: string
+          created_at: string
+          growth_rates: Json | null
+          id: string
+          postcode: string
+          price_history: Json | null
+          property_counts: Json | null
+          rental_yields: Json | null
+          updated_at: string
+        }
+        Insert: {
+          average_price: number
+          city: string
+          created_at?: string
+          growth_rates?: Json | null
+          id?: string
+          postcode: string
+          price_history?: Json | null
+          property_counts?: Json | null
+          rental_yields?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          average_price?: number
+          city?: string
+          created_at?: string
+          growth_rates?: Json | null
+          id?: string
+          postcode?: string
+          price_history?: Json | null
+          property_counts?: Json | null
+          rental_yields?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       external_properties: {
         Row: {
           bathrooms: number | null
@@ -356,6 +395,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "property_comparisons_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_area_analyses: {
+        Row: {
+          created_at: string
+          filters: Json | null
+          id: string
+          selected_areas: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          selected_areas: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          selected_areas?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_area_analyses_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
