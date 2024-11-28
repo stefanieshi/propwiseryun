@@ -59,20 +59,21 @@ const AreaResearch = () => {
       return;
     }
 
+    // Updated search query to handle case-insensitive search for both city and postcode
     const { data, error } = await supabase
       .from("area_analytics")
-      .select("postcode")
-      .ilike("postcode", `${searchTerm}%`)
-      .limit(1)
-      .single();
+      .select("postcode, city")
+      .or(`city.ilike.%${searchTerm}%, postcode.ilike.%${searchTerm}%`)
+      .limit(1);
 
-    if (error) {
+    if (error || !data || data.length === 0) {
       toast.error("Area not found");
       return;
     }
 
-    setSelectedAreas(prev => [...prev, data.postcode]);
+    setSelectedAreas(prev => [...prev, data[0].postcode]);
     setSearchTerm("");
+    toast.success(`Added ${data[0].city} (${data[0].postcode}) to comparison`);
   };
 
   const removeArea = (postcode: string) => {
