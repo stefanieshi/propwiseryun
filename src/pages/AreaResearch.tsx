@@ -7,17 +7,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { Json } from "@/integrations/supabase/types";
 
 interface AreaAnalytics {
   average_price: number;
   city: string;
-  rental_yields: {
-    average: number;
-  } | null;
-  price_history: Array<{
-    date: string;
-    price: number;
-  }> | null;
+  rental_yields: Json;
+  price_history: Json;
+  postcode: string;
+  id: string;
+}
+
+interface RentalYields {
+  average: number;
+}
+
+interface PriceHistoryItem {
+  date: string;
+  price: number;
 }
 
 const AreaResearch = () => {
@@ -39,6 +46,21 @@ const AreaResearch = () => {
     },
     enabled: !!searchTerm
   });
+
+  const getRentalYield = (rentalYields: Json | null): string => {
+    if (!rentalYields) return "N/A";
+    try {
+      const parsed = rentalYields as RentalYields;
+      return parsed.average ? `${parsed.average}%` : "N/A";
+    } catch {
+      return "N/A";
+    }
+  };
+
+  const getPriceHistory = (priceHistory: Json | null): PriceHistoryItem[] => {
+    if (!priceHistory || !Array.isArray(priceHistory)) return [];
+    return priceHistory as PriceHistoryItem[];
+  };
 
   return (
     <div className="space-y-6">
@@ -85,17 +107,17 @@ const AreaResearch = () => {
               <Card className="p-4">
                 <h3 className="text-sm font-medium text-muted-foreground">Rental Yield</h3>
                 <p className="text-2xl font-bold">
-                  {areaAnalytics.rental_yields?.average ?? "N/A"}%
+                  {getRentalYield(areaAnalytics.rental_yields)}
                 </p>
               </Card>
             </div>
 
-            {areaAnalytics.price_history && Array.isArray(areaAnalytics.price_history) && (
+            {areaAnalytics.price_history && (
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Price History</h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={areaAnalytics.price_history}>
+                    <LineChart data={getPriceHistory(areaAnalytics.price_history)}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
                       <YAxis />
