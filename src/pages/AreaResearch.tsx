@@ -8,6 +8,18 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface AreaAnalytics {
+  average_price: number;
+  city: string;
+  rental_yields: {
+    average: number;
+  } | null;
+  price_history: Array<{
+    date: string;
+    price: number;
+  }> | null;
+}
+
 const AreaResearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -23,7 +35,7 @@ const AreaResearch = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as AreaAnalytics;
     },
     enabled: !!searchTerm
   });
@@ -73,12 +85,12 @@ const AreaResearch = () => {
               <Card className="p-4">
                 <h3 className="text-sm font-medium text-muted-foreground">Rental Yield</h3>
                 <p className="text-2xl font-bold">
-                  {areaAnalytics.rental_yields?.average || "N/A"}%
+                  {areaAnalytics.rental_yields?.average ?? "N/A"}%
                 </p>
               </Card>
             </div>
 
-            {areaAnalytics.price_history && (
+            {areaAnalytics.price_history && Array.isArray(areaAnalytics.price_history) && (
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Price History</h3>
                 <div className="h-[300px]">
