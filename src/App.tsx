@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
+import AreaResearch from "./pages/AreaResearch";
 import AuthPage from "./pages/AuthPage";
 import { ComparisonButton } from "./components/ComparisonButton";
 import { motion } from "framer-motion";
@@ -92,6 +93,7 @@ const App = () => {
                   isAuthenticated ? (
                     <AppLayout>
                       <Routes>
+                        <Route path="/area-research" element={<AreaResearch />} />
                         <Route path="/" element={<Index />} />
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
                         <Route path="/comparison" element={<ComparisonPage />} />

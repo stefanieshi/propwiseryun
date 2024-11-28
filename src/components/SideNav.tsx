@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, User, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, User, ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   }, [isCollapsed, onCollapsedChange]);
 
   const menuItems = [
+    { icon: Map, label: "Area Research", href: "/area-research" },
     { icon: Home, label: "Property research", href: "/" },
     { icon: CreditCard, label: "Mortgage pre-approval", href: "/mortgage" },
     { icon: FileText, label: "Conveyancing", href: "/conveyancing" },
