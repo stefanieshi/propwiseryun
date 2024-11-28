@@ -50,8 +50,9 @@ const AreaResearch = () => {
   const getRentalYield = (rentalYields: Json | null): string => {
     if (!rentalYields) return "N/A";
     try {
-      const parsed = rentalYields as RentalYields;
-      return parsed.average ? `${parsed.average}%` : "N/A";
+      // First cast to unknown, then to the specific type
+      const parsed = (rentalYields as unknown) as RentalYields;
+      return typeof parsed.average === 'number' ? `${parsed.average}%` : "N/A";
     } catch {
       return "N/A";
     }
@@ -59,7 +60,24 @@ const AreaResearch = () => {
 
   const getPriceHistory = (priceHistory: Json | null): PriceHistoryItem[] => {
     if (!priceHistory || !Array.isArray(priceHistory)) return [];
-    return priceHistory as PriceHistoryItem[];
+    try {
+      // First cast to unknown, then validate the structure
+      return (priceHistory as unknown[]).map(item => {
+        const entry = item as Record<string, unknown>;
+        if (
+          typeof entry.date === 'string' &&
+          typeof entry.price === 'number'
+        ) {
+          return {
+            date: entry.date,
+            price: entry.price
+          };
+        }
+        throw new Error('Invalid price history item structure');
+      });
+    } catch {
+      return [];
+    }
   };
 
   return (
