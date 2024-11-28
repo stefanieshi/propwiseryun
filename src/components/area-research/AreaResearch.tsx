@@ -42,15 +42,15 @@ const AreaResearch = () => {
           if (existingEntry) {
             Object.assign(existingEntry, entry);
           } else {
-            acc.push(entry);
+            acc.push({ ...entry });
           }
         });
         return acc;
-      }, [] as Array<{ [key: string]: string | number }>);
+      }, [] as Array<{ date: string; [key: string]: string | number }>);
 
       // Sort by date
       return mergedData.sort((a, b) => 
-        new Date(a.date as string).getTime() - new Date(b.date as string).getTime()
+        new Date(a.date).getTime() - new Date(b.date).getTime()
       );
     },
     enabled: selectedAreas.length > 0,
