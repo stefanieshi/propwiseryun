@@ -1,83 +1,121 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Search } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Json } from "@/integrations/supabase/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PriceHeatmap from "@/components/analytics/PriceHeatmap";
+import { toast } from "sonner";
 
 interface AreaAnalytics {
   average_price: number;
   city: string;
-  rental_yields: Json;
-  price_history: Json;
+  rental_yields: any;
+  price_history: any;
   postcode: string;
   id: string;
-}
-
-interface RentalYields {
-  average: number;
-}
-
-interface PriceHistoryItem {
-  date: string;
-  price: number;
+  property_types: any;
+  historical_prices: any;
 }
 
 const AreaResearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [propertyType, setPropertyType] = useState("all");
+  const [timeRange, setTimeRange] = useState("10");
+  const [priceRange, setPriceRange] = useState("all");
 
   const { data: areaAnalytics, isLoading } = useQuery({
-    queryKey: ["areaAnalytics", searchTerm],
+    queryKey: ["areaAnalytics", selectedAreas, propertyType, timeRange, priceRange],
     queryFn: async () => {
-      if (!searchTerm) return null;
+      if (selectedAreas.length === 0) return [];
+      
       const { data, error } = await supabase
         .from("area_analytics")
         .select("*")
-        .ilike("postcode", `${searchTerm}%`)
-        .limit(1)
-        .single();
+        .in("postcode", selectedAreas);
 
-      if (error) throw error;
-      return data as AreaAnalytics;
+      if (error) {
+        toast.error("Failed to fetch area analytics");
+        throw error;
+      }
+      return data as AreaAnalytics[];
     },
-    enabled: !!searchTerm
+    enabled: selectedAreas.length > 0
   });
 
-  const getRentalYield = (rentalYields: Json | null): string => {
-    if (!rentalYields) return "N/A";
-    try {
-      // First cast to unknown, then to the specific type
-      const parsed = (rentalYields as unknown) as RentalYields;
-      return typeof parsed.average === 'number' ? `${parsed.average}%` : "N/A";
-    } catch {
-      return "N/A";
+  const handleSearch = async () => {
+    if (!searchTerm) return;
+    
+    if (selectedAreas.length >= 5) {
+      toast.error("You can compare up to 5 areas at a time");
+      return;
     }
+
+    if (selectedAreas.includes(searchTerm)) {
+      toast.error("This area is already selected");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("area_analytics")
+      .select("postcode")
+      .ilike("postcode", `${searchTerm}%`)
+      .limit(1)
+      .single();
+
+    if (error) {
+      toast.error("Area not found");
+      return;
+    }
+
+    setSelectedAreas(prev => [...prev, data.postcode]);
+    setSearchTerm("");
   };
 
-  const getPriceHistory = (priceHistory: Json | null): PriceHistoryItem[] => {
-    if (!priceHistory || !Array.isArray(priceHistory)) return [];
-    try {
-      // First cast to unknown, then validate the structure
-      return (priceHistory as unknown[]).map(item => {
-        const entry = item as Record<string, unknown>;
-        if (
-          typeof entry.date === 'string' &&
-          typeof entry.price === 'number'
-        ) {
-          return {
-            date: entry.date,
-            price: entry.price
-          };
-        }
-        throw new Error('Invalid price history item structure');
-      });
-    } catch {
-      return [];
-    }
+  const removeArea = (postcode: string) => {
+    setSelectedAreas(prev => prev.filter(p => p !== postcode));
+  };
+
+  const getPriceHistoryData = () => {
+    if (!areaAnalytics) return [];
+
+    const allData: any[] = [];
+    areaAnalytics.forEach(area => {
+      if (area.historical_prices) {
+        Object.entries(area.historical_prices)
+          .slice(-parseInt(timeRange) * 12) // Convert years to months
+          .forEach(([date, price]) => {
+            const existingEntry = allData.find(d => d.date === date);
+            if (existingEntry) {
+              existingEntry[area.postcode] = price;
+            } else {
+              allData.push({
+                date,
+                [area.postcode]: price
+              });
+            }
+          });
+      }
+    });
+
+    return allData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  };
+
+  const getHeatmapData = () => {
+    if (!areaAnalytics) return [];
+    
+    return areaAnalytics.map(area => ({
+      area: area.postcode,
+      price: area.average_price,
+      // These would ideally come from the database, using mock values for now
+      latitude: Math.random() * 100,
+      longitude: Math.random() * 100
+    }));
   };
 
   return (
@@ -85,76 +123,148 @@ const AreaResearch = () => {
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold">Area Research</h1>
         <p className="text-muted-foreground">
-          Analyze price trends and market data for different areas
+          Compare property trends and market data across different areas
         </p>
       </div>
 
       <Card className="p-6">
-        <div className="flex gap-4 mb-6">
-          <Input
-            placeholder="Enter postcode..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
-          <Button>
-            <Search className="w-4 h-4 mr-2" />
-            Search
-          </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter postcode..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <Button onClick={handleSearch}>
+              <Search className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <Select value={propertyType} onValueChange={setPropertyType}>
+            <SelectTrigger>
+              <SelectValue placeholder="Property Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Properties</SelectItem>
+              <SelectItem value="house">Houses</SelectItem>
+              <SelectItem value="flat">Flats</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Time Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 Year</SelectItem>
+              <SelectItem value="3">3 Years</SelectItem>
+              <SelectItem value="5">5 Years</SelectItem>
+              <SelectItem value="10">10 Years</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={priceRange} onValueChange={setPriceRange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Price Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Prices</SelectItem>
+              <SelectItem value="0-250000">Up to £250k</SelectItem>
+              <SelectItem value="250000-500000">£250k - £500k</SelectItem>
+              <SelectItem value="500000-1000000">£500k - £1M</SelectItem>
+              <SelectItem value="1000000+">£1M+</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          {selectedAreas.map((postcode) => (
+            <div
+              key={postcode}
+              className="flex items-center gap-2 bg-secondary px-3 py-1 rounded-full"
+            >
+              <span>{postcode}</span>
+              <button
+                onClick={() => removeArea(postcode)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
         </div>
 
         {isLoading ? (
           <div className="h-[400px] flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        ) : areaAnalytics ? (
+        ) : areaAnalytics && areaAnalytics.length > 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Average Price</h3>
-                <p className="text-2xl font-bold">£{areaAnalytics.average_price.toLocaleString()}</p>
-              </Card>
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Location</h3>
-                <p className="text-2xl font-bold">{areaAnalytics.city}</p>
-              </Card>
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Rental Yield</h3>
-                <p className="text-2xl font-bold">
-                  {getRentalYield(areaAnalytics.rental_yields)}
-                </p>
-              </Card>
-            </div>
-
-            {areaAnalytics.price_history && (
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Price History</h3>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={getPriceHistory(areaAnalytics.price_history)}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Price History Comparison</h3>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={getPriceHistoryData()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    {selectedAreas.map((postcode, index) => (
                       <Line
+                        key={postcode}
                         type="monotone"
-                        dataKey="price"
-                        stroke="#8B5CF6"
+                        dataKey={postcode}
+                        stroke={`hsl(${index * 60}, 70%, 50%)`}
                         strokeWidth={2}
                       />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </Card>
-            )}
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {areaAnalytics.map((area) => (
+                <Card key={area.id} className="p-4">
+                  <h4 className="font-medium mb-2">{area.postcode}</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Average Price</span>
+                      <span className="font-medium">£{area.average_price.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Rental Yield</span>
+                      <span className="font-medium">
+                        {area.rental_yields?.average ? `${area.rental_yields.average}%` : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Annual Growth</span>
+                      <span className="font-medium">
+                        {area.historical_prices ? 
+                          `${((Object.values(area.historical_prices).slice(-1)[0] as number / 
+                             Object.values(area.historical_prices)[0] as number - 1) * 100).toFixed(1)}%` 
+                          : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <PriceHeatmap data={getHeatmapData()} />
           </motion.div>
         ) : (
           <div className="text-center text-muted-foreground py-8">
-            Enter a postcode to view area analytics
+            {selectedAreas.length === 0 ? 
+              "Search and select areas to view analytics" : 
+              "No data available for the selected areas"}
           </div>
         )}
       </Card>

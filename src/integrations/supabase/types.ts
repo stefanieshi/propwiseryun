@@ -63,10 +63,12 @@ export type Database = {
           city: string
           created_at: string
           growth_rates: Json | null
+          historical_prices: Json | null
           id: string
           postcode: string
           price_history: Json | null
           property_counts: Json | null
+          property_types: Json | null
           rental_yields: Json | null
           updated_at: string
         }
@@ -75,10 +77,12 @@ export type Database = {
           city: string
           created_at?: string
           growth_rates?: Json | null
+          historical_prices?: Json | null
           id?: string
           postcode: string
           price_history?: Json | null
           property_counts?: Json | null
+          property_types?: Json | null
           rental_yields?: Json | null
           updated_at?: string
         }
@@ -87,10 +91,12 @@ export type Database = {
           city?: string
           created_at?: string
           growth_rates?: Json | null
+          historical_prices?: Json | null
           id?: string
           postcode?: string
           price_history?: Json | null
           property_counts?: Json | null
+          property_types?: Json | null
           rental_yields?: Json | null
           updated_at?: string
         }
