@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Property, UserProgress } from "@/types";
 import PropertyCard from "@/components/PropertyCard";
-import AreaResearch from "@/components/area-research/AreaResearch";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -115,11 +114,6 @@ const Index = () => {
             })}
           </div>
         </Card>
-
-        {/* Area Research */}
-        <div className="mb-8">
-          <AreaResearch />
-        </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
