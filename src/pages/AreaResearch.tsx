@@ -9,6 +9,7 @@ import AreaFilters from "@/components/area-research/AreaFilters";
 import AreaInsights from "@/components/area-research/AreaInsights";
 import AreaPriceChart from "@/components/area-research/AreaPriceChart";
 import AreaResearchHeader from "@/components/area-research/AreaResearchHeader";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AreaAnalytics {
   average_price: number;
@@ -27,6 +28,7 @@ const AreaResearch = () => {
   const [propertyType, setPropertyType] = useState("all");
   const [timeRange, setTimeRange] = useState("10");
   const [priceRange, setPriceRange] = useState("all");
+  const [searchResults, setSearchResults] = useState<{ postcode: string; city: string }[]>([]);
 
   const { data: areaAnalytics, isLoading } = useQuery({
     queryKey: ["areaAnalytics", selectedAreas, propertyType, timeRange, priceRange],
@@ -52,31 +54,38 @@ const AreaResearch = () => {
       toast.error("Please enter a location or postcode");
       return;
     }
-    
-    if (selectedAreas.length >= 5) {
-      toast.error("You can compare up to 5 areas at a time");
-      return;
-    }
-
-    if (selectedAreas.includes(searchTerm)) {
-      toast.error("This area is already selected");
-      return;
-    }
 
     const { data, error } = await supabase
       .from("area_analytics")
       .select("postcode, city")
       .or(`city.ilike.%${searchTerm}%, postcode.ilike.%${searchTerm}%`)
-      .limit(1);
+      .limit(10); // Increased limit to show more results
 
     if (error || !data || data.length === 0) {
-      toast.error("Area not found");
+      toast.error("No areas found");
+      setSearchResults([]);
       return;
     }
 
-    setSelectedAreas(prev => [...prev, data[0].postcode]);
-    setSearchTerm("");
-    toast.success(`Added ${data[0].city} (${data[0].postcode}) to comparison`);
+    setSearchResults(data);
+    toast.success(`Found ${data.length} areas matching "${searchTerm}"`);
+  };
+
+  const addArea = (postcode: string, city: string) => {
+    if (selectedAreas.length >= 5) {
+      toast.error("You can compare up to 5 areas at a time");
+      return;
+    }
+
+    if (selectedAreas.includes(postcode)) {
+      toast.error("This area is already selected");
+      return;
+    }
+
+    setSelectedAreas(prev => [...prev, postcode]);
+    toast.success(`Added ${city} (${postcode}) to comparison`);
+    setSearchResults([]); // Clear search results after selection
+    setSearchTerm(""); // Clear search term
   };
 
   const removeArea = (postcode: string) => {
@@ -127,6 +136,38 @@ const AreaResearch = () => {
           onSearch={handleSearch}
           onRemoveArea={removeArea}
         />
+
+        {/* Search Results */}
+        {searchResults.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4"
+          >
+            <ScrollArea className="h-40 rounded-md border p-4">
+              <div className="space-y-2">
+                {searchResults.map((result) => (
+                  <motion.div
+                    key={result.postcode}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center justify-between p-2 hover:bg-secondary/50 rounded-lg transition-colors"
+                  >
+                    <span className="text-sm">
+                      {result.city} ({result.postcode})
+                    </span>
+                    <button
+                      onClick={() => addArea(result.postcode, result.city)}
+                      className="text-sm text-primary hover:text-primary/80 transition-colors"
+                    >
+                      Add to comparison
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+            </ScrollArea>
+          </motion.div>
+        )}
 
         {isLoading ? (
           <div className="h-[400px] flex items-center justify-center">
