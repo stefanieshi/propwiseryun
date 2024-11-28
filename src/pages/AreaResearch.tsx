@@ -8,6 +8,7 @@ import PriceHeatmap from "@/components/analytics/PriceHeatmap";
 import AreaFilters from "@/components/area-research/AreaFilters";
 import AreaInsights from "@/components/area-research/AreaInsights";
 import AreaPriceChart from "@/components/area-research/AreaPriceChart";
+import AreaResearchHeader from "@/components/area-research/AreaResearchHeader";
 
 interface AreaAnalytics {
   average_price: number;
@@ -47,7 +48,10 @@ const AreaResearch = () => {
   });
 
   const handleSearch = async () => {
-    if (!searchTerm) return;
+    if (!searchTerm) {
+      toast.error("Please enter a location or postcode");
+      return;
+    }
     
     if (selectedAreas.length >= 5) {
       toast.error("You can compare up to 5 areas at a time");
@@ -59,7 +63,6 @@ const AreaResearch = () => {
       return;
     }
 
-    // Updated search query to handle case-insensitive search for both city and postcode
     const { data, error } = await supabase
       .from("area_analytics")
       .select("postcode, city")
@@ -78,6 +81,7 @@ const AreaResearch = () => {
 
   const removeArea = (postcode: string) => {
     setSelectedAreas(prev => prev.filter(p => p !== postcode));
+    toast.success(`Removed ${postcode} from comparison`);
   };
 
   const getPriceHistoryData = () => {
@@ -105,27 +109,11 @@ const AreaResearch = () => {
     return allData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
-  const getHeatmapData = () => {
-    if (!areaAnalytics) return [];
-    
-    return areaAnalytics.map(area => ({
-      area: area.postcode,
-      price: area.average_price,
-      latitude: Math.random() * 100,
-      longitude: Math.random() * 100
-    }));
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex flex-col space-y-4">
-        <h1 className="text-3xl font-bold">Area Research</h1>
-        <p className="text-muted-foreground">
-          Compare property trends and market data across different areas
-        </p>
-      </div>
+      <AreaResearchHeader />
 
-      <Card className="p-6">
+      <Card className="p-6 glass-effect">
         <AreaFilters
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -148,7 +136,7 @@ const AreaResearch = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
+            className="space-y-6 mt-6"
           >
             <AreaPriceChart 
               data={getPriceHistoryData()} 
@@ -157,13 +145,27 @@ const AreaResearch = () => {
 
             <AreaInsights areaAnalytics={areaAnalytics} />
 
-            <PriceHeatmap data={getHeatmapData()} />
+            {selectedAreas.length > 1 && (
+              <PriceHeatmap 
+                data={areaAnalytics.map(area => ({
+                  area: area.postcode,
+                  price: area.average_price,
+                  latitude: Math.random() * 100,
+                  longitude: Math.random() * 100
+                }))} 
+              />
+            )}
           </motion.div>
         ) : (
-          <div className="text-center text-muted-foreground py-8">
-            {selectedAreas.length === 0 ? 
-              "Search and select areas to view analytics" : 
-              "No data available for the selected areas"}
+          <div className="text-center text-muted-foreground py-12">
+            <p className="text-lg mb-2">
+              {selectedAreas.length === 0 ? 
+                "Search and select areas to view analytics" : 
+                "No data available for the selected areas"}
+            </p>
+            <p className="text-sm">
+              Try searching for a city name or postcode
+            </p>
           </div>
         )}
       </Card>
