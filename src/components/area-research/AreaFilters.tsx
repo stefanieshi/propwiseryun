@@ -35,7 +35,7 @@ const AreaFilters = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <div className="flex gap-2">
           <Input
-            placeholder="Enter postcode..."
+            placeholder="Enter city..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && onSearch()}
