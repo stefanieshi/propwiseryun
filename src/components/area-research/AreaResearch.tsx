@@ -23,7 +23,35 @@ const AreaResearch = () => {
         .in("postcode", selectedAreas);
       
       if (error) throw error;
-      return data;
+
+      // Transform the data for the chart
+      if (!data) return [];
+      
+      const transformedData = data.map(area => {
+        const priceHistory = area.price_history as { date: string; price: number }[] || [];
+        return priceHistory.map(history => ({
+          date: history.date,
+          [area.postcode]: history.price,
+        }));
+      });
+
+      // Merge all price histories into a single array with all areas
+      const mergedData = transformedData.reduce((acc, curr) => {
+        curr.forEach(entry => {
+          const existingEntry = acc.find(e => e.date === entry.date);
+          if (existingEntry) {
+            Object.assign(existingEntry, entry);
+          } else {
+            acc.push(entry);
+          }
+        });
+        return acc;
+      }, [] as Array<{ [key: string]: string | number }>);
+
+      // Sort by date
+      return mergedData.sort((a, b) => 
+        new Date(a.date as string).getTime() - new Date(b.date as string).getTime()
+      );
     },
     enabled: selectedAreas.length > 0,
   });
