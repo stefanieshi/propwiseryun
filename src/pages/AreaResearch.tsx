@@ -1,15 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import PriceHeatmap from "@/components/analytics/PriceHeatmap";
 import { toast } from "sonner";
+import PriceHeatmap from "@/components/analytics/PriceHeatmap";
+import AreaFilters from "@/components/area-research/AreaFilters";
+import AreaInsights from "@/components/area-research/AreaInsights";
+import AreaPriceChart from "@/components/area-research/AreaPriceChart";
 
 interface AreaAnalytics {
   average_price: number;
@@ -19,7 +17,7 @@ interface AreaAnalytics {
   postcode: string;
   id: string;
   property_types: any;
-  historical_prices: any;
+  historical_prices: Record<string, number>;
 }
 
 const AreaResearch = () => {
@@ -88,15 +86,15 @@ const AreaResearch = () => {
     areaAnalytics.forEach(area => {
       if (area.historical_prices) {
         Object.entries(area.historical_prices)
-          .slice(-parseInt(timeRange) * 12) // Convert years to months
+          .slice(-parseInt(timeRange) * 12)
           .forEach(([date, price]) => {
             const existingEntry = allData.find(d => d.date === date);
             if (existingEntry) {
-              existingEntry[area.postcode] = price;
+              existingEntry[area.postcode] = Number(price);
             } else {
               allData.push({
                 date,
-                [area.postcode]: price
+                [area.postcode]: Number(price)
               });
             }
           });
@@ -112,7 +110,6 @@ const AreaResearch = () => {
     return areaAnalytics.map(area => ({
       area: area.postcode,
       price: area.average_price,
-      // These would ideally come from the database, using mock values for now
       latitude: Math.random() * 100,
       longitude: Math.random() * 100
     }));
@@ -128,72 +125,19 @@ const AreaResearch = () => {
       </div>
 
       <Card className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter postcode..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-            <Button onClick={handleSearch}>
-              <Search className="w-4 h-4" />
-            </Button>
-          </div>
-
-          <Select value={propertyType} onValueChange={setPropertyType}>
-            <SelectTrigger>
-              <SelectValue placeholder="Property Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Properties</SelectItem>
-              <SelectItem value="house">Houses</SelectItem>
-              <SelectItem value="flat">Flats</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Time Range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 Year</SelectItem>
-              <SelectItem value="3">3 Years</SelectItem>
-              <SelectItem value="5">5 Years</SelectItem>
-              <SelectItem value="10">10 Years</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={priceRange} onValueChange={setPriceRange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Price Range" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Prices</SelectItem>
-              <SelectItem value="0-250000">Up to £250k</SelectItem>
-              <SelectItem value="250000-500000">£250k - £500k</SelectItem>
-              <SelectItem value="500000-1000000">£500k - £1M</SelectItem>
-              <SelectItem value="1000000+">£1M+</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {selectedAreas.map((postcode) => (
-            <div
-              key={postcode}
-              className="flex items-center gap-2 bg-secondary px-3 py-1 rounded-full"
-            >
-              <span>{postcode}</span>
-              <button
-                onClick={() => removeArea(postcode)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <AreaFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          propertyType={propertyType}
+          setPropertyType={setPropertyType}
+          timeRange={timeRange}
+          setTimeRange={setTimeRange}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          selectedAreas={selectedAreas}
+          onSearch={handleSearch}
+          onRemoveArea={removeArea}
+        />
 
         {isLoading ? (
           <div className="h-[400px] flex items-center justify-center">
@@ -205,58 +149,12 @@ const AreaResearch = () => {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Price History Comparison</h3>
-              <div className="h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={getPriceHistoryData()}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    {selectedAreas.map((postcode, index) => (
-                      <Line
-                        key={postcode}
-                        type="monotone"
-                        dataKey={postcode}
-                        stroke={`hsl(${index * 60}, 70%, 50%)`}
-                        strokeWidth={2}
-                      />
-                    ))}
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
+            <AreaPriceChart 
+              data={getPriceHistoryData()} 
+              selectedAreas={selectedAreas} 
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {areaAnalytics.map((area) => (
-                <Card key={area.id} className="p-4">
-                  <h4 className="font-medium mb-2">{area.postcode}</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Average Price</span>
-                      <span className="font-medium">£{area.average_price.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Rental Yield</span>
-                      <span className="font-medium">
-                        {area.rental_yields?.average ? `${area.rental_yields.average}%` : 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Annual Growth</span>
-                      <span className="font-medium">
-                        {area.historical_prices ? 
-                          `${((Object.values(area.historical_prices).slice(-1)[0] as number / 
-                             Object.values(area.historical_prices)[0] as number - 1) * 100).toFixed(1)}%` 
-                          : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <AreaInsights areaAnalytics={areaAnalytics} />
 
             <PriceHeatmap data={getHeatmapData()} />
           </motion.div>
