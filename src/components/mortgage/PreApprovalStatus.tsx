@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Info } from "lucide-react";
+import { Info, Check } from "lucide-react";
 import { TooltipWrapper } from "@/components/ui/tooltip-wrapper";
 import { motion } from "framer-motion";
 import { PreApprovalData } from "./types";
