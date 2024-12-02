@@ -1,30 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { motion } from "framer-motion";
+import { AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { Info, Check, AlertTriangle } from "lucide-react";
-import { TooltipWrapper } from "@/components/ui/tooltip-wrapper";
-
-interface PreApprovalData {
-  id: string;
-  estimated_amount: number;
-  approval_likelihood: number;
-  criteria_matched: string[];
-  interest_rate_range: {
-    min: number;
-    max: number;
-  };
-  monthly_payment_range: {
-    min: number;
-    max: number;
-  };
-  created_at: string;
-}
+import { PreApprovalStatus } from "./PreApprovalStatus";
+import { PreApprovalData, PreApprovalResponse } from "./types";
 
 export const PreApproval = () => {
   const { toast } = useToast();
@@ -45,7 +28,17 @@ export const PreApproval = () => {
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
-      return data as PreApprovalData;
+      
+      // Transform the data to match our frontend type
+      if (data) {
+        const transformedData: PreApprovalData = {
+          ...data,
+          interest_rate_range: data.interest_rate_range as { min: number; max: number },
+          monthly_payment_range: data.monthly_payment_range as { min: number; max: number }
+        };
+        return transformedData;
+      }
+      return null;
     }
   });
 
@@ -133,62 +126,7 @@ export const PreApproval = () => {
       </div>
 
       {preApproval ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
-          <div className="p-4 bg-primary/5 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-medium">Estimated Pre-approval Amount</h3>
-              <Badge variant={preApproval.approval_likelihood > 70 ? "success" : "secondary"}>
-                {preApproval.approval_likelihood}% Match
-              </Badge>
-            </div>
-            <p className="text-3xl font-bold text-primary">
-              £{preApproval.estimated_amount.toLocaleString()}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium">Interest Rate Range</h3>
-                <TooltipWrapper content="Estimated rates based on your credit profile">
-                  <Info className="w-4 h-4 text-muted-foreground" />
-                </TooltipWrapper>
-              </div>
-              <p className="text-2xl font-semibold">
-                {preApproval.interest_rate_range.min}% - {preApproval.interest_rate_range.max}%
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-medium">Monthly Payment</h3>
-                <TooltipWrapper content="Estimated monthly payments including principal and interest">
-                  <Info className="w-4 h-4 text-muted-foreground" />
-                </TooltipWrapper>
-              </div>
-              <p className="text-2xl font-semibold">
-                £{preApproval.monthly_payment_range.min.toLocaleString()} - 
-                £{preApproval.monthly_payment_range.max.toLocaleString()}
-              </p>
-            </div>
-          </div>
-
-          <div className="border rounded-lg p-4">
-            <h3 className="font-medium mb-3">Matching Criteria</h3>
-            <div className="space-y-2">
-              {preApproval.criteria_matched.map((criteria, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span>{criteria}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        <PreApprovalStatus preApproval={preApproval} />
       ) : (
         <div className="text-center py-8">
           <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
