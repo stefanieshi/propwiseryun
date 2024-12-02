@@ -1,0 +1,4 @@
+project_id = "rqejjsbqsshdxljylwvn"
+
+[match-brokers]
+verify_jwt = true
