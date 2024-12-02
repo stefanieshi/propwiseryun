@@ -102,6 +102,102 @@ export type Database = {
         }
         Relationships: []
       }
+      broker_matches: {
+        Row: {
+          broker_id: string
+          created_at: string
+          id: string
+          match_reasons: string[] | null
+          match_score: number
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          broker_id: string
+          created_at?: string
+          id?: string
+          match_reasons?: string[] | null
+          match_score: number
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          broker_id?: string
+          created_at?: string
+          id?: string
+          match_reasons?: string[] | null
+          match_score?: number
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_matches_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broker_matches_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brokers: {
+        Row: {
+          approval_rate: number | null
+          average_processing_time: number | null
+          created_at: string
+          description: string | null
+          fees: Json | null
+          id: string
+          lender_partnerships: string[] | null
+          min_credit_score: number | null
+          name: string
+          rating: number | null
+          review_count: number | null
+          specializations: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          approval_rate?: number | null
+          average_processing_time?: number | null
+          created_at?: string
+          description?: string | null
+          fees?: Json | null
+          id?: string
+          lender_partnerships?: string[] | null
+          min_credit_score?: number | null
+          name: string
+          rating?: number | null
+          review_count?: number | null
+          specializations?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          approval_rate?: number | null
+          average_processing_time?: number | null
+          created_at?: string
+          description?: string | null
+          fees?: Json | null
+          id?: string
+          lender_partnerships?: string[] | null
+          min_credit_score?: number | null
+          name?: string
+          rating?: number | null
+          review_count?: number | null
+          specializations?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       external_properties: {
         Row: {
           bathrooms: number | null

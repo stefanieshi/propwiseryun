@@ -38,18 +38,26 @@ export const BrokerMatch = () => {
           broker_id,
           match_score,
           match_reasons,
-          broker:brokers(*)
+          broker:brokers(
+            id,
+            name,
+            description,
+            approval_rate,
+            specializations,
+            average_processing_time,
+            rating,
+            review_count
+          )
         `)
         .order("match_score", { ascending: false })
         .limit(3);
 
       if (matchesError) throw matchesError;
-      return matchesData as BrokerMatch[];
+      return matchesData as unknown as BrokerMatch[];
     }
   });
 
   const handleContactBroker = async (brokerId: string) => {
-    // In a real application, this would initiate contact with the broker
     toast({
       title: "Contact request sent",
       description: "The broker will contact you shortly.",
@@ -85,7 +93,7 @@ export const BrokerMatch = () => {
             className="relative p-6 border rounded-lg hover:shadow-md transition-shadow"
           >
             <div className="absolute top-4 right-4">
-              <Badge variant="success" className="flex items-center gap-1">
+              <Badge variant="secondary" className="flex items-center gap-1">
                 <ThumbsUp className="w-3 h-3" />
                 {match.match_score}% Match
               </Badge>
