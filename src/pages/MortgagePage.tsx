@@ -15,8 +15,9 @@ const MortgagePage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState("onboarding");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -46,15 +47,32 @@ const MortgagePage = () => {
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleOnboardingComplete = () => {
     setHasCompletedOnboarding(true);
     setActiveTab("profile");
+    toast({
+      title: "Profile Updated",
+      description: "Your mortgage profile has been successfully created.",
+    });
   };
 
-  if (!hasCompletedOnboarding) {
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (hasCompletedOnboarding === false) {
     return (
       <div className="container mx-auto py-8">
         <MortgageHeader 
