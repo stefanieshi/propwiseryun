@@ -24,21 +24,20 @@ export const PreApproval = () => {
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 
-      if (error && error.code !== "PGRST116") throw error;
+      if (error) throw error;
       
-      // Transform the data to match our frontend type
-      if (data) {
-        const transformedData: PreApprovalData = {
-          ...data,
-          interest_rate_range: data.interest_rate_range as { min: number; max: number },
-          monthly_payment_range: data.monthly_payment_range as { min: number; max: number }
-        };
-        return transformedData;
-      }
-      return null;
+      // If no data is found, return null
+      if (!data || data.length === 0) return null;
+      
+      // Transform the first (and only) result to match our frontend type
+      const transformedData: PreApprovalData = {
+        ...data[0],
+        interest_rate_range: data[0].interest_rate_range as { min: number; max: number },
+        monthly_payment_range: data[0].monthly_payment_range as { min: number; max: number }
+      };
+      return transformedData;
     }
   });
 
@@ -121,7 +120,7 @@ export const PreApproval = () => {
           onClick={calculatePreApproval}
           disabled={isCalculating}
         >
-          Recalculate
+          {preApproval ? "Recalculate" : "Calculate"}
         </Button>
       </div>
 
