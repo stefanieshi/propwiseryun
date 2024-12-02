@@ -1,4 +1,4 @@
 project_id = "rqejjsbqsshdxljylwvn"
 
-[match-brokers]
+[calculate-pre-approval]
 verify_jwt = true

@@ -396,6 +396,62 @@ export type Database = {
           },
         ]
       }
+      pre_approvals: {
+        Row: {
+          approval_likelihood: number
+          created_at: string
+          credit_score: number
+          criteria_matched: string[] | null
+          debt_to_income_ratio: number | null
+          employment_status: string
+          estimated_amount: number
+          id: string
+          income: number
+          interest_rate_range: Json | null
+          monthly_payment_range: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approval_likelihood: number
+          created_at?: string
+          credit_score: number
+          criteria_matched?: string[] | null
+          debt_to_income_ratio?: number | null
+          employment_status: string
+          estimated_amount: number
+          id?: string
+          income: number
+          interest_rate_range?: Json | null
+          monthly_payment_range?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approval_likelihood?: number
+          created_at?: string
+          credit_score?: number
+          criteria_matched?: string[] | null
+          debt_to_income_ratio?: number | null
+          employment_status?: string
+          estimated_amount?: number
+          id?: string
+          income?: number
+          interest_rate_range?: Json | null
+          monthly_payment_range?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_approvals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
