@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { MortgageHeader } from "@/components/mortgage/MortgageHeader";
@@ -7,23 +7,39 @@ import { DocumentUpload } from "@/components/mortgage/DocumentUpload";
 import { PreApproval } from "@/components/mortgage/PreApproval";
 import { BrokerMatch } from "@/components/mortgage/BrokerMatch";
 import { LoanRecommendations } from "@/components/mortgage/LoanRecommendations";
+import { EnhancedOnboarding } from "@/components/mortgage/EnhancedOnboarding";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const MortgagePage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [activeTab, setActiveTab] = useState("onboarding");
 
-  const onSubmit = async (values: any) => {
+  useEffect(() => {
+    checkOnboardingStatus();
+  }, []);
+
+  const checkOnboardingStatus = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
-      toast({
-        title: "Application submitted",
-        description: "We'll process your information and get back to you shortly.",
-      });
-      
-      setCurrentStep(currentStep + 1);
+      const { data: preApproval } = await supabase
+        .from("pre_approvals")
+        .select("*")
+        .eq("user_id", user.id)
+        .limit(1);
+
+      setHasCompletedOnboarding(!!preApproval && preApproval.length > 0);
+      if (preApproval && preApproval.length > 0) {
+        setActiveTab("profile");
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -33,6 +49,23 @@ const MortgagePage = () => {
     }
   };
 
+  const handleOnboardingComplete = () => {
+    setHasCompletedOnboarding(true);
+    setActiveTab("profile");
+  };
+
+  if (!hasCompletedOnboarding) {
+    return (
+      <div className="container mx-auto py-8">
+        <MortgageHeader 
+          currentStep={currentStep} 
+          title="Complete Your Profile" 
+        />
+        <EnhancedOnboarding onComplete={handleOnboardingComplete} />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-8">
       <MortgageHeader 
@@ -40,7 +73,7 @@ const MortgagePage = () => {
         title="AI Mortgage Platform" 
       />
 
-      <Tabs defaultValue="profile" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
@@ -50,7 +83,7 @@ const MortgagePage = () => {
         </TabsList>
 
         <TabsContent value="profile">
-          <ProfileForm onSubmit={onSubmit} />
+          <ProfileForm onSubmit={() => setCurrentStep(currentStep + 1)} />
         </TabsContent>
 
         <TabsContent value="documents">
