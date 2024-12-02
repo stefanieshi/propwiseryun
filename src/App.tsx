@@ -13,6 +13,7 @@ import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
 import AreaResearch from "./pages/AreaResearch";
 import AuthPage from "./pages/AuthPage";
+import MortgagePage from "./pages/MortgagePage";
 import { ComparisonButton } from "./components/ComparisonButton";
 import { motion } from "framer-motion";
 
@@ -98,6 +99,7 @@ const App = () => {
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
                         <Route path="/comparison" element={<ComparisonPage />} />
                         <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
+                        <Route path="/mortgage" element={<MortgagePage />} />
                       </Routes>
                     </AppLayout>
                   ) : (

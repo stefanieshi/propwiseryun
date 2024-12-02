@@ -21,7 +21,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   const menuItems = [
     { icon: Map, label: "Area Research", href: "/area-research" },
     { icon: Home, label: "Property research", href: "/" },
-    { icon: CreditCard, label: "Mortgage pre-approval", href: "/mortgage" },
+    { icon: CreditCard, label: "Mortgage", href: "/mortgage" },
     { icon: FileText, label: "Conveyancing", href: "/conveyancing" },
     { icon: BarChart2, label: "AI consultant", href: "/ai-consultant" },
     { icon: User, label: "Account", href: "/account" },
