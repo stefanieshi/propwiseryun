@@ -150,6 +150,44 @@ export type Database = {
           },
         ]
       }
+      broker_messages: {
+        Row: {
+          broker_match_id: string
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_type: string
+          updated_at: string
+        }
+        Insert: {
+          broker_match_id: string
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_type: string
+          updated_at?: string
+        }
+        Update: {
+          broker_match_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_messages_broker_match_id_fkey"
+            columns: ["broker_match_id"]
+            isOneToOne: false
+            referencedRelation: "broker_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brokers: {
         Row: {
           approval_rate: number | null

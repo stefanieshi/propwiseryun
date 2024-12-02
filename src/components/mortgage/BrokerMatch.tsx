@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Star, ThumbsUp, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { ChatBox } from "./ChatBox";
 
 interface Broker {
   id: string;
@@ -149,13 +150,8 @@ export const BrokerMatch = () => {
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
-              <Button
-                onClick={() => handleContactBroker(match.broker_id)}
-                className="flex items-center gap-2"
-              >
-                Contact Broker
-              </Button>
+            <div className="mt-4">
+              <ChatBox brokerMatchId={match.broker_id} />
             </div>
           </motion.div>
         ))}
