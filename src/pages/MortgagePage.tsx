@@ -6,6 +6,7 @@ import { ProfileForm } from "@/components/mortgage/ProfileForm";
 import { DocumentUpload } from "@/components/mortgage/DocumentUpload";
 import { PreApproval } from "@/components/mortgage/PreApproval";
 import { BrokerMatch } from "@/components/mortgage/BrokerMatch";
+import { LoanRecommendations } from "@/components/mortgage/LoanRecommendations";
 import { supabase } from "@/integrations/supabase/client";
 
 const MortgagePage = () => {
@@ -43,6 +44,7 @@ const MortgagePage = () => {
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="recommendations">Loan Options</TabsTrigger>
           <TabsTrigger value="approval">Pre-approval</TabsTrigger>
           <TabsTrigger value="broker">Broker Match</TabsTrigger>
         </TabsList>
@@ -53,6 +55,10 @@ const MortgagePage = () => {
 
         <TabsContent value="documents">
           <DocumentUpload />
+        </TabsContent>
+
+        <TabsContent value="recommendations">
+          <LoanRecommendations />
         </TabsContent>
 
         <TabsContent value="approval">
