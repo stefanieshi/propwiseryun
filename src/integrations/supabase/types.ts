@@ -343,6 +343,59 @@ export type Database = {
         }
         Relationships: []
       }
+      mortgage_documents: {
+        Row: {
+          content_type: string
+          created_at: string
+          document_type: string
+          extracted_data: Json | null
+          file_path: string
+          id: string
+          original_name: string
+          size: number
+          updated_at: string
+          user_id: string
+          validation_details: Json | null
+          validation_status: string | null
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          document_type: string
+          extracted_data?: Json | null
+          file_path: string
+          id?: string
+          original_name: string
+          size: number
+          updated_at?: string
+          user_id: string
+          validation_details?: Json | null
+          validation_status?: string | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          document_type?: string
+          extracted_data?: Json | null
+          file_path?: string
+          id?: string
+          original_name?: string
+          size?: number
+          updated_at?: string
+          user_id?: string
+          validation_details?: Json | null
+          validation_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mortgage_documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
