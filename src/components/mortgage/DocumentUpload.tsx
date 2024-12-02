@@ -12,6 +12,7 @@ interface DocumentStatus {
   document_type: string;
   validation_status: string;
   extracted_data: any;
+  original_name: string;
 }
 
 export const DocumentUpload = () => {
@@ -53,6 +54,7 @@ export const DocumentUpload = () => {
         original_name: file.name,
         content_type: file.type,
         size: file.size,
+        user_id: user.id,  // Add the user_id here
       });
 
       if (dbError) throw dbError;
