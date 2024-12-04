@@ -6,9 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChatBox } from "@/components/mortgage/ChatBox";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
 interface LawyerCardProps {
-  lawyer: any; // We'll keep this as any since it comes from the brokers table
+  lawyer: any;
 }
 
 const LawyerCard = ({ lawyer }: LawyerCardProps) => {
@@ -79,45 +85,47 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
   };
 
   return (
-    <div className="bg-card rounded-lg shadow-md p-6 space-y-4">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center space-x-4">
-          {lawyer.profile_picture_url ? (
-            <img
-              src={lawyer.profile_picture_url}
-              alt={lawyer.name}
-              className="w-16 h-16 rounded-full object-cover border-2 border-primary"
-            />
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
-              <User className="w-8 h-8 text-muted-foreground" />
-            </div>
-          )}
-          <div>
-            <h3 className="font-semibold text-lg">{lawyer.name}</h3>
-            <div className="flex items-center space-x-1 mt-1">
-              {renderRatingStars()}
-              <span className="text-sm text-muted-foreground ml-2">
-                ({lawyer.review_count} reviews)
-              </span>
+    <Card className="w-full transition-all duration-300 hover:shadow-lg">
+      <CardHeader className="pb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-4">
+            {lawyer.profile_picture_url ? (
+              <img
+                src={lawyer.profile_picture_url}
+                alt={lawyer.name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-primary"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
+                <User className="w-8 h-8 text-muted-foreground" />
+              </div>
+            )}
+            <div>
+              <h3 className="font-semibold text-lg">{lawyer.name}</h3>
+              <div className="flex items-center space-x-1 mt-1">
+                {renderRatingStars()}
+                <span className="text-sm text-muted-foreground ml-2">
+                  ({lawyer.review_count} reviews)
+                </span>
+              </div>
             </div>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleFavorite}
+            className="hover:bg-transparent"
+          >
+            {isFavorite ? (
+              <BookmarkCheck className="h-5 w-5 text-primary" />
+            ) : (
+              <Bookmark className="h-5 w-5" />
+            )}
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleFavorite}
-          className="hover:bg-transparent"
-        >
-          {isFavorite ? (
-            <BookmarkCheck className="h-5 w-5 text-primary" />
-          ) : (
-            <Bookmark className="h-5 w-5" />
-          )}
-        </Button>
-      </div>
+      </CardHeader>
 
-      <div className="space-y-3">
+      <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
           {lawyer.specializations?.map((spec: string, index: number) => (
             <Badge key={index} variant="secondary">
@@ -139,32 +147,35 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
         </div>
 
         {lawyer.recent_reviews && (
-          <ScrollArea className="h-32">
-            <div className="space-y-2">
-              {lawyer.recent_reviews.map((review: any, index: number) => (
-                <div
-                  key={index}
-                  className="bg-secondary/5 rounded-lg p-3 text-sm"
-                >
-                  <div className="flex items-center space-x-1 mb-1">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-3 h-3 text-yellow-400 fill-current"
-                      />
-                    ))}
+          <div className="bg-card rounded-lg border p-3">
+            <h4 className="font-medium mb-2">Recent Reviews</h4>
+            <ScrollArea className="h-32">
+              <div className="space-y-2">
+                {lawyer.recent_reviews.map((review: any, index: number) => (
+                  <div
+                    key={index}
+                    className="bg-secondary/5 rounded-lg p-3 text-sm"
+                  >
+                    <div className="flex items-center space-x-1 mb-1">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-3 h-3 text-yellow-400 fill-current"
+                        />
+                      ))}
+                    </div>
+                    <p className="text-muted-foreground">{review.comment}</p>
                   </div>
-                  <p className="text-muted-foreground">{review.comment}</p>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
         )}
-      </div>
+      </CardContent>
 
-      <div className="pt-4">
+      <CardFooter className="pt-2">
         {showChat ? (
-          <div className="space-y-2">
+          <div className="w-full space-y-2">
             <ChatBox brokerMatchId={lawyer.id} />
             <Button
               variant="outline"
@@ -180,11 +191,11 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
             onClick={() => setShowChat(true)}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Chat with Lawyer</span>
+            <span>Chat with Solicitor</span>
           </Button>
         )}
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 
