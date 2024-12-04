@@ -17,20 +17,30 @@ const LawyerOrders = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      const { data, error } = await supabase
+      // First get the orders
+      const { data: userOrders, error: ordersError } = await supabase
         .from("lawyer_orders")
-        .select(`
-          *,
-          lawyer:brokers(
-            name,
-            fees
-          )
-        `)
+        .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (ordersError) throw ordersError;
+      
+      if (!userOrders?.length) return [];
+
+      // Then fetch the lawyer details for each order
+      const { data: lawyers, error: lawyersError } = await supabase
+        .from("brokers")
+        .select("id, name, fees")
+        .in("id", userOrders.map(order => order.lawyer_id));
+
+      if (lawyersError) throw lawyersError;
+
+      // Combine the data
+      return userOrders.map(order => ({
+        ...order,
+        lawyer: lawyers?.find(l => l.id === order.lawyer_id) || null
+      }));
     },
   });
 
@@ -67,10 +77,10 @@ const LawyerOrders = () => {
           <TableRow key={order.id}>
             <TableCell className="font-medium">{order.id.slice(0, 8)}</TableCell>
             <TableCell>
-              {order.lawyer.name}
+              {order.lawyer?.name}
               <br />
               <span className="text-sm text-muted-foreground">
-                £{order.lawyer.fees.hourly_rate}/hr
+                £{order.lawyer?.fees?.hourly_rate}/hr
               </span>
             </TableCell>
             <TableCell>{order.service_type}</TableCell>

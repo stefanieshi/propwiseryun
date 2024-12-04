@@ -9,16 +9,24 @@ const FavoriteLawyers = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      const { data, error } = await supabase
+      // First get the favorite lawyer IDs
+      const { data: favorites, error: favoritesError } = await supabase
         .from("favorite_lawyers")
-        .select(`
-          lawyer_id,
-          lawyer:brokers(*)
-        `)
+        .select("lawyer_id")
         .eq("user_id", user.id);
 
-      if (error) throw error;
-      return data.map((fav) => fav.lawyer);
+      if (favoritesError) throw favoritesError;
+      
+      if (!favorites?.length) return [];
+
+      // Then fetch the actual lawyer details
+      const { data: lawyers, error: lawyersError } = await supabase
+        .from("brokers")
+        .select("*")
+        .in("id", favorites.map(f => f.lawyer_id));
+
+      if (lawyersError) throw lawyersError;
+      return lawyers || [];
     },
   });
 
