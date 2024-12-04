@@ -15,7 +15,7 @@ export const LawyerStats = ({
 }: LawyerStatsProps) => {
   // Format the fee based on hourlyRate to determine which specific fee to show
   const getFee = () => {
-    if (hourlyRate <= 100) return "£1,800";
+    if (hourlyRate <= 100) return "£1,500";
     if (hourlyRate <= 200) return "£1,800";
     if (hourlyRate <= 250) return "£2,000";
     return "£2,200";
