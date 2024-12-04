@@ -40,7 +40,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group",
                 isActive
-                  ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white"
+                  ? "bg-gradient-to-r from-primary/20 to-primary/20 text-white"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               )}
             >
@@ -87,15 +87,35 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
     >
       <div className="flex items-center justify-between mb-8">
         <AnimatePresence>
-          {!isCollapsed && (
-            <motion.h1
+          {!isCollapsed ? (
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+              className="flex items-center space-x-2"
             >
-              PropertyAI
-            </motion.h1>
+              <img 
+                src="/lovable-uploads/92ce51d3-8dd2-4f65-9d00-5d9d53c6cb55.png" 
+                alt="Propwiser" 
+                className="h-8 w-8"
+              />
+              <span className="text-2xl font-bold text-primary">
+                Propwiser
+              </span>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center"
+            >
+              <img 
+                src="/lovable-uploads/92ce51d3-8dd2-4f65-9d00-5d9d53c6cb55.png" 
+                alt="Propwiser" 
+                className="h-8 w-8"
+              />
+            </motion.div>
           )}
         </AnimatePresence>
         <Button
