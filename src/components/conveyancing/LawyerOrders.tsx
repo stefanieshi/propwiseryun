@@ -10,6 +10,11 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Fees {
+  hourly_rate?: number;
+  [key: string]: any;
+}
+
 const LawyerOrders = () => {
   const { data: orders, isLoading } = useQuery({
     queryKey: ["lawyerOrders"],
@@ -80,7 +85,7 @@ const LawyerOrders = () => {
               {order.lawyer?.name}
               <br />
               <span className="text-sm text-muted-foreground">
-                £{order.lawyer?.fees?.hourly_rate}/hr
+                £{(order.lawyer?.fees as Fees)?.hourly_rate || 'N/A'}/hr
               </span>
             </TableCell>
             <TableCell>{order.service_type}</TableCell>
