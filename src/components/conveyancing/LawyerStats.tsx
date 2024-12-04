@@ -5,6 +5,11 @@ interface LawyerStatsProps {
   reviewCount: number;
   hourlyRate: number;
   isOnline?: boolean;
+  fees?: {
+    fixed_fee?: number;
+    min_fee?: number;
+    max_fee?: number;
+  };
 }
 
 export const LawyerStats = ({
@@ -12,13 +17,19 @@ export const LawyerStats = ({
   reviewCount,
   hourlyRate,
   isOnline = true,
+  fees,
 }: LawyerStatsProps) => {
-  // Format the fee based on hourlyRate
+  // Format the fee based on available fee data
   const getFee = () => {
-    if (hourlyRate <= 100) return "£1,500";
-    if (hourlyRate <= 200) return "£1,800";
-    if (hourlyRate <= 250) return "£2,000";
-    return "£2,200";
+    if (fees?.fixed_fee) {
+      return `£${fees.fixed_fee.toLocaleString()}`;
+    }
+    if (fees?.min_fee && fees?.max_fee) {
+      return `£${fees.min_fee.toLocaleString()} - £${fees.max_fee.toLocaleString()}`;
+    }
+    // Fallback calculation based on hourly rate if no specific fees provided
+    const baseFee = Math.round((hourlyRate * 10) / 100) * 100 + 1000;
+    return `£${baseFee.toLocaleString()} - £${(baseFee + 500).toLocaleString()}`;
   };
 
   return (
