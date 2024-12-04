@@ -28,7 +28,7 @@ export const LawyerStats = ({
       <div className="p-4 rounded-lg bg-secondary/10">
         <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
           <Award className="w-4 h-4 text-blue-400" />
-          Hourly Rate
+          Solicitor Fee
         </div>
         <div className="font-medium">£{hourlyRate}</div>
       </div>
