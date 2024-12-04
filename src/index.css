@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 200 33% 98%;
+    --foreground: 200 50% 3%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 200 50% 3%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 200 50% 3%;
 
-    --primary: 263 85% 63%;
+    --primary: 174 71% 56%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 14% 96%;
+    --muted: 222 47% 11%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 302 59% 65%;
+    --accent: 181 100% 41%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 174 71% 56%;
 
     --radius: 0.75rem;
   }
@@ -91,10 +91,27 @@
 
 /* Glass card */
 .glass-card {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  @apply bg-gradient-futuristic backdrop-blur-md border border-primary/10 shadow-xl;
 }
 
 /* Gradient border */
 .gradient-border {
   @apply relative before:absolute before:inset-0 before:-z-10 before:p-[1px] before:bg-gradient-primary before:rounded-[inherit] before:content-[''];
+}
+
+/* Futuristic elements */
+.futuristic-panel {
+  @apply bg-gradient-futuristic backdrop-blur-md border border-primary/20 rounded-lg shadow-lg;
+}
+
+.futuristic-glow {
+  @apply relative after:absolute after:inset-0 after:rounded-lg after:shadow-[0_0_15px_rgba(64,224,208,0.3)] after:animate-pulse;
+}
+
+.futuristic-border {
+  @apply border border-primary/30 rounded-lg shadow-[inset_0_0_10px_rgba(64,224,208,0.2)];
+}
+
+.neo-brutalism {
+  @apply border-2 border-primary shadow-[4px_4px_0px_0px_rgba(64,224,208,0.8)];
 }
