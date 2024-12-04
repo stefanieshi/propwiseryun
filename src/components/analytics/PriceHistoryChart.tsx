@@ -42,7 +42,7 @@ const PriceHistoryChart = ({ data }: PriceHistoryChartProps) => {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="w-full space-y-6"
     >
-      <Card className="p-6 bg-gradient-to-br from-secondary/50 to-secondary border-primary/20 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
+      <Card className="p-6 bg-[#1A1F2C] border-primary/20 backdrop-blur-sm shadow-lg hover:shadow-primary/20 transition-all duration-300">
         <h3 className="text-lg font-semibold mb-4 text-primary animate-glow">Price History Comparison</h3>
         
         <GrowthMetrics 
