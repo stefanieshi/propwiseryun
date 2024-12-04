@@ -23,7 +23,10 @@ const LawyerDirectory = () => {
     queryFn: async () => {
       let query = supabase
         .from("brokers")
-        .select("*");
+        .select("*")
+        .eq('name', 'Sarah')
+        .update({ fees: { min_fee: 1500, max_fee: 2500 } })
+        .select();
 
       if (searchQuery) {
         query = query.ilike("name", `%${searchQuery}%`);
