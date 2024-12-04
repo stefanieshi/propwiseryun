@@ -13,12 +13,12 @@ const FavoriteLawyers = () => {
         .from("favorite_lawyers")
         .select(`
           lawyer_id,
-          lawyers (*)
+          lawyer:brokers(*)
         `)
         .eq("user_id", user.id);
 
       if (error) throw error;
-      return data.map((fav) => fav.lawyers);
+      return data.map((fav) => fav.lawyer);
     },
   });
 

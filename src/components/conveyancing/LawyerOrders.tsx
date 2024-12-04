@@ -21,9 +21,9 @@ const LawyerOrders = () => {
         .from("lawyer_orders")
         .select(`
           *,
-          lawyers (
+          lawyer:brokers(
             name,
-            firm_name
+            fees
           )
         `)
         .eq("user_id", user.id)
@@ -67,10 +67,10 @@ const LawyerOrders = () => {
           <TableRow key={order.id}>
             <TableCell className="font-medium">{order.id.slice(0, 8)}</TableCell>
             <TableCell>
-              {order.lawyers.name}
+              {order.lawyer.name}
               <br />
               <span className="text-sm text-muted-foreground">
-                {order.lawyers.firm_name}
+                £{order.lawyer.fees.hourly_rate}/hr
               </span>
             </TableCell>
             <TableCell>{order.service_type}</TableCell>

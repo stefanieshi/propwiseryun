@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, SortAscending, User } from "lucide-react";
+import { Search, ArrowUpDown, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -20,10 +19,10 @@ const LawyerDirectory = () => {
   const [sortBy, setSortBy] = useState("rating");
 
   const { data: lawyers, isLoading } = useQuery({
-    queryKey: ["lawyers", searchQuery, locationFilter, specializationFilter, sortBy],
+    queryKey: ["brokers", searchQuery, locationFilter, specializationFilter, sortBy],
     queryFn: async () => {
       let query = supabase
-        .from("lawyers")
+        .from("brokers")
         .select("*");
 
       if (searchQuery) {
@@ -41,7 +40,7 @@ const LawyerDirectory = () => {
       if (sortBy === "rating") {
         query = query.order("rating", { ascending: false });
       } else if (sortBy === "hourly_rate") {
-        query = query.order("hourly_rate", { ascending: true });
+        query = query.order("fees->hourly_rate", { ascending: true });
       }
 
       const { data, error } = await query;

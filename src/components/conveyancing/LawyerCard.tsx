@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface LawyerCardProps {
-  lawyer: any;
+  lawyer: any; // We'll keep this as any since it comes from the brokers table
 }
 
 const LawyerCard = ({ lawyer }: LawyerCardProps) => {
@@ -67,9 +67,9 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
     <div className="bg-card rounded-lg shadow-md p-6 space-y-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
-          {lawyer.profile_image_url ? (
+          {lawyer.profile_picture_url ? (
             <img
-              src={lawyer.profile_image_url}
+              src={lawyer.profile_picture_url}
               alt={lawyer.name}
               className="w-12 h-12 rounded-full object-cover"
             />
@@ -78,7 +78,9 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
           )}
           <div>
             <h3 className="font-semibold">{lawyer.name}</h3>
-            <p className="text-sm text-muted-foreground">{lawyer.firm_name}</p>
+            <p className="text-sm text-muted-foreground">
+              £{lawyer.fees?.hourly_rate || 0}/hr
+            </p>
           </div>
         </div>
         <Button
@@ -97,18 +99,17 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
 
       <div className="space-y-2">
         <p className="text-sm">
-          <span className="font-medium">Location:</span> {lawyer.location}
-        </p>
-        <p className="text-sm">
           <span className="font-medium">Specializations:</span>{" "}
-          {lawyer.specializations.join(", ")}
-        </p>
-        <p className="text-sm">
-          <span className="font-medium">Hourly Rate:</span> £{lawyer.hourly_rate}/hr
+          {lawyer.specializations?.join(", ") || "Not specified"}
         </p>
         <p className="text-sm">
           <span className="font-medium">Rating:</span> {lawyer.rating} ({lawyer.review_count} reviews)
         </p>
+        {lawyer.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {lawyer.description}
+          </p>
+        )}
       </div>
 
       <div className="pt-4">
