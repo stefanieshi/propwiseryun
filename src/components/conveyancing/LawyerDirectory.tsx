@@ -14,8 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 const LawyerDirectory = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-  const [specializationFilter, setSpecializationFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [specializationFilter, setSpecializationFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
 
   const { data: lawyers, isLoading } = useQuery({
@@ -29,11 +29,11 @@ const LawyerDirectory = () => {
         query = query.ilike("name", `%${searchQuery}%`);
       }
 
-      if (locationFilter) {
+      if (locationFilter !== "all") {
         query = query.contains("service_areas", [locationFilter]);
       }
 
-      if (specializationFilter) {
+      if (specializationFilter !== "all") {
         query = query.contains("specializations", [specializationFilter]);
       }
 
@@ -72,10 +72,10 @@ const LawyerDirectory = () => {
             <SelectValue placeholder="Location" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All locations</SelectItem>
-            <SelectItem value="London">London</SelectItem>
-            <SelectItem value="Manchester">Manchester</SelectItem>
-            <SelectItem value="Birmingham">Birmingham</SelectItem>
+            <SelectItem value="all">All locations</SelectItem>
+            <SelectItem value="london">London</SelectItem>
+            <SelectItem value="manchester">Manchester</SelectItem>
+            <SelectItem value="birmingham">Birmingham</SelectItem>
           </SelectContent>
         </Select>
 
@@ -84,10 +84,10 @@ const LawyerDirectory = () => {
             <SelectValue placeholder="Specialization" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All specializations</SelectItem>
-            <SelectItem value="Property Law">Property Law</SelectItem>
-            <SelectItem value="Commercial Property">Commercial Property</SelectItem>
-            <SelectItem value="Residential Property">Residential Property</SelectItem>
+            <SelectItem value="all">All specializations</SelectItem>
+            <SelectItem value="property_law">Property Law</SelectItem>
+            <SelectItem value="commercial_property">Commercial Property</SelectItem>
+            <SelectItem value="residential_property">Residential Property</SelectItem>
           </SelectContent>
         </Select>
 
