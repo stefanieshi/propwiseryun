@@ -83,3 +83,18 @@
 .input-focus {
   @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200;
 }
+
+/* Shimmer effect */
+.shimmer {
+  @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent;
+}
+
+/* Glass card */
+.glass-card {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+/* Gradient border */
+.gradient-border {
+  @apply relative before:absolute before:inset-0 before:-z-10 before:p-[1px] before:bg-gradient-primary before:rounded-[inherit] before:content-[''];
+}
