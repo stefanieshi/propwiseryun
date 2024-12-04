@@ -38,7 +38,7 @@ export const LawyerStats = ({
           <Clock className="w-4 h-4 text-green-400" />
           Response Time
         </div>
-        <div className="font-medium">< 24 hours</div>
+        <div className="font-medium">{"<24 hours"}</div>
       </div>
 
       <div className="p-4 rounded-lg bg-secondary/10">
