@@ -96,10 +96,13 @@ const ComparisonView = ({ properties }: ComparisonViewProps) => {
           <span className="font-medium text-muted-foreground">Detailed Report</span>
         </div>
         {displayProperties.map((property) => (
-          <div key={`${property.id}-report`} className="border-t py-4 text-center">
+          <div
+            key={`${property.id}-report`}
+            className="border-t border-primary/20 py-4 text-center bg-primary/5"
+          >
             <Button 
               variant="default"
-              className="bg-orange-500 hover:bg-orange-600"
+              className="bg-primary hover:bg-primary/90"
               onClick={() => window.open(`/property/${property.id}/report`, '_blank')}
             >
               View report
