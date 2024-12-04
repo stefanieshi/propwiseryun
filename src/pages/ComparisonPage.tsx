@@ -11,7 +11,7 @@ const ComparisonPage = () => {
         <BackButton onClick={clearSelection} />
         <h1 className="text-2xl font-bold ml-4">Property Comparison</h1>
       </div>
-      <ComparisonView properties={selectedProperties} />
+      <ComparisonView properties={selectedProperties.length > 0 ? selectedProperties : undefined} />
     </div>
   );
 };

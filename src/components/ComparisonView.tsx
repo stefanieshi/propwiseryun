@@ -75,25 +75,27 @@ const exampleProperties: Property[] = [
 ];
 
 interface ComparisonViewProps {
-  properties: Property[];
+  properties?: Property[];
 }
 
-const ComparisonView = ({ properties = exampleProperties }: ComparisonViewProps) => {
+const ComparisonView = ({ properties }: ComparisonViewProps) => {
+  const displayProperties = properties || exampleProperties;
+  
   return (
     <Card className="p-6 glass-effect">
-      <ComparisonHeader properties={properties} />
+      <ComparisonHeader properties={displayProperties} />
       <div className="mt-8">
-        <ComparisonTable properties={properties} />
+        <ComparisonTable properties={displayProperties} />
       </div>
       
       {/* View Report Button */}
       <div className="grid auto-cols-fr gap-4 mt-8" style={{
-        gridTemplateColumns: `200px repeat(${properties.length}, minmax(200px, 1fr))`
+        gridTemplateColumns: `200px repeat(${displayProperties.length}, minmax(200px, 1fr))`
       }}>
         <div className="col-span-1 border-t py-4">
           <span className="font-medium text-muted-foreground">Detailed Report</span>
         </div>
-        {properties.map((property) => (
+        {displayProperties.map((property) => (
           <div key={`${property.id}-report`} className="border-t py-4 text-center">
             <Button 
               variant="default"
