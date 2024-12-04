@@ -13,7 +13,7 @@ export const LawyerStats = ({
   hourlyRate,
   isOnline = true,
 }: LawyerStatsProps) => {
-  // Format the fee based on hourlyRate to determine which specific fee to show
+  // Format the fee based on hourlyRate
   const getFee = () => {
     if (hourlyRate <= 100) return "£1,500";
     if (hourlyRate <= 200) return "£1,800";
