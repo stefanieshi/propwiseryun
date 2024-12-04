@@ -42,7 +42,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         <h3 className="text-lg font-semibold text-white mb-2">
           {property.title}
         </h3>
-        <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+        <p className="text-2xl font-bold bg-gradient-to-r from-[#40E0D0] to-[#20B2AA] bg-clip-text text-transparent mb-2">
           £{property.price.toLocaleString()}
         </p>
         <p className="text-sm text-gray-400 mb-4">{property.location}</p>
