@@ -46,7 +46,7 @@ export const LawyerStats = ({
           <Clock className="w-4 h-4 text-green-400" />
           Response Time
         </div>
-        <div className="font-medium">{"<24 hours"}</div>
+        <div className="font-medium">{"2-4 hours"}</div>
       </div>
 
       <div className="p-4 rounded-lg bg-secondary/10">
@@ -55,7 +55,7 @@ export const LawyerStats = ({
           Chat Status
         </div>
         <div className="font-medium text-green-400">
-          {isOnline ? "Online" : "Offline"}
+          {isOnline ? "Available Now" : "Offline"}
         </div>
       </div>
     </div>
