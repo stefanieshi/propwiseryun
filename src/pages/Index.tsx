@@ -21,6 +21,49 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const generateImageForProperty = async (property: Property) => {
+    try {
+      const response = await fetch('/api/generate-property-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ property }),
+      });
+
+      if (!response.ok) throw new Error('Failed to generate image');
+      
+      const { image } = await response.json();
+      
+      // Update the property with the new image
+      const { error: updateError } = await supabase
+        .from('properties')
+        .update({ image_url: image })
+        .eq('id', property.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setProperties(prevProperties =>
+        prevProperties.map(p =>
+          p.id === property.id ? { ...p, image_url: image } : p
+        )
+      );
+
+      toast({
+        title: "Image Generated",
+        description: "Property image has been generated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -42,6 +85,14 @@ const Index = () => {
 
       if (propertiesError) throw propertiesError;
 
+      // Generate images for properties that don't have them
+      const propertiesWithImages = propertiesData || [];
+      for (const property of propertiesWithImages) {
+        if (!property.image_url) {
+          await generateImageForProperty(property);
+        }
+      }
+
       // Fetch user progress
       const { data: progressData, error: progressError } = await supabase
         .from("user_progress")
@@ -51,7 +102,7 @@ const Index = () => {
 
       if (progressError && progressError.code !== "PGRST116") throw progressError;
 
-      setProperties(propertiesData || []);
+      setProperties(propertiesWithImages);
       setUserProgress(progressData);
       setLoading(false);
     } catch (error: any) {
