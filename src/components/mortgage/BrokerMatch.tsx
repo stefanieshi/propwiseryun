@@ -1,13 +1,12 @@
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useToast } from "@/components/ui/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Star, ThumbsUp, Award, Clock, MessageSquare } from "lucide-react";
+import { Loader2, ThumbsUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { BrokerStats } from "./BrokerStats";
+import { BrokerReviews } from "./BrokerReviews";
 import { ChatBox } from "./ChatBox";
 
 interface Broker {
@@ -22,16 +21,6 @@ interface Broker {
   profile_picture_url: string | null;
 }
 
-interface BrokerReview {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  user: {
-    full_name: string;
-  };
-}
-
 interface BrokerMatch {
   broker_id: string;
   match_score: number;
@@ -41,8 +30,6 @@ interface BrokerMatch {
 }
 
 export const BrokerMatch = () => {
-  const { toast } = useToast();
-
   const { data: matches, isLoading } = useQuery({
     queryKey: ["broker-matches"],
     queryFn: async () => {
@@ -69,7 +56,6 @@ export const BrokerMatch = () => {
 
       if (matchesError) throw matchesError;
 
-      // Fetch reviews for each broker
       const matchesWithReviews = await Promise.all(
         matchesData.map(async (match) => {
           const { data: reviews } = await supabase
@@ -106,6 +92,16 @@ export const BrokerMatch = () => {
     );
   }
 
+  if (!matches || matches.length === 0) {
+    return (
+      <Card className="p-6">
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No broker matches found.</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="p-6">
       <div className="mb-6">
@@ -116,13 +112,13 @@ export const BrokerMatch = () => {
       </div>
 
       <div className="space-y-6">
-        {matches?.map((match, index) => (
+        {matches.map((match, index) => (
           <motion.div
             key={match.broker_id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="relative p-6 glass-card rounded-lg"
+            className="relative p-6 glass-card rounded-lg border bg-card/50 backdrop-blur-sm"
           >
             <div className="absolute top-4 right-4">
               <Badge variant="secondary" className="flex items-center gap-1">
@@ -161,74 +157,14 @@ export const BrokerMatch = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-sm">
-                <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400" />
-                  Rating
-                </div>
-                <div className="font-medium">
-                  {match.broker?.rating}/5 ({match.broker?.review_count} reviews)
-                </div>
-              </div>
+            <BrokerStats
+              rating={match.broker?.rating || 0}
+              reviewCount={match.broker?.review_count || 0}
+              approvalRate={match.broker?.approval_rate || 0}
+              processingTime={match.broker?.average_processing_time || 0}
+            />
 
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-sm">
-                <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
-                  <Award className="w-4 h-4 text-blue-400" />
-                  Approval Rate
-                </div>
-                <div className="font-medium">{match.broker?.approval_rate}%</div>
-              </div>
-
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-sm">
-                <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
-                  <Clock className="w-4 h-4 text-green-400" />
-                  Processing Time
-                </div>
-                <div className="font-medium">
-                  {match.broker?.average_processing_time} days
-                </div>
-              </div>
-
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-sm">
-                <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1">
-                  <MessageSquare className="w-4 h-4 text-primary" />
-                  Chat Status
-                </div>
-                <div className="font-medium text-green-400">Online</div>
-              </div>
-            </div>
-
-            {match.reviews && match.reviews.length > 0 && (
-              <div className="mb-6">
-                <h4 className="text-lg font-medium mb-3">Recent Reviews</h4>
-                <div className="space-y-3">
-                  {match.reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="p-4 rounded-lg bg-secondary/10 backdrop-blur-sm"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">
-                          {review.user?.full_name || "Anonymous"}
-                        </span>
-                        <div className="flex items-center">
-                          {Array.from({ length: review.rating }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className="w-4 h-4 text-yellow-400 fill-current"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {review.comment}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <BrokerReviews reviews={match.reviews || []} />
 
             <div className="space-y-2 mb-6">
               <div className="text-sm text-muted-foreground">Match Reasons:</div>
