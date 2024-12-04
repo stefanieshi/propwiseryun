@@ -21,12 +21,16 @@ const LawyerDirectory = () => {
   const { data: lawyers, isLoading } = useQuery({
     queryKey: ["lawyers", searchQuery, specializationFilter, sortBy],
     queryFn: async () => {
+      // First, update Sarah's fees
+      await supabase
+        .from("brokers")
+        .update({ fees: { min_fee: 1500, max_fee: 2500 } })
+        .eq('name', 'Sarah');
+
+      // Then, fetch all lawyers with filters
       let query = supabase
         .from("brokers")
-        .select("*")
-        .eq('name', 'Sarah')
-        .update({ fees: { min_fee: 1500, max_fee: 2500 } })
-        .select();
+        .select("*");
 
       if (searchQuery) {
         query = query.ilike("name", `%${searchQuery}%`);
