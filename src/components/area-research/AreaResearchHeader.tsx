@@ -6,7 +6,7 @@ const AreaResearchHeader = () => {
     <div className="flex flex-col space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#40E0D0] to-[#20B2AA] bg-clip-text text-transparent">
             Area Research
           </h1>
           <p className="text-muted-foreground mt-2">

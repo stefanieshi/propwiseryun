@@ -8,7 +8,7 @@ interface MortgageHeaderProps {
 export const MortgageHeader = ({ currentStep, title }: MortgageHeaderProps) => {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+      <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-[#40E0D0] to-[#48D1CC] bg-clip-text text-transparent">
         {title}
       </h1>
       <div className="mb-8">
