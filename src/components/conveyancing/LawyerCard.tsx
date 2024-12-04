@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { User, Bookmark, BookmarkCheck } from "lucide-react";
+import { User, Bookmark, BookmarkCheck, MessageSquare, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ChatBox } from "@/components/mortgage/ChatBox";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface LawyerCardProps {
   lawyer: any; // We'll keep this as any since it comes from the brokers table
@@ -10,6 +13,7 @@ interface LawyerCardProps {
 
 const LawyerCard = ({ lawyer }: LawyerCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const { toast } = useToast();
 
   const toggleFavorite = async () => {
@@ -63,6 +67,17 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
     }
   };
 
+  const renderRatingStars = () => {
+    return Array.from({ length: 5 }).map((_, index) => (
+      <Star
+        key={index}
+        className={`h-4 w-4 ${
+          index < lawyer.rating ? "text-yellow-400 fill-current" : "text-gray-300"
+        }`}
+      />
+    ));
+  };
+
   return (
     <div className="bg-card rounded-lg shadow-md p-6 space-y-4">
       <div className="flex items-start justify-between">
@@ -71,16 +86,21 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
             <img
               src={lawyer.profile_picture_url}
               alt={lawyer.name}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-16 h-16 rounded-full object-cover border-2 border-primary"
             />
           ) : (
-            <User className="w-12 h-12 text-muted-foreground" />
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
+              <User className="w-8 h-8 text-muted-foreground" />
+            </div>
           )}
           <div>
-            <h3 className="font-semibold">{lawyer.name}</h3>
-            <p className="text-sm text-muted-foreground">
-              £{lawyer.fees?.hourly_rate || 0}/hr
-            </p>
+            <h3 className="font-semibold text-lg">{lawyer.name}</h3>
+            <div className="flex items-center space-x-1 mt-1">
+              {renderRatingStars()}
+              <span className="text-sm text-muted-foreground ml-2">
+                ({lawyer.review_count} reviews)
+              </span>
+            </div>
           </div>
         </div>
         <Button
@@ -97,23 +117,72 @@ const LawyerCard = ({ lawyer }: LawyerCardProps) => {
         </Button>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm">
-          <span className="font-medium">Specializations:</span>{" "}
-          {lawyer.specializations?.join(", ") || "Not specified"}
-        </p>
-        <p className="text-sm">
-          <span className="font-medium">Rating:</span> {lawyer.rating} ({lawyer.review_count} reviews)
-        </p>
-        {lawyer.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {lawyer.description}
+      <div className="space-y-3">
+        <div className="flex flex-wrap gap-2">
+          {lawyer.specializations?.map((spec: string, index: number) => (
+            <Badge key={index} variant="secondary">
+              {spec}
+            </Badge>
+          ))}
+        </div>
+        
+        <div className="bg-secondary/10 rounded-lg p-3">
+          <p className="text-sm">
+            <span className="font-medium">Hourly Rate:</span>{" "}
+            £{lawyer.fees?.hourly_rate || "N/A"}
           </p>
+          {lawyer.description && (
+            <p className="text-sm text-muted-foreground mt-2">
+              {lawyer.description}
+            </p>
+          )}
+        </div>
+
+        {lawyer.recent_reviews && (
+          <ScrollArea className="h-32">
+            <div className="space-y-2">
+              {lawyer.recent_reviews.map((review: any, index: number) => (
+                <div
+                  key={index}
+                  className="bg-secondary/5 rounded-lg p-3 text-sm"
+                >
+                  <div className="flex items-center space-x-1 mb-1">
+                    {Array.from({ length: review.rating }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-3 h-3 text-yellow-400 fill-current"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         )}
       </div>
 
       <div className="pt-4">
-        <Button className="w-full">Contact Lawyer</Button>
+        {showChat ? (
+          <div className="space-y-2">
+            <ChatBox brokerMatchId={lawyer.id} />
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowChat(false)}
+            >
+              Close Chat
+            </Button>
+          </div>
+        ) : (
+          <Button
+            className="w-full flex items-center justify-center space-x-2"
+            onClick={() => setShowChat(true)}
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Chat with Lawyer</span>
+          </Button>
+        )}
       </div>
     </div>
   );
