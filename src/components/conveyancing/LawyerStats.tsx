@@ -13,8 +13,13 @@ export const LawyerStats = ({
   hourlyRate,
   isOnline = true,
 }: LawyerStatsProps) => {
-  // Format the fee range
-  const feeRange = "£1,500-£2,200";
+  // Format the fee based on hourlyRate to determine which specific fee to show
+  const getFee = () => {
+    if (hourlyRate <= 150) return "£1,500";
+    if (hourlyRate <= 200) return "£1,800";
+    if (hourlyRate <= 250) return "£2,000";
+    return "£2,200";
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -33,7 +38,7 @@ export const LawyerStats = ({
           <Award className="w-4 h-4 text-blue-400" />
           Solicitor Fee
         </div>
-        <div className="font-medium">{feeRange}</div>
+        <div className="font-medium">{getFee()}</div>
       </div>
 
       <div className="p-4 rounded-lg bg-secondary/10">
