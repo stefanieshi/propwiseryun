@@ -29,13 +29,19 @@ const PriceChart = ({ data }: PriceChartProps) => {
       >
         <CartesianGrid 
           strokeDasharray="3 3" 
-          stroke="rgba(255,255,255,0.1)"
+          stroke="rgba(64, 224, 208, 0.1)"
+          className="animate-pulse"
         />
         <XAxis 
           dataKey="date"
-          label={{ value: 'Year', position: 'insideBottom', offset: -5 }}
-          stroke="#8B5CF6"
-          tick={{ fill: '#8B5CF6' }}
+          label={{ 
+            value: 'Year', 
+            position: 'insideBottom', 
+            offset: -5,
+            style: { fill: '#94A3B8' }
+          }}
+          stroke="#94A3B8"
+          tick={{ fill: '#94A3B8' }}
         />
         <YAxis 
           tickFormatter={formatPrice}
@@ -43,33 +49,33 @@ const PriceChart = ({ data }: PriceChartProps) => {
             value: 'Price', 
             angle: -90, 
             position: 'insideLeft',
-            style: { textAnchor: 'middle' }
+            style: { fill: '#94A3B8', textAnchor: 'middle' }
           }}
-          stroke="#8B5CF6"
-          tick={{ fill: '#8B5CF6' }}
+          stroke="#94A3B8"
+          tick={{ fill: '#94A3B8' }}
         />
         <Tooltip 
           formatter={(value: number) => formatPrice(value)}
           labelFormatter={(label) => `Year: ${label}`}
           contentStyle={{
             backgroundColor: 'rgba(26, 31, 44, 0.9)',
-            border: '1px solid rgba(139, 92, 246, 0.2)',
+            border: '1px solid rgba(64, 224, 208, 0.2)',
             borderRadius: '8px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           }}
-          itemStyle={{ color: '#8B5CF6' }}
-          labelStyle={{ color: '#8B5CF6' }}
+          itemStyle={{ color: '#40E0D0' }}
+          labelStyle={{ color: '#94A3B8' }}
         />
         <Legend 
           wrapperStyle={{
             paddingTop: '20px',
-            color: '#8B5CF6'
+            color: '#94A3B8'
           }}
         />
         <Line
           type="monotone"
           dataKey="Property Price"
-          stroke="#8B5CF6"
+          stroke="#40E0D0"
           strokeWidth={3}
           dot={false}
           className="filter drop-shadow-md"
@@ -78,7 +84,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
         <Line
           type="monotone"
           dataKey="Area Average"
-          stroke="#D946EF"
+          stroke="#00CED1"
           strokeWidth={2}
           dot={false}
           className="filter drop-shadow-md"
@@ -88,7 +94,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
         <Line
           type="monotone"
           dataKey="City Average"
-          stroke="#F97316"
+          stroke="#85FFF4"
           strokeWidth={2}
           dot={false}
           className="filter drop-shadow-md"
