@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface Message {
@@ -23,6 +23,7 @@ interface ChatBoxProps {
 export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
   const { data: messages, isLoading } = useQuery({
@@ -66,7 +67,7 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isExpanded]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +99,18 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
     }
   };
 
+  if (!isExpanded) {
+    return (
+      <Button 
+        className="w-full flex items-center gap-2" 
+        onClick={() => setIsExpanded(true)}
+      >
+        <Send className="w-4 h-4" />
+        Start Chat
+      </Button>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4">
@@ -107,7 +120,18 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
   }
 
   return (
-    <div className="flex flex-col h-[400px] border rounded-lg">
+    <div className="flex flex-col h-[400px] border rounded-lg bg-secondary/5 backdrop-blur-sm">
+      <div className="p-3 border-b flex justify-between items-center">
+        <h4 className="font-medium">Chat with Broker</h4>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => setIsExpanded(false)}
+        >
+          Minimize
+        </Button>
+      </div>
+
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages?.map((message) => (
@@ -121,7 +145,7 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
                 className={`max-w-[70%] rounded-lg p-3 ${
                   message.sender_type === 'user'
                     ? 'bg-primary text-primary-foreground ml-auto'
-                    : 'bg-muted'
+                    : 'bg-secondary/20 backdrop-blur-sm'
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
@@ -134,15 +158,18 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
         </div>
       </ScrollArea>
       
-      <form onSubmit={sendMessage} className="p-4 border-t">
+      <form onSubmit={sendMessage} className="p-4 border-t bg-secondary/5">
         <div className="flex gap-2">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1"
+            className="flex-1 bg-secondary/10"
           />
-          <Button type="submit">Send</Button>
+          <Button type="submit" className="flex items-center gap-2">
+            <Send className="w-4 h-4" />
+            Send
+          </Button>
         </div>
       </form>
     </div>

@@ -188,6 +188,51 @@ export type Database = {
           },
         ]
       }
+      broker_reviews: {
+        Row: {
+          broker_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          broker_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          broker_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_reviews_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broker_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brokers: {
         Row: {
           approval_rate: number | null
@@ -199,6 +244,7 @@ export type Database = {
           lender_partnerships: string[] | null
           min_credit_score: number | null
           name: string
+          profile_picture_url: string | null
           rating: number | null
           review_count: number | null
           specializations: string[] | null
@@ -214,6 +260,7 @@ export type Database = {
           lender_partnerships?: string[] | null
           min_credit_score?: number | null
           name: string
+          profile_picture_url?: string | null
           rating?: number | null
           review_count?: number | null
           specializations?: string[] | null
@@ -229,6 +276,7 @@ export type Database = {
           lender_partnerships?: string[] | null
           min_credit_score?: number | null
           name?: string
+          profile_picture_url?: string | null
           rating?: number | null
           review_count?: number | null
           specializations?: string[] | null
