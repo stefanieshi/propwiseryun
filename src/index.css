@@ -5,32 +5,32 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 222 47% 11%;
 
     --primary: 263 85% 63%;
-    --primary-foreground: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 302 59% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 263 85% 63%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%;
 
     --radius: 0.75rem;
   }
@@ -42,17 +42,16 @@
   }
 
   body {
-    @apply bg-white text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 
-  /* Futuristic scrollbar */
+  /* Enhanced scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    @apply w-2 h-2;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-secondary/20;
+    @apply bg-secondary/20 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -62,5 +61,25 @@
 
 /* Glass effect for cards */
 .glass-effect {
-  @apply bg-white/90 backdrop-blur-lg border border-white/20;
+  @apply bg-white/90 backdrop-blur-lg border border-white/20 shadow-lg;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-primary bg-clip-text text-transparent;
+}
+
+/* Enhanced button styles */
+.btn-gradient {
+  @apply bg-gradient-primary hover:opacity-90 transition-opacity;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Input focus styles */
+.input-focus {
+  @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200;
 }

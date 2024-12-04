@@ -25,24 +25,24 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#40E0D0",
-          foreground: "#000000",
+          DEFAULT: "#8B5CF6",
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#F5F5F5",
-          foreground: "#000000",
+          DEFAULT: "#F4F5F7",
+          foreground: "#1A1F2C",
         },
         accent: {
-          DEFAULT: "#40E0D0",
-          foreground: "#000000",
+          DEFAULT: "#D946EF",
+          foreground: "#FFFFFF",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#F4F5F7",
+          foreground: "#6B7280",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -81,6 +81,10 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         glow: "glow 2s ease-in-out infinite",
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-primary': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%)',
       },
     },
   },
