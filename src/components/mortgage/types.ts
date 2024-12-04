@@ -23,3 +23,13 @@ export interface PreApprovalResponse {
   monthly_payment_range: any;
   created_at: string;
 }
+
+export interface BrokerReview {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  user?: {
+    full_name: string | null;
+  };
+}

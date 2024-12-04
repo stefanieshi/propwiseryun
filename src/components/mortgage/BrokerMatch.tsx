@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrokerStats } from "./BrokerStats";
 import { BrokerReviews } from "./BrokerReviews";
 import { ChatBox } from "./ChatBox";
+import { BrokerReview } from "./types";
 
 interface Broker {
   id: string;

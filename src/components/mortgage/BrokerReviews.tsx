@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import { BrokerReview } from "@/integrations/supabase/types";
+import { BrokerReview } from "./types";
 
 interface BrokerReviewsProps {
   reviews: BrokerReview[];
