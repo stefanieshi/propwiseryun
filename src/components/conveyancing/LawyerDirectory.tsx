@@ -14,12 +14,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 const LawyerDirectory = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [locationFilter, setLocationFilter] = useState("all");
   const [specializationFilter, setSpecializationFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
 
   const { data: lawyers, isLoading } = useQuery({
-    queryKey: ["brokers", searchQuery, locationFilter, specializationFilter, sortBy],
+    queryKey: ["brokers", searchQuery, specializationFilter, sortBy],
     queryFn: async () => {
       let query = supabase
         .from("brokers")
@@ -27,10 +26,6 @@ const LawyerDirectory = () => {
 
       if (searchQuery) {
         query = query.ilike("name", `%${searchQuery}%`);
-      }
-
-      if (locationFilter !== "all") {
-        query = query.contains("service_areas", [locationFilter]);
       }
 
       if (specializationFilter !== "all") {
@@ -55,7 +50,7 @@ const LawyerDirectory = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
           <Input
@@ -66,18 +61,6 @@ const LawyerDirectory = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
-        <Select value={locationFilter} onValueChange={setLocationFilter}>
-          <SelectTrigger>
-            <SelectValue placeholder="Location" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All locations</SelectItem>
-            <SelectItem value="london">London</SelectItem>
-            <SelectItem value="manchester">Manchester</SelectItem>
-            <SelectItem value="birmingham">Birmingham</SelectItem>
-          </SelectContent>
-        </Select>
 
         <Select value={specializationFilter} onValueChange={setSpecializationFilter}>
           <SelectTrigger>
