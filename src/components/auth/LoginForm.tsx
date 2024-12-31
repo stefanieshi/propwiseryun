@@ -32,6 +32,9 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
       
       navigate("/");
       toast.success("Successfully logged in!");
+    } catch (error: any) {
+      toast.error("An unexpected error occurred. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }

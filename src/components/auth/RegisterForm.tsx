@@ -20,6 +20,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
           data: {
             full_name: name,
           },
+          emailRedirectTo: `${window.location.origin}/auth`,
         },
       });
       
@@ -33,6 +34,9 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
       }
       
       toast.success("Registration successful! Please check your email for verification.");
+    } catch (error: any) {
+      toast.error("An unexpected error occurred. Please try again.");
+      console.error("Registration error:", error);
     } finally {
       setLoading(false);
     }
