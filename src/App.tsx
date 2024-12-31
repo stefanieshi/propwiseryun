@@ -20,12 +20,12 @@ import { motion } from "framer-motion";
 
 const queryClient = new QueryClient();
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children, isAuthenticated }) => {
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-background">
-      <SideNav onCollapsedChange={setIsMenuCollapsed} />
+      <SideNav onCollapsedChange={setIsMenuCollapsed} isAuthenticated={isAuthenticated} />
       <motion.main
         initial={false}
         animate={{
@@ -37,9 +37,17 @@ const AppLayout = ({ children }) => {
       >
         {children}
       </motion.main>
-      <ComparisonButton />
+      {isAuthenticated && <ComparisonButton />}
     </div>
   );
+};
+
+// Protected route wrapper component
+const ProtectedRoute = ({ children, isAuthenticated }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+  return children;
 };
 
 const App = () => {
@@ -89,24 +97,74 @@ const App = () => {
                   isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
                 }
               />
+              
+              {/* Public routes */}
               <Route
-                path="/*"
+                path="/"
                 element={
-                  isAuthenticated ? (
-                    <AppLayout>
-                      <Routes>
-                        <Route path="/area-research" element={<AreaResearch />} />
-                        <Route path="/" element={<Index />} />
-                        <Route path="/viewed-properties" element={<ViewedProperties />} />
-                        <Route path="/comparison" element={<ComparisonPage />} />
-                        <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
-                        <Route path="/mortgage" element={<MortgagePage />} />
-                        <Route path="/conveyancing" element={<ConveyancingPage />} />
-                      </Routes>
+                  <AppLayout isAuthenticated={isAuthenticated}>
+                    <Index />
+                  </AppLayout>
+                }
+              />
+              <Route
+                path="/area-research"
+                element={
+                  <AppLayout isAuthenticated={isAuthenticated}>
+                    <AreaResearch />
+                  </AppLayout>
+                }
+              />
+
+              {/* Protected routes */}
+              <Route
+                path="/viewed-properties"
+                element={
+                  <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    <AppLayout isAuthenticated={isAuthenticated}>
+                      <ViewedProperties />
                     </AppLayout>
-                  ) : (
-                    <Navigate to="/auth" replace />
-                  )
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/comparison"
+                element={
+                  <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    <AppLayout isAuthenticated={isAuthenticated}>
+                      <ComparisonPage />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/property/:id/analytics"
+                element={
+                  <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    <AppLayout isAuthenticated={isAuthenticated}>
+                      <PropertyAnalytics />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/mortgage"
+                element={
+                  <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    <AppLayout isAuthenticated={isAuthenticated}>
+                      <MortgagePage />
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/conveyancing"
+                element={
+                  <ProtectedRoute isAuthenticated={isAuthenticated}>
+                    <AppLayout isAuthenticated={isAuthenticated}>
+                      <ConveyancingPage />
+                    </AppLayout>
+                  </ProtectedRoute>
                 }
               />
             </Routes>
