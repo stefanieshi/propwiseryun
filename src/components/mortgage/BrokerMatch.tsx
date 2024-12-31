@@ -8,27 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrokerStats } from "./BrokerStats";
 import { BrokerReviews } from "./BrokerReviews";
 import { ChatBox } from "./ChatBox";
-import { BrokerReview } from "./types";
-
-interface Broker {
-  id: string;
-  name: string;
-  description: string;
-  approval_rate: number;
-  specializations: string[];
-  average_processing_time: number;
-  rating: number;
-  review_count: number;
-  profile_picture_url: string | null;
-}
-
-interface BrokerMatch {
-  broker_id: string;
-  match_score: number;
-  match_reasons: string[];
-  broker?: Broker;
-  reviews?: BrokerReview[];
-}
+import { BrokerMatch as IBrokerMatch } from "./types";
 
 export const BrokerMatch = () => {
   const { data: matches, isLoading } = useQuery({
@@ -58,7 +38,7 @@ export const BrokerMatch = () => {
       if (matchesError) throw matchesError;
 
       const matchesWithReviews = await Promise.all(
-        matchesData.map(async (match) => {
+        (matchesData || []).map(async (match) => {
           const { data: reviews } = await supabase
             .from("broker_reviews")
             .select(`
@@ -74,12 +54,13 @@ export const BrokerMatch = () => {
 
           return {
             ...match,
+            broker: Array.isArray(match.broker) ? match.broker[0] : match.broker,
             reviews: reviews || [],
           };
         })
       );
 
-      return matchesWithReviews as BrokerMatch[];
+      return matchesWithReviews as IBrokerMatch[];
     },
   });
 
@@ -128,42 +109,46 @@ export const BrokerMatch = () => {
               </Badge>
             </div>
 
-            <div className="flex items-start gap-6 mb-6">
-              <Avatar className="h-20 w-20 border-2 border-primary">
-                <AvatarImage
-                  src={match.broker?.profile_picture_url || ""}
-                  alt={match.broker?.name}
-                />
-                <AvatarFallback className="bg-secondary text-secondary-foreground">
-                  {match.broker?.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
+            {match.broker && (
+              <>
+                <div className="flex items-start gap-6 mb-6">
+                  <Avatar className="h-20 w-20 border-2 border-primary">
+                    <AvatarImage
+                      src={match.broker.profile_picture_url || ""}
+                      alt={match.broker.name}
+                    />
+                    <AvatarFallback className="bg-secondary text-secondary-foreground">
+                      {match.broker.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div className="flex-1">
-                <h3 className="text-xl font-medium">{match.broker?.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {match.broker?.description}
-                </p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-medium">{match.broker.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {match.broker.description}
+                    </p>
 
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {match.broker?.specializations.map((specialty, i) => (
-                    <Badge key={i} variant="outline" className="capitalize">
-                      {specialty}
-                    </Badge>
-                  ))}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {match.broker.specializations.map((specialty, i) => (
+                        <Badge key={i} variant="outline" className="capitalize">
+                          {specialty}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <BrokerStats
-              rating={match.broker?.rating || 0}
-              reviewCount={match.broker?.review_count || 0}
-              approvalRate={match.broker?.approval_rate || 0}
-              processingTime={match.broker?.average_processing_time || 0}
-            />
+                <BrokerStats
+                  rating={match.broker.rating || 0}
+                  reviewCount={match.broker.review_count || 0}
+                  approvalRate={match.broker.approval_rate || 0}
+                  processingTime={match.broker.average_processing_time || 0}
+                />
+              </>
+            )}
 
             <BrokerReviews reviews={match.reviews || []} />
 
