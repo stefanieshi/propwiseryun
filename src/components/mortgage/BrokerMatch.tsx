@@ -52,11 +52,23 @@ export const BrokerMatch = () => {
             .order("created_at", { ascending: false })
             .limit(3);
 
-          return {
-            ...match,
+          const processedMatch: IBrokerMatch = {
+            broker_id: match.broker_id,
+            match_score: match.match_score,
+            match_reasons: match.match_reasons,
             broker: Array.isArray(match.broker) ? match.broker[0] : match.broker,
-            reviews: reviews || [],
-          } as IBrokerMatch;
+            reviews: (reviews || []).map(review => ({
+              id: review.id,
+              rating: review.rating,
+              comment: review.comment,
+              created_at: review.created_at,
+              user: {
+                full_name: review.user?.[0]?.full_name || null
+              }
+            }))
+          };
+
+          return processedMatch;
         })
       );
 
@@ -150,7 +162,7 @@ export const BrokerMatch = () => {
               </>
             )}
 
-            <BrokerReviews reviews={match.reviews || []} />
+            <BrokerReviews reviews={match.reviews} />
 
             <div className="space-y-2 mb-6">
               <div className="text-sm text-muted-foreground">Match Reasons:</div>
