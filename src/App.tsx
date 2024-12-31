@@ -2,9 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { supabase } from "./integrations/supabase/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ComparisonProvider } from "./contexts/ComparisonContext";
 import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
@@ -12,7 +10,6 @@ import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
 import AreaResearch from "./pages/AreaResearch";
-import AuthPage from "./pages/AuthPage";
 import MortgagePage from "./pages/MortgagePage";
 import ConveyancingPage from "./pages/ConveyancingPage";
 import { ComparisonButton } from "./components/ComparisonButton";
@@ -20,12 +17,12 @@ import { motion } from "framer-motion";
 
 const queryClient = new QueryClient();
 
-const AppLayout = ({ children, isAuthenticated }) => {
+const AppLayout = ({ children }) => {
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-background">
-      <SideNav onCollapsedChange={setIsMenuCollapsed} isAuthenticated={isAuthenticated} />
+      <SideNav onCollapsedChange={setIsMenuCollapsed} isAuthenticated={true} />
       <motion.main
         initial={false}
         animate={{
@@ -37,52 +34,12 @@ const AppLayout = ({ children, isAuthenticated }) => {
       >
         {children}
       </motion.main>
-      {isAuthenticated && <ComparisonButton />}
+      <ComparisonButton />
     </div>
   );
 };
 
-// Protected route wrapper component
-const ProtectedRoute = ({ children, isAuthenticated }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
-  return children;
-};
-
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        setIsAuthenticated(!!session);
-      } catch (error) {
-        console.error("Error checking auth status:", error);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (loading) {
-    return null;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -92,17 +49,9 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route
-                path="/auth"
-                element={
-                  isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
-                }
-              />
-              
-              {/* Public routes */}
-              <Route
                 path="/"
                 element={
-                  <AppLayout isAuthenticated={isAuthenticated}>
+                  <AppLayout>
                     <Index />
                   </AppLayout>
                 }
@@ -110,61 +59,49 @@ const App = () => {
               <Route
                 path="/area-research"
                 element={
-                  <AppLayout isAuthenticated={isAuthenticated}>
+                  <AppLayout>
                     <AreaResearch />
                   </AppLayout>
                 }
               />
-
-              {/* Protected routes */}
               <Route
                 path="/viewed-properties"
                 element={
-                  <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    <AppLayout isAuthenticated={isAuthenticated}>
-                      <ViewedProperties />
-                    </AppLayout>
-                  </ProtectedRoute>
+                  <AppLayout>
+                    <ViewedProperties />
+                  </AppLayout>
                 }
               />
               <Route
                 path="/comparison"
                 element={
-                  <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    <AppLayout isAuthenticated={isAuthenticated}>
-                      <ComparisonPage />
-                    </AppLayout>
-                  </ProtectedRoute>
+                  <AppLayout>
+                    <ComparisonPage />
+                  </AppLayout>
                 }
               />
               <Route
                 path="/property/:id/analytics"
                 element={
-                  <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    <AppLayout isAuthenticated={isAuthenticated}>
-                      <PropertyAnalytics />
-                    </AppLayout>
-                  </ProtectedRoute>
+                  <AppLayout>
+                    <PropertyAnalytics />
+                  </AppLayout>
                 }
               />
               <Route
                 path="/mortgage"
                 element={
-                  <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    <AppLayout isAuthenticated={isAuthenticated}>
-                      <MortgagePage />
-                    </AppLayout>
-                  </ProtectedRoute>
+                  <AppLayout>
+                    <MortgagePage />
+                  </AppLayout>
                 }
               />
               <Route
                 path="/conveyancing"
                 element={
-                  <ProtectedRoute isAuthenticated={isAuthenticated}>
-                    <AppLayout isAuthenticated={isAuthenticated}>
-                      <ConveyancingPage />
-                    </AppLayout>
-                  </ProtectedRoute>
+                  <AppLayout>
+                    <ConveyancingPage />
+                  </AppLayout>
                 }
               />
             </Routes>
