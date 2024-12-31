@@ -19,7 +19,6 @@ const GoogleButton = ({ loading }: { loading: boolean }) => {
       if (error) throw error;
     } catch (error: any) {
       toast.error("Failed to connect with Google. Please try again.");
-      console.error("Google login error:", error);
     }
   };
 

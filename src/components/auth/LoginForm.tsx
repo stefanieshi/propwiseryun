@@ -12,16 +12,11 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password.trim(),
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
       
       if (error) {
@@ -32,17 +27,11 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
         } else {
           toast.error(error.message);
         }
-        console.error("Login error:", error);
         return;
       }
-
-      if (data?.user) {
-        toast.success("Successfully logged in!");
-        navigate("/");
-      }
-    } catch (error: any) {
-      toast.error("An unexpected error occurred. Please try again.");
-      console.error("Login error:", error);
+      
+      navigate("/");
+      toast.success("Successfully logged in!");
     } finally {
       setLoading(false);
     }
@@ -73,7 +62,7 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
         />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Signing in..." : "Sign in"}
+        Sign in
       </Button>
     </form>
   );

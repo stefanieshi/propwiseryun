@@ -1,1 +1,4 @@
 project_id = "rqejjsbqsshdxljylwvn"
+
+[functions.save-external-property]
+verify_jwt = false

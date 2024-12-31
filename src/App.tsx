@@ -2,15 +2,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "./integrations/supabase/client";
 import { ComparisonProvider } from "./contexts/ComparisonContext";
-import { useState } from "react"; // Added this import
 import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
 import AreaResearch from "./pages/AreaResearch";
+import AuthPage from "./pages/AuthPage";
 import MortgagePage from "./pages/MortgagePage";
 import ConveyancingPage from "./pages/ConveyancingPage";
 import { ComparisonButton } from "./components/ComparisonButton";
@@ -23,7 +25,7 @@ const AppLayout = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <SideNav onCollapsedChange={setIsMenuCollapsed} isAuthenticated={true} />
+      <SideNav onCollapsedChange={setIsMenuCollapsed} />
       <motion.main
         initial={false}
         animate={{
@@ -41,6 +43,38 @@ const AppLayout = ({ children }) => {
 };
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        setIsAuthenticated(!!session);
+      } catch (error) {
+        console.error("Error checking auth status:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -50,59 +84,29 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route
-                path="/"
+                path="/auth"
                 element={
-                  <AppLayout>
-                    <Index />
-                  </AppLayout>
+                  isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
                 }
               />
               <Route
-                path="/area-research"
+                path="/*"
                 element={
-                  <AppLayout>
-                    <AreaResearch />
-                  </AppLayout>
-                }
-              />
-              <Route
-                path="/viewed-properties"
-                element={
-                  <AppLayout>
-                    <ViewedProperties />
-                  </AppLayout>
-                }
-              />
-              <Route
-                path="/comparison"
-                element={
-                  <AppLayout>
-                    <ComparisonPage />
-                  </AppLayout>
-                }
-              />
-              <Route
-                path="/property/:id/analytics"
-                element={
-                  <AppLayout>
-                    <PropertyAnalytics />
-                  </AppLayout>
-                }
-              />
-              <Route
-                path="/mortgage"
-                element={
-                  <AppLayout>
-                    <MortgagePage />
-                  </AppLayout>
-                }
-              />
-              <Route
-                path="/conveyancing"
-                element={
-                  <AppLayout>
-                    <ConveyancingPage />
-                  </AppLayout>
+                  isAuthenticated ? (
+                    <AppLayout>
+                      <Routes>
+                        <Route path="/area-research" element={<AreaResearch />} />
+                        <Route path="/" element={<Index />} />
+                        <Route path="/viewed-properties" element={<ViewedProperties />} />
+                        <Route path="/comparison" element={<ComparisonPage />} />
+                        <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
+                        <Route path="/mortgage" element={<MortgagePage />} />
+                        <Route path="/conveyancing" element={<ConveyancingPage />} />
+                      </Routes>
+                    </AppLayout>
+                  ) : (
+                    <Navigate to="/auth" replace />
+                  )
                 }
               />
             </Routes>

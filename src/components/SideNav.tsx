@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, Map, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, User, ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 interface SideNavProps {
   onCollapsedChange?: (collapsed: boolean) => void;
-  isAuthenticated?: boolean;
 }
 
 const SideNav = ({ onCollapsedChange }: SideNavProps) => {
@@ -25,6 +24,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
     { icon: CreditCard, label: "Mortgage", href: "/mortgage" },
     { icon: FileText, label: "Conveyancing", href: "/conveyancing" },
     { icon: BarChart2, label: "AI consultant", href: "/ai-consultant" },
+    { icon: User, label: "Account", href: "/account" },
   ];
 
   const NavLink = ({ item, isCollapsed }) => {
