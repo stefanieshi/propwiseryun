@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ComparisonProvider } from "./contexts/ComparisonContext";
+import { useState } from "react"; // Added this import
 import SideNav from "./components/SideNav";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
