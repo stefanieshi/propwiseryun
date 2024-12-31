@@ -3,7 +3,7 @@ export interface BrokerReview {
   rating: number;
   comment: string;
   created_at: string;
-  user?: {
+  user: {
     full_name: string | null;
   };
 }
@@ -24,8 +24,8 @@ export interface BrokerMatch {
   broker_id: string;
   match_score: number;
   match_reasons: string[];
-  broker?: Broker;
-  reviews?: BrokerReview[];
+  broker: Broker;
+  reviews: BrokerReview[];
 }
 
 export interface PreApprovalData {

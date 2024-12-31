@@ -56,11 +56,11 @@ export const BrokerMatch = () => {
             ...match,
             broker: Array.isArray(match.broker) ? match.broker[0] : match.broker,
             reviews: reviews || [],
-          };
+          } as IBrokerMatch;
         })
       );
 
-      return matchesWithReviews as IBrokerMatch[];
+      return matchesWithReviews;
     },
   });
 
