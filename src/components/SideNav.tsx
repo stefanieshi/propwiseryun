@@ -8,9 +8,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 interface SideNavProps {
   onCollapsedChange?: (collapsed: boolean) => void;
+  isAuthenticated: boolean;
 }
 
-const SideNav = ({ onCollapsedChange }: SideNavProps) => {
+const SideNav = ({ onCollapsedChange, isAuthenticated }: SideNavProps) => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -21,15 +22,20 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   const menuItems = [
     { icon: Map, label: "Area Research", href: "/area-research" },
     { icon: Home, label: "Property research", href: "/" },
-    { icon: CreditCard, label: "Mortgage", href: "/mortgage" },
-    { icon: FileText, label: "Conveyancing", href: "/conveyancing" },
-    { icon: BarChart2, label: "AI consultant", href: "/ai-consultant" },
-    { icon: User, label: "Account", href: "/account" },
+    { icon: CreditCard, label: "Mortgage", href: "/mortgage", protected: true },
+    { icon: FileText, label: "Conveyancing", href: "/conveyancing", protected: true },
+    { icon: BarChart2, label: "AI consultant", href: "/ai-consultant", protected: true },
+    { icon: User, label: "Account", href: "/account", protected: true },
   ];
 
   const NavLink = ({ item, isCollapsed }) => {
     const Icon = item.icon;
     const isActive = location.pathname === item.href;
+    
+    // Don't render protected menu items if user is not authenticated
+    if (item.protected && !isAuthenticated) {
+      return null;
+    }
     
     return (
       <TooltipProvider delayDuration={0}>
