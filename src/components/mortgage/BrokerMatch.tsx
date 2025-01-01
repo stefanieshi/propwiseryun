@@ -33,7 +33,7 @@ interface BrokerMatch {
 // Example data for demonstration
 const exampleMatches: BrokerMatch[] = [
   {
-    broker_id: "1",
+    broker_id: "550e8400-e29b-41d4-a716-446655440000",
     match_score: 95,
     match_reasons: [
       "Specializes in first-time buyers",
@@ -42,7 +42,7 @@ const exampleMatches: BrokerMatch[] = [
       "Excellent customer reviews"
     ],
     broker: {
-      id: "1",
+      id: "550e8400-e29b-41d4-a716-446655440000",
       name: "Sarah Johnson",
       description: "Expert mortgage broker with 15 years of experience helping first-time buyers secure their dream homes.",
       approval_rate: 92,
@@ -57,18 +57,20 @@ const exampleMatches: BrokerMatch[] = [
         id: "1",
         rating: 5,
         comment: "Sarah made the whole process incredibly smooth. Highly recommended!",
-        user: { full_name: "James Wilson" }
+        user: { full_name: "James Wilson" },
+        created_at: new Date().toISOString()
       },
       {
         id: "2",
         rating: 5,
         comment: "Excellent service and communication throughout.",
-        user: { full_name: "Emma Thompson" }
+        user: { full_name: "Emma Thompson" },
+        created_at: new Date().toISOString()
       }
     ]
   },
   {
-    broker_id: "2",
+    broker_id: "550e8400-e29b-41d4-a716-446655440001",
     match_score: 88,
     match_reasons: [
       "Specialized in complex cases",
@@ -77,7 +79,7 @@ const exampleMatches: BrokerMatch[] = [
       "Personalized service"
     ],
     broker: {
-      id: "2",
+      id: "550e8400-e29b-41d4-a716-446655440001",
       name: "Michael Chen",
       description: "Specialized in handling complex mortgage cases with a track record of finding solutions for challenging situations.",
       approval_rate: 88,
@@ -92,12 +94,13 @@ const exampleMatches: BrokerMatch[] = [
         id: "3",
         rating: 5,
         comment: "Michael found me a great deal despite my complex income situation.",
-        user: { full_name: "David Brown" }
+        user: { full_name: "David Brown" },
+        created_at: new Date().toISOString()
       }
     ]
   },
   {
-    broker_id: "3",
+    broker_id: "550e8400-e29b-41d4-a716-446655440002",
     match_score: 82,
     match_reasons: [
       "Buy-to-let specialist",
@@ -106,7 +109,7 @@ const exampleMatches: BrokerMatch[] = [
       "Great track record"
     ],
     broker: {
-      id: "3",
+      id: "550e8400-e29b-41d4-a716-446655440002",
       name: "Rachel Anderson",
       description: "Buy-to-let mortgage specialist with deep knowledge of the investment property market.",
       approval_rate: 85,
@@ -121,7 +124,8 @@ const exampleMatches: BrokerMatch[] = [
         id: "4",
         rating: 4,
         comment: "Very knowledgeable about the buy-to-let market.",
-        user: { full_name: "Sophie Clark" }
+        user: { full_name: "Sophie Clark" },
+        created_at: new Date().toISOString()
       }
     ]
   }
