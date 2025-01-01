@@ -27,7 +27,8 @@ export function ChatContainer() {
   const handleSend = async (content: string) => {
     try {
       setIsLoading(true);
-      const newMessages = [...messages, { role: "user", content }];
+      const newMessage: Message = { role: "user", content };
+      const newMessages = [...messages, newMessage];
       setMessages(newMessages);
 
       const { data, error } = await supabase.functions.invoke('ai-chat', {
