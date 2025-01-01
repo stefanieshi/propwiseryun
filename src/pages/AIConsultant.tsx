@@ -17,10 +17,16 @@ import { Button } from "@/components/ui/button";
 import {
   Brain,
   Calculator,
-  ChartBarIcon,
+  ChartBar,
   ClipboardCheck,
   HomeIcon,
   TrendingUp,
+  AlertTriangle,
+  Building,
+  DollarSign,
+  LineChart,
+  PieChart,
+  BarChart3,
 } from "lucide-react";
 
 const AIConsultant = () => {
@@ -50,7 +56,7 @@ const AIConsultant = () => {
         </div>
         <Button
           onClick={handleAnalysis}
-          className="bg-gradient-primary"
+          className="bg-gradient-to-r from-primary/80 to-primary hover:from-primary hover:to-primary/90 transition-all duration-300"
           disabled={isAnalyzing}
         >
           <Brain className="mr-2 h-4 w-4" />
@@ -59,7 +65,7 @@ const AIConsultant = () => {
       </div>
 
       <Tabs defaultValue="investment" className="space-y-4">
-        <TabsList className="grid grid-cols-4 gap-4 bg-muted p-1">
+        <TabsList className="grid w-full grid-cols-4 gap-4">
           <TabsTrigger value="investment">Investment Analysis</TabsTrigger>
           <TabsTrigger value="market">Market Insights</TabsTrigger>
           <TabsTrigger value="recommendations">Property Recommendations</TabsTrigger>
@@ -84,6 +90,7 @@ const AIConsultant = () => {
                     Our AI analyzes market data, property values, and rental yields to provide accurate ROI predictions.
                   </p>
                   <Button variant="outline" className="w-full">
+                    <DollarSign className="mr-2 h-4 w-4" />
                     Calculate ROI
                   </Button>
                 </div>
@@ -106,6 +113,7 @@ const AIConsultant = () => {
                     Get AI-powered predictions for property value growth based on historical data and market trends.
                   </p>
                   <Button variant="outline" className="w-full">
+                    <LineChart className="mr-2 h-4 w-4" />
                     View Potential
                   </Button>
                 </div>
@@ -118,7 +126,7 @@ const AIConsultant = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <ChartBarIcon className="mr-2 h-5 w-5 text-primary" />
+                <ChartBar className="mr-2 h-5 w-5 text-primary" />
                 Market Analysis
               </CardTitle>
               <CardDescription>
@@ -131,6 +139,7 @@ const AIConsultant = () => {
                   Our AI analyzes current market conditions, trends, and future projections to help you make informed decisions.
                 </p>
                 <Button variant="outline" className="w-full">
+                  <BarChart3 className="mr-2 h-4 w-4" />
                   View Market Analysis
                 </Button>
               </div>
@@ -155,6 +164,7 @@ const AIConsultant = () => {
                   Get AI-powered property recommendations tailored to your preferences, budget, and investment goals.
                 </p>
                 <Button variant="outline" className="w-full">
+                  <Building className="mr-2 h-4 w-4" />
                   View Recommendations
                 </Button>
               </div>
@@ -179,6 +189,7 @@ const AIConsultant = () => {
                   Our AI evaluates potential risks associated with properties, including market volatility, location factors, and financial considerations.
                 </p>
                 <Button variant="outline" className="w-full">
+                  <AlertTriangle className="mr-2 h-4 w-4" />
                   View Risk Assessment
                 </Button>
               </div>
