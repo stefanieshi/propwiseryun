@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { PrewrittenPrompts } from "./PrewrittenPrompts";
 
 interface Message {
   role: "user" | "assistant";
@@ -51,12 +52,17 @@ export function ChatContainer() {
     }
   };
 
+  const handlePromptSelect = (prompt: string) => {
+    handleSend(prompt);
+  };
+
   return (
-    <Card className="flex flex-col h-[600px] p-4">
+    <Card className="flex flex-col h-[800px] p-4">
+      <PrewrittenPrompts onSelectPrompt={handlePromptSelect} />
       <ScrollArea className="flex-1 pr-4">
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            Start a conversation with your AI real estate consultant
+            Select a common question above or start a conversation with your AI real estate consultant
           </div>
         ) : (
           messages.map((message, index) => (
