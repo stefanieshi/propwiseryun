@@ -8,12 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { type Json } from "@/integrations/supabase/types";
 
 interface WorkflowManagerProps {
   workflows: Array<{
     id: string;
     current_stage: string;
-    completion_status: Record<string, any>;
+    completion_status: Json;
     created_at: string;
   }>;
 }
@@ -50,15 +51,17 @@ const WorkflowManager = ({ workflows }: WorkflowManagerProps) => {
   );
 };
 
-const getStatusVariant = (status: Record<string, any>) => {
-  const completion = Object.values(status).filter(Boolean).length / Object.keys(status).length;
+const getStatusVariant = (status: Json) => {
+  if (typeof status !== 'object' || !status) return "secondary";
+  const completion = Object.values(status as Record<string, any>).filter(Boolean).length / Object.keys(status as Record<string, any>).length;
   if (completion === 1) return "success";
-  if (completion > 0.5) return "warning";
+  if (completion > 0.5) return "secondary";
   return "secondary";
 };
 
-const getStatusLabel = (status: Record<string, any>) => {
-  const completion = Object.values(status).filter(Boolean).length / Object.keys(status).length;
+const getStatusLabel = (status: Json) => {
+  if (typeof status !== 'object' || !status) return "Pending";
+  const completion = Object.values(status as Record<string, any>).filter(Boolean).length / Object.keys(status as Record<string, any>).length;
   if (completion === 1) return "Completed";
   if (completion > 0.5) return "In Progress";
   return "Pending";

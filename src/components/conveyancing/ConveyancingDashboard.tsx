@@ -14,12 +14,12 @@ const ConveyancingDashboard = () => {
   const [activeTab, setActiveTab] = useState("documents");
   const { toast } = useToast();
 
-  const { data: workflows, isLoading } = useQuery({
+  const { data: workflows = [], isLoading } = useQuery({
     queryKey: ["conveyancing-workflows"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("conveyancing_workflows")
-        .select("*")
+        .select("id, current_stage, completion_status, created_at")
         .order("created_at", { ascending: false });
 
       if (error) {

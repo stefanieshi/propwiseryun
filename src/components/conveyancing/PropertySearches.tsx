@@ -15,25 +15,18 @@ const PropertySearches = () => {
 
     setIsSearching(true);
     try {
-      const { data, error } = await supabase.functions.invoke('process-conveyancing', {
-        body: { 
-          action: 'property_search', 
-          data: { query: searchQuery }
-        }
-      });
+      const { data, error } = await supabase.from("property_searches").insert({
+        property_id: "00000000-0000-0000-0000-000000000000", // Placeholder UUID
+        search_type: "land_registry",
+        results: { query: searchQuery },
+        status: "pending"
+      }).select().single();
 
       if (error) throw error;
 
-      await supabase.from('property_searches').insert({
-        property_id: data.property_id,
-        search_type: 'land_registry',
-        results: data.results,
-        status: 'completed'
-      });
-
       toast({
-        title: "Success",
-        description: "Property search completed successfully",
+        title: "Search initiated",
+        description: "Property search has been started",
       });
     } catch (error: any) {
       toast({
