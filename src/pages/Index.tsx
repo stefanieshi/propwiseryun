@@ -14,55 +14,71 @@ import {
   CheckCircle,
 } from "lucide-react";
 
+const sampleProperties: Property[] = [
+  {
+    id: "1",
+    title: "Luxury Kitchen Apartment",
+    price: 2500000,
+    location: "Central London",
+    bedrooms: 3,
+    bathrooms: 2,
+    sqft: 2000,
+    property_type: "Apartment",
+    description: "Modern apartment with stunning kitchen and natural lighting",
+    image_url: "/lovable-uploads/40b689a6-12a5-4e9d-9f98-61dac7376731.png",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "2",
+    title: "Garden Terrace House",
+    price: 3500000,
+    location: "North London",
+    bedrooms: 4,
+    bathrooms: 3,
+    sqft: 3000,
+    property_type: "House",
+    description: "Beautiful house with spacious garden and terrace",
+    image_url: "/lovable-uploads/2223284a-1a67-4d4f-bb74-60fdb31adda0.png",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "3",
+    title: "Riverside Apartments",
+    price: 1800000,
+    location: "Thames Bank",
+    bedrooms: 2,
+    bathrooms: 2,
+    sqft: 1500,
+    property_type: "Apartment",
+    description: "Modern apartments with riverside views",
+    image_url: "/lovable-uploads/cc8e1d8a-b412-4cd4-80bb-6a16c1def4a2.png",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: "4",
+    title: "Modern Architectural Marvel",
+    price: 4500000,
+    location: "Hampstead",
+    bedrooms: 5,
+    bathrooms: 4,
+    sqft: 4000,
+    property_type: "House",
+    description: "Unique modern design with panoramic views",
+    image_url: "/lovable-uploads/42ca702d-9604-4405-ad47-928c9dc888a4.png",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
 const Index = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const generateImageForProperty = async (property: Property) => {
-    try {
-      const response = await fetch('/api/generate-property-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ property }),
-      });
-
-      if (!response.ok) throw new Error('Failed to generate image');
-      
-      const { image } = await response.json();
-      
-      // Update the property with the new image
-      const { error: updateError } = await supabase
-        .from('properties')
-        .update({ image_url: image })
-        .eq('id', property.id);
-
-      if (updateError) throw updateError;
-
-      // Update local state
-      setProperties(prevProperties =>
-        prevProperties.map(p =>
-          p.id === property.id ? { ...p, image_url: image } : p
-        )
-      );
-
-      toast({
-        title: "Image Generated",
-        description: "Property image has been generated successfully.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
 
   useEffect(() => {
     fetchUserData();
@@ -77,21 +93,8 @@ const Index = () => {
         return;
       }
 
-      // Fetch saved properties
-      const { data: propertiesData, error: propertiesError } = await supabase
-        .from("properties")
-        .select("*")
-        .limit(6);
-
-      if (propertiesError) throw propertiesError;
-
-      // Generate images for properties that don't have them
-      const propertiesWithImages = propertiesData || [];
-      for (const property of propertiesWithImages) {
-        if (!property.image_url) {
-          await generateImageForProperty(property);
-        }
-      }
+      // For now, we'll use our sample properties instead of fetching from Supabase
+      setProperties(sampleProperties);
 
       // Fetch user progress
       const { data: progressData, error: progressError } = await supabase
@@ -102,7 +105,6 @@ const Index = () => {
 
       if (progressError && progressError.code !== "PGRST116") throw progressError;
 
-      setProperties(propertiesWithImages);
       setUserProgress(progressData);
       setLoading(false);
     } catch (error: any) {
