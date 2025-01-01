@@ -19,6 +19,9 @@ const DocumentGenerator = () => {
   const generateDocument = async () => {
     setIsGenerating(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
       const { data, error } = await supabase.functions.invoke('process-conveyancing', {
         body: { action: 'generate_document', data: { documentType } }
       });
@@ -26,9 +29,14 @@ const DocumentGenerator = () => {
       if (error) throw error;
 
       await supabase.from('conveyancing_documents').insert({
+        user_id: user.id,
+        lawyer_id: data.lawyer_id,
         document_type: documentType,
         content: data.content,
-        status: 'draft'
+        status: 'draft',
+        risk_score: data.risk_score,
+        fraud_check_result: data.fraud_check_result,
+        land_registry_status: 'pending'
       });
 
       toast({
