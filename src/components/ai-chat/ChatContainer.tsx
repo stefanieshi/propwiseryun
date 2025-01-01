@@ -5,7 +5,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 
 interface Message {
   role: "user" | "assistant";
@@ -28,19 +27,18 @@ export function ChatContainer() {
     try {
       setIsLoading(true);
       const newMessage: Message = { role: "user", content };
-      const newMessages = [...messages, newMessage];
-      setMessages(newMessages);
+      setMessages([...messages, newMessage]);
 
       const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: { messages: newMessages }
+        body: { messages: [...messages, newMessage] }
       });
 
       if (error) throw error;
 
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: data.choices[0].message.content }
-      ]);
+      setMessages(prev => [...prev, { 
+        role: "assistant", 
+        content: data.choices[0].message.content 
+      }]);
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -55,7 +53,7 @@ export function ChatContainer() {
 
   return (
     <Card className="flex flex-col h-[600px] p-4">
-      <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 pr-4">
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             Start a conversation with your AI real estate consultant
