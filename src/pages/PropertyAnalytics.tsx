@@ -8,6 +8,7 @@ import BackButton from "@/components/BackButton";
 import { motion } from "framer-motion";
 import AnalyticsHeader from "@/components/analytics/AnalyticsHeader";
 import AnalyticsTabs from "@/components/analytics/AnalyticsTabs";
+import { ComparisonProvider } from "@/contexts/ComparisonContext";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,27 +17,35 @@ const PropertyAnalytics = () => {
   const { data: property, isLoading: propertyLoading } = useQuery({
     queryKey: ["property", id],
     queryFn: async () => {
+      if (!id) throw new Error("No property ID provided");
+      
       const { data, error } = await supabase
         .from("properties")
         .select("*")
         .eq("id", id)
         .single();
+      
       if (error) throw error;
       return data;
     },
+    enabled: !!id,
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["property-analytics", id],
     queryFn: async () => {
+      if (!id) throw new Error("No property ID provided");
+      
       const { data, error } = await supabase
         .from("property_analytics")
         .select("*")
         .eq("property_id", id)
         .single();
+      
       if (error) throw error;
       return data;
     },
+    enabled: !!id,
   });
 
   const handleGenerateReport = async () => {
@@ -90,25 +99,27 @@ const PropertyAnalytics = () => {
   }
 
   return (
-    <motion.div 
-      className="space-y-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="space-y-6">
-        <AnalyticsHeader
-          propertyTitle={property?.title}
-          propertyId={id as string}
-          onGenerateReport={handleGenerateReport}
-        />
-        <AnalyticsTabs
-          analytics={analytics}
-          property={property}
-          propertyId={id as string}
-        />
-      </div>
-    </motion.div>
+    <ComparisonProvider>
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="space-y-6">
+          <AnalyticsHeader
+            propertyTitle={property?.title}
+            propertyId={id as string}
+            onGenerateReport={handleGenerateReport}
+          />
+          <AnalyticsTabs
+            analytics={analytics}
+            property={property}
+            propertyId={id as string}
+          />
+        </div>
+      </motion.div>
+    </ComparisonProvider>
   );
 };
 
