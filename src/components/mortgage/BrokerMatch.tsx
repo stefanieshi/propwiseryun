@@ -30,6 +30,103 @@ interface BrokerMatch {
   reviews?: BrokerReview[];
 }
 
+// Example data for demonstration
+const exampleMatches: BrokerMatch[] = [
+  {
+    broker_id: "1",
+    match_score: 95,
+    match_reasons: [
+      "Specializes in first-time buyers",
+      "High approval rate",
+      "Fast processing time",
+      "Excellent customer reviews"
+    ],
+    broker: {
+      id: "1",
+      name: "Sarah Johnson",
+      description: "Expert mortgage broker with 15 years of experience helping first-time buyers secure their dream homes.",
+      approval_rate: 92,
+      specializations: ["First-time buyers", "Buy-to-let", "Remortgaging"],
+      average_processing_time: 14,
+      rating: 4.8,
+      review_count: 156,
+      profile_picture_url: "/lovable-uploads/42ca702d-9604-4405-ad47-928c9dc888a4.png"
+    },
+    reviews: [
+      {
+        id: "1",
+        rating: 5,
+        comment: "Sarah made the whole process incredibly smooth. Highly recommended!",
+        user: { full_name: "James Wilson" }
+      },
+      {
+        id: "2",
+        rating: 5,
+        comment: "Excellent service and communication throughout.",
+        user: { full_name: "Emma Thompson" }
+      }
+    ]
+  },
+  {
+    broker_id: "2",
+    match_score: 88,
+    match_reasons: [
+      "Specialized in complex cases",
+      "Strong lender relationships",
+      "Competitive rates",
+      "Personalized service"
+    ],
+    broker: {
+      id: "2",
+      name: "Michael Chen",
+      description: "Specialized in handling complex mortgage cases with a track record of finding solutions for challenging situations.",
+      approval_rate: 88,
+      specializations: ["Self-employed", "Complex income", "Large mortgages"],
+      average_processing_time: 18,
+      rating: 4.7,
+      review_count: 132,
+      profile_picture_url: "/lovable-uploads/753f39c6-065d-4521-98e8-03e7b4094058.png"
+    },
+    reviews: [
+      {
+        id: "3",
+        rating: 5,
+        comment: "Michael found me a great deal despite my complex income situation.",
+        user: { full_name: "David Brown" }
+      }
+    ]
+  },
+  {
+    broker_id: "3",
+    match_score: 82,
+    match_reasons: [
+      "Buy-to-let specialist",
+      "Excellent market knowledge",
+      "Quick response times",
+      "Great track record"
+    ],
+    broker: {
+      id: "3",
+      name: "Rachel Anderson",
+      description: "Buy-to-let mortgage specialist with deep knowledge of the investment property market.",
+      approval_rate: 85,
+      specializations: ["Buy-to-let", "Portfolio landlords", "New build"],
+      average_processing_time: 16,
+      rating: 4.6,
+      review_count: 98,
+      profile_picture_url: "/lovable-uploads/92ce51d3-8dd2-4f65-9d00-5d9d53c6cb55.png"
+    },
+    reviews: [
+      {
+        id: "4",
+        rating: 4,
+        comment: "Very knowledgeable about the buy-to-let market.",
+        user: { full_name: "Sophie Clark" }
+      }
+    ]
+  }
+];
+
 export const BrokerMatch = () => {
   const { data: matches, isLoading } = useQuery({
     queryKey: ["broker-matches"],
@@ -79,7 +176,7 @@ export const BrokerMatch = () => {
         })
       );
 
-      return matchesWithReviews as BrokerMatch[];
+      return matchesWithReviews.length > 0 ? matchesWithReviews : exampleMatches;
     },
   });
 
