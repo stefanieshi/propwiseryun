@@ -29,15 +29,26 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
   const { data: messages, isLoading } = useQuery({
     queryKey: ['broker-messages', brokerMatchId],
     queryFn: async () => {
+      // Validate UUID format before making the request
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(brokerMatchId)) {
+        console.warn('Invalid UUID format for broker_match_id:', brokerMatchId);
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('broker_messages')
         .select('*')
         .eq('broker_match_id', brokerMatchId)
         .order('created_at', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching messages:', error);
+        return [];
+      }
       return data as Message[];
-    }
+    },
+    enabled: isExpanded && !!brokerMatchId // Only fetch when chat is expanded and we have a valid ID
   });
 
   useEffect(() => {
@@ -52,7 +63,6 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
           filter: `broker_match_id=eq.${brokerMatchId}`
         },
         (payload) => {
-          // Handle new message
           console.log('New message:', payload);
         }
       )
@@ -89,7 +99,7 @@ export const ChatBox = ({ brokerMatchId }: ChatBoxProps) => {
         title: "Message sent",
         description: "Your message has been sent to the broker.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
       toast({
         title: "Error",
