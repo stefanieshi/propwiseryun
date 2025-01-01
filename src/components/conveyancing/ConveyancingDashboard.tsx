@@ -5,39 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import DocumentGenerator from "./DocumentGenerator";
-import PropertySearches from "./PropertySearches";
-import WorkflowManager from "./WorkflowManager";
+import LawyerDirectory from "./LawyerDirectory";
+import FavoriteLawyers from "./FavoriteLawyers";
 import StampDutyCalculator from "./StampDutyCalculator";
-import ConveyancingChat from "./ConveyancingChat";
 
 const ConveyancingDashboard = () => {
-  const [activeTab, setActiveTab] = useState("documents");
+  const [activeTab, setActiveTab] = useState("lawyers");
   const { toast } = useToast();
-
-  const { data: workflows = [], isLoading } = useQuery({
-    queryKey: ["conveyancing-workflows"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("conveyancing_workflows")
-        .select("id, current_stage, completion_status, created_at")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load workflows",
-          variant: "destructive",
-        });
-        return [];
-      }
-
-      return data;
-    },
-  });
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="space-y-6">
@@ -47,32 +21,27 @@ const ConveyancingDashboard = () => {
 
       <Card className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-5 w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="lawyers">Lawyers</TabsTrigger>
+            <TabsTrigger value="favorites">My Favorites</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="searches">Searches</TabsTrigger>
-            <TabsTrigger value="workflow">Workflow</TabsTrigger>
             <TabsTrigger value="calculator">Calculator</TabsTrigger>
-            <TabsTrigger value="chat">Chat</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="lawyers" className="mt-6">
+            <LawyerDirectory />
+          </TabsContent>
+
+          <TabsContent value="favorites" className="mt-6">
+            <FavoriteLawyers />
+          </TabsContent>
 
           <TabsContent value="documents" className="mt-6">
             <DocumentGenerator />
           </TabsContent>
 
-          <TabsContent value="searches" className="mt-6">
-            <PropertySearches />
-          </TabsContent>
-
-          <TabsContent value="workflow" className="mt-6">
-            <WorkflowManager workflows={workflows} />
-          </TabsContent>
-
           <TabsContent value="calculator" className="mt-6">
             <StampDutyCalculator />
-          </TabsContent>
-
-          <TabsContent value="chat" className="mt-6">
-            <ConveyancingChat />
           </TabsContent>
         </Tabs>
       </Card>
