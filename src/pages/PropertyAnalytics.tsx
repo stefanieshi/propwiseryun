@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import BackButton from "@/components/BackButton";
 import { motion } from "framer-motion";
 import AnalyticsHeader from "@/components/analytics/AnalyticsHeader";
 import AnalyticsTabs from "@/components/analytics/AnalyticsTabs";
@@ -99,7 +98,6 @@ const PropertyAnalytics = () => {
   if (propertyLoading || analyticsLoading) {
     return (
       <Card className="glass-card p-6">
-        <BackButton className="mb-4" />
         <Skeleton className="h-[300px]" />
       </Card>
     );
@@ -108,7 +106,6 @@ const PropertyAnalytics = () => {
   if (!property || !analytics) {
     return (
       <Card className="glass-card p-6">
-        <BackButton className="mb-4" />
         <p className="text-center text-muted-foreground">
           No analytics data available for this property
         </p>
