@@ -5,6 +5,9 @@ import { Card } from "@/components/ui/card";
 import LawyerDirectory from "@/components/conveyancing/LawyerDirectory";
 import FavoriteLawyers from "@/components/conveyancing/FavoriteLawyers";
 import LawyerOrders from "@/components/conveyancing/LawyerOrders";
+import DocumentAutomation from "@/components/conveyancing/DocumentAutomation";
+import TaskManagement from "@/components/conveyancing/TaskManagement";
+import LandRegistry from "@/components/conveyancing/LandRegistry";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +16,7 @@ const ConveyancingHeader = ({ title }: { title: string }) => {
     <div className="mb-8">
       <h1 className="text-3xl font-bold mb-2">{title}</h1>
       <p className="text-muted-foreground">
-        Find and connect with experienced conveyancing lawyers for your property transaction
+        Streamline your conveyancing process with AI-powered tools and expert lawyers
       </p>
     </div>
   );
@@ -64,10 +67,13 @@ const ConveyancingPage = () => {
 
       <Card className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="directory">Lawyer Directory</TabsTrigger>
             <TabsTrigger value="favorites">My Favorites</TabsTrigger>
             <TabsTrigger value="orders">My Orders</TabsTrigger>
+            <TabsTrigger value="documents">Document Automation</TabsTrigger>
+            <TabsTrigger value="tasks">Task Management</TabsTrigger>
+            <TabsTrigger value="registry">Land Registry</TabsTrigger>
           </TabsList>
 
           <TabsContent value="directory" className="space-y-4">
@@ -80,6 +86,18 @@ const ConveyancingPage = () => {
 
           <TabsContent value="orders" className="space-y-4">
             <LawyerOrders />
+          </TabsContent>
+
+          <TabsContent value="documents" className="space-y-4">
+            <DocumentAutomation />
+          </TabsContent>
+
+          <TabsContent value="tasks" className="space-y-4">
+            <TaskManagement />
+          </TabsContent>
+
+          <TabsContent value="registry" className="space-y-4">
+            <LandRegistry />
           </TabsContent>
         </Tabs>
       </Card>

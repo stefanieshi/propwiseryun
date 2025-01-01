@@ -341,6 +341,53 @@ export type Database = {
           },
         ]
       }
+      conveyancing_tasks: {
+        Row: {
+          assigned_to: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+          workflow_id: string | null
+        }
+        Insert: {
+          assigned_to: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+          workflow_id?: string | null
+        }
+        Update: {
+          assigned_to?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          workflow_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conveyancing_tasks_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "conveyancing_workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conveyancing_workflows: {
         Row: {
           completion_status: Json
@@ -398,6 +445,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_templates: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          jurisdiction: string
+          name: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          id?: string
+          jurisdiction: string
+          name: string
+          template_type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          jurisdiction?: string
+          name?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       external_properties: {
         Row: {
@@ -499,6 +576,56 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      land_registry_submissions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          documents: Json
+          id: string
+          registration_number: string | null
+          status: string
+          submission_type: string
+          submitted_at: string | null
+          updated_at: string
+          validation_result: Json | null
+          workflow_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          documents: Json
+          id?: string
+          registration_number?: string | null
+          status?: string
+          submission_type: string
+          submitted_at?: string | null
+          updated_at?: string
+          validation_result?: Json | null
+          workflow_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          documents?: Json
+          id?: string
+          registration_number?: string | null
+          status?: string
+          submission_type?: string
+          submitted_at?: string | null
+          updated_at?: string
+          validation_result?: Json | null
+          workflow_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "land_registry_submissions_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "conveyancing_workflows"
             referencedColumns: ["id"]
           },
         ]
