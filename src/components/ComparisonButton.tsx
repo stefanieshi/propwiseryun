@@ -16,21 +16,22 @@ export function ComparisonButton() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2"
+        className="fixed bottom-8 right-8 z-50 flex items-center gap-3"
       >
         <Button
           variant="outline"
           size="icon"
           onClick={clearSelection}
-          className="rounded-full"
+          className="rounded-full bg-background shadow-lg hover:bg-background/90 border-2 border-primary animate-pulse"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5 text-primary" />
         </Button>
         <Button
-          className="rounded-full shadow-lg bg-primary hover:bg-primary/90"
+          className="rounded-full shadow-lg bg-gradient-primary hover:opacity-90 transition-all duration-300 
+                     py-6 px-8 text-lg font-semibold animate-glow"
           onClick={() => navigate("/comparison")}
         >
-          <Scale className="mr-2 h-4 w-4" />
+          <Scale className="mr-3 h-5 w-5" />
           Compare {selectedProperties.length} Properties
         </Button>
       </motion.div>
