@@ -36,7 +36,10 @@ export const PreApprovalStatus = ({ preApproval }: PreApprovalStatusProps) => {
             </TooltipWrapper>
           </div>
           <p className="text-2xl font-semibold">
-            {preApproval.interest_rate_range.min}% - {preApproval.interest_rate_range.max}%
+            {preApproval.interest_rate_range ? 
+              `${preApproval.interest_rate_range.min}% - ${preApproval.interest_rate_range.max}%` :
+              "Not available"
+            }
           </p>
         </div>
 
@@ -48,8 +51,11 @@ export const PreApprovalStatus = ({ preApproval }: PreApprovalStatusProps) => {
             </TooltipWrapper>
           </div>
           <p className="text-2xl font-semibold">
-            £{preApproval.monthly_payment_range.min.toLocaleString()} - 
-            £{preApproval.monthly_payment_range.max.toLocaleString()}
+            {preApproval.monthly_payment_range ? 
+              `£${preApproval.monthly_payment_range.min.toLocaleString()} - 
+               £${preApproval.monthly_payment_range.max.toLocaleString()}` :
+              "Not available"
+            }
           </p>
         </div>
       </div>
@@ -57,7 +63,7 @@ export const PreApprovalStatus = ({ preApproval }: PreApprovalStatusProps) => {
       <div className="border rounded-lg p-4">
         <h3 className="font-medium mb-3">Matching Criteria</h3>
         <div className="space-y-2">
-          {preApproval.criteria_matched.map((criteria, index) => (
+          {(preApproval.criteria_matched || []).map((criteria, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <Check className="w-4 h-4 text-green-500" />
               <span>{criteria}</span>
