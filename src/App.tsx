@@ -15,6 +15,7 @@ import AreaResearch from "./pages/AreaResearch";
 import AuthPage from "./pages/AuthPage";
 import MortgagePage from "./pages/MortgagePage";
 import ConveyancingPage from "./pages/ConveyancingPage";
+import AiConsultant from "./pages/AiConsultant";
 import { ComparisonButton } from "./components/ComparisonButton";
 import { motion } from "framer-motion";
 
@@ -102,6 +103,7 @@ const App = () => {
                         <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
                         <Route path="/mortgage" element={<MortgagePage />} />
                         <Route path="/conveyancing" element={<ConveyancingPage />} />
+                        <Route path="/ai-consultant" element={<AiConsultant />} />
                       </Routes>
                     </AppLayout>
                   ) : (
