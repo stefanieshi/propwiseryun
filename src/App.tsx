@@ -1,52 +1,42 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Index from "./pages/Index";
-import PropertyAnalytics from "./pages/PropertyAnalytics";
-import ViewedProperties from "./pages/ViewedProperties";
-import ComparisonPage from "./pages/ComparisonPage";
-import AreaResearch from "./pages/AreaResearch";
-import MortgagePage from "./pages/MortgagePage";
-import ConveyancingPage from "./pages/ConveyancingPage";
-import CommutePage from "./pages/CommutePage";
-import AIConsultant from "./pages/AIConsultant";
-import AuthPage from "./pages/AuthPage";
-import SideNav from "./components/SideNav";
+import { ComparisonProvider } from "@/contexts/ComparisonContext";
 import { Toaster } from "@/components/ui/toaster";
-import "./App.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Routes, Route } from "react-router-dom";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import Home from "@/pages/Home";
+import PropertyAnalytics from "@/pages/PropertyAnalytics";
+import Comparison from "@/pages/Comparison";
+import NotFound from "@/pages/NotFound";
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="flex min-h-screen">
-          <SideNav />
-          <main className="flex-1 p-4">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/analytics/:id" element={<PropertyAnalytics />} />
-              <Route path="/viewed" element={<ViewedProperties />} />
-              <Route path="/compare" element={<ComparisonPage />} />
-              <Route path="/area-research" element={<AreaResearch />} />
-              <Route path="/mortgage" element={<MortgagePage />} />
-              <Route path="/conveyancing" element={<ConveyancingPage />} />
-              <Route path="/commute" element={<CommutePage />} />
-              <Route path="/ai-consultant" element={<AIConsultant />} />
-              <Route path="/auth" element={<AuthPage />} />
-            </Routes>
-          </main>
-        </div>
+      <ComparisonProvider>
+        <BrowserRouter>
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <div className="min-h-screen bg-background font-sans antialiased">
+              <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1 container mx-auto px-4 py-8">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
+                    <Route path="/comparison" element={<Comparison />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            </div>
+          </ThemeProvider>
+        </BrowserRouter>
         <Toaster />
-      </Router>
+      </ComparisonProvider>
     </QueryClientProvider>
   );
 }

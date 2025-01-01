@@ -8,7 +8,6 @@ import BackButton from "@/components/BackButton";
 import { motion } from "framer-motion";
 import AnalyticsHeader from "@/components/analytics/AnalyticsHeader";
 import AnalyticsTabs from "@/components/analytics/AnalyticsTabs";
-import { ComparisonProvider } from "@/contexts/ComparisonContext";
 
 const PropertyAnalytics = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +24,14 @@ const PropertyAnalytics = () => {
         .eq("id", id)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        toast({
+          title: "Error fetching property",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
       return data;
     },
     enabled: !!id,
@@ -42,7 +48,14 @@ const PropertyAnalytics = () => {
         .eq("property_id", id)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        toast({
+          title: "Error fetching analytics",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
       return data;
     },
     enabled: !!id,
@@ -84,7 +97,12 @@ const PropertyAnalytics = () => {
   };
 
   if (propertyLoading || analyticsLoading) {
-    return <AnalyticsSkeleton />;
+    return (
+      <Card className="glass-card p-6">
+        <BackButton className="mb-4" />
+        <Skeleton className="h-[300px]" />
+      </Card>
+    );
   }
 
   if (!property || !analytics) {
@@ -99,38 +117,26 @@ const PropertyAnalytics = () => {
   }
 
   return (
-    <ComparisonProvider>
-      <motion.div 
-        className="space-y-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="space-y-6">
-          <AnalyticsHeader
-            propertyTitle={property?.title}
-            propertyId={id as string}
-            onGenerateReport={handleGenerateReport}
-          />
-          <AnalyticsTabs
-            analytics={analytics}
-            property={property}
-            propertyId={id as string}
-          />
-        </div>
-      </motion.div>
-    </ComparisonProvider>
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="space-y-6">
+        <AnalyticsHeader
+          propertyTitle={property?.title}
+          propertyId={id}
+          onGenerateReport={handleGenerateReport}
+        />
+        <AnalyticsTabs
+          analytics={analytics}
+          property={property}
+          propertyId={id}
+        />
+      </div>
+    </motion.div>
   );
 };
-
-const AnalyticsSkeleton = () => (
-  <div className="space-y-6">
-    <BackButton />
-    <Skeleton className="h-8 w-64" />
-    <Card className="glass-card p-6">
-      <Skeleton className="h-[300px]" />
-    </Card>
-  </div>
-);
 
 export default PropertyAnalytics;
