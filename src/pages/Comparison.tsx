@@ -1,5 +1,5 @@
-import { ComparisonTable } from "@/components/comparison/ComparisonTable"
-import { ComparisonHeader } from "@/components/comparison/ComparisonHeader"
+import ComparisonTable from "@/components/comparison/ComparisonTable";
+import ComparisonHeader from "@/components/comparison/ComparisonHeader";
 
 export default function Comparison() {
   return (
@@ -7,5 +7,5 @@ export default function Comparison() {
       <ComparisonHeader />
       <ComparisonTable />
     </div>
-  )
+  );
 }
