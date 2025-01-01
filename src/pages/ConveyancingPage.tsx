@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LawyerDirectory from "@/components/conveyancing/LawyerDirectory";
 import FavoriteLawyers from "@/components/conveyancing/FavoriteLawyers";
 import LawyerOrders from "@/components/conveyancing/LawyerOrders";
+import ConveyancingDashboard from "@/components/conveyancing/ConveyancingDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -22,7 +23,7 @@ const ConveyancingHeader = ({ title }: { title: string }) => {
 const ConveyancingPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("directory");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -64,11 +65,16 @@ const ConveyancingPage = () => {
 
       <Card className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="directory">Lawyer Directory</TabsTrigger>
             <TabsTrigger value="favorites">My Favorites</TabsTrigger>
             <TabsTrigger value="orders">My Orders</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="dashboard" className="space-y-4">
+            <ConveyancingDashboard />
+          </TabsContent>
 
           <TabsContent value="directory" className="space-y-4">
             <LawyerDirectory />
