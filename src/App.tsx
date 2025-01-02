@@ -14,6 +14,7 @@ import ComparisonPage from "./pages/ComparisonPage";
 import PropertyAnalytics from "./pages/PropertyAnalytics";
 import AreaResearch from "./pages/AreaResearch";
 import AuthPage from "./pages/AuthPage";
+import SignUpPage from "./components/auth/SignUpPage";
 import MortgagePage from "./pages/MortgagePage";
 import ConveyancingPage from "./pages/ConveyancingPage";
 import AiConsultant from "./pages/AiConsultant";
@@ -92,12 +93,21 @@ const App = () => {
               {/* Home route - redirects based on auth status */}
               <Route path="/" element={!isAuthenticated ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
               
+              {/* Auth routes */}
               <Route
                 path="/auth"
                 element={
                   isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />
                 }
               />
+              <Route
+                path="/signup"
+                element={
+                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />
+                }
+              />
+
+              {/* Protected routes */}
               <Route
                 path="/*"
                 element={
