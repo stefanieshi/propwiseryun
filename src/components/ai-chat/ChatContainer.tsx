@@ -53,10 +53,10 @@ export function ChatContainer() {
 
   return (
     <Card className="flex flex-col h-[600px] p-4">
-      <ScrollArea className="flex-1 pr-4">
+      <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            Start a conversation with your AI real estate consultant
+            Start a conversation with your AI real estate consultant or select a prompt above
           </div>
         ) : (
           messages.map((message, index) => (
