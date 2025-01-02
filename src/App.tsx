@@ -86,7 +86,12 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {/* Landing page route - accessible to all */}
+              <Route path="/landing" element={<LandingPage />} />
+              
+              {/* Home route - redirects based on auth status */}
               <Route path="/" element={!isAuthenticated ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+              
               <Route
                 path="/auth"
                 element={
