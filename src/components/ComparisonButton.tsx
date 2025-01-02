@@ -28,12 +28,14 @@ export function ComparisonButton() {
         </Button>
         <Button
           className="rounded-full shadow-xl bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 transition-all duration-300 
-                     py-6 px-8 text-lg font-semibold animate-glow scale-105 hover:scale-110
+                     py-6 px-8 text-xl font-bold animate-glow scale-105 hover:scale-110
                      border-2 border-[#9b87f5]/20 backdrop-blur-sm"
           onClick={() => navigate("/comparison")}
         >
           <Scale className="mr-3 h-5 w-5" />
-          Compare {selectedProperties.length} Properties
+          <span className="text-white tracking-wide">
+            Compare {selectedProperties.length} Properties
+          </span>
         </Button>
       </motion.div>
     </AnimatePresence>
