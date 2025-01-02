@@ -16,6 +16,7 @@ import AuthPage from "./pages/AuthPage";
 import MortgagePage from "./pages/MortgagePage";
 import ConveyancingPage from "./pages/ConveyancingPage";
 import AiConsultant from "./pages/AiConsultant";
+import AccountPage from "./pages/AccountPage";
 import { ComparisonButton } from "./components/ComparisonButton";
 import { motion } from "framer-motion";
 
@@ -104,6 +105,7 @@ const App = () => {
                         <Route path="/mortgage" element={<MortgagePage />} />
                         <Route path="/conveyancing" element={<ConveyancingPage />} />
                         <Route path="/ai-consultant" element={<AiConsultant />} />
+                        <Route path="/account" element={<AccountPage />} />
                       </Routes>
                     </AppLayout>
                   ) : (
