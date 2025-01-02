@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { House, DollarSign, ChartBar, Info, List } from "lucide-react";
+import { House, DollarSign, ChartBar, Info, List, Search, Building, Shield } from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -18,8 +18,9 @@ const LandingPage = () => {
           <h1 className="text-4xl md:text-6xl font-bold text-[#9b87f5] mb-4">
             Your AI-Powered Property Navigator
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Make smarter property decisions with AI-driven insights and analysis
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Make smarter property decisions with AI-driven insights and comprehensive analysis. 
+            From area research to mortgage advice, we're here to guide you through every step of your property journey.
           </p>
           <Button 
             className="bg-[#9b87f5] hover:bg-[#7E69AB] text-white px-8 py-6 text-lg"
@@ -30,27 +31,27 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Features Section */}
+      {/* Services Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#403E43]">
-            Why Choose Propwiser?
+            Comprehensive Property Solutions
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<House className="h-8 w-8 text-[#9b87f5]" />}
-              title="Smart Property Analysis"
-              description="Get detailed insights and analytics for any property you're interested in"
+            <ServiceCard
+              icon={<Search className="h-8 w-8 text-[#9b87f5]" />}
+              title="Area Research"
+              description="Discover the perfect neighborhood with our advanced area analysis tools, including price trends, local amenities, and community insights."
             />
-            <FeatureCard
-              icon={<ChartBar className="h-8 w-8 text-[#9b87f5]" />}
-              title="Market Intelligence"
-              description="Access real-time market data and trends to make informed decisions"
+            <ServiceCard
+              icon={<Building className="h-8 w-8 text-[#9b87f5]" />}
+              title="Property Analysis"
+              description="Get detailed property insights, including price history, potential rental yields, and comprehensive market comparisons."
             />
-            <FeatureCard
-              icon={<Info className="h-8 w-8 text-[#9b87f5]" />}
-              title="AI Consultation"
-              description="Receive personalized recommendations from our AI property advisor"
+            <ServiceCard
+              icon={<Shield className="h-8 w-8 text-[#9b87f5]" />}
+              title="Legal & Financial Support"
+              description="Access expert mortgage advice and conveyancing services to ensure a smooth property transaction process."
             />
           </div>
         </div>
@@ -60,14 +61,15 @@ const LandingPage = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#403E43]">
-            Simple, Transparent Pricing
+            Choose Your Plan
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Basic"
               price="Free"
               features={[
-                "Basic property analysis",
+                "Basic area research",
+                "Property price history",
                 "Market trends overview",
                 "Limited property comparisons"
               ]}
@@ -78,10 +80,11 @@ const LandingPage = () => {
               title="Pro"
               price="£29/month"
               features={[
-                "Advanced property analysis",
-                "Detailed market insights",
+                "Advanced area analysis",
+                "Detailed property insights",
                 "Unlimited comparisons",
-                "AI consultation"
+                "AI-powered recommendations",
+                "Mortgage pre-approval check"
               ]}
               buttonText="Try Pro"
               onClick={() => navigate("/auth")}
@@ -94,7 +97,8 @@ const LandingPage = () => {
                 "All Pro features",
                 "API access",
                 "Custom integrations",
-                "Dedicated support"
+                "Dedicated support",
+                "Priority access to new features"
               ]}
               buttonText="Contact Us"
               onClick={() => navigate("/contact")}
@@ -106,7 +110,7 @@ const LandingPage = () => {
   );
 };
 
-const FeatureCard = ({ icon, title, description }) => (
+const ServiceCard = ({ icon, title, description }) => (
   <div className="p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow">
     <div className="mb-4">{icon}</div>
     <h3 className="text-xl font-semibold mb-2 text-[#403E43]">{title}</h3>

@@ -1,10 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, CreditCard, ArrowLeftRight, FileText, BarChart2, User, ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@supabase/auth-helpers-react";
 
 interface SideNavProps {
   onCollapsedChange?: (collapsed: boolean) => void;
@@ -13,6 +14,7 @@ interface SideNavProps {
 const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     onCollapsedChange?.(isCollapsed);
@@ -26,6 +28,10 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
     { icon: BarChart2, label: "AI consultant", href: "/ai-consultant" },
     { icon: User, label: "Account", href: "/account" },
   ];
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   const NavLink = ({ item, isCollapsed }) => {
     const Icon = item.icon;
@@ -92,7 +98,8 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={handleLogoClick}
             >
               <img 
                 src="/lovable-uploads/92ce51d3-8dd2-4f65-9d00-5d9d53c6cb55.png" 
@@ -108,7 +115,8 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center"
+              className="flex items-center cursor-pointer"
+              onClick={handleLogoClick}
             >
               <img 
                 src="/lovable-uploads/92ce51d3-8dd2-4f65-9d00-5d9d53c6cb55.png" 
