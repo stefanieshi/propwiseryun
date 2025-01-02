@@ -5,6 +5,7 @@ import { toast } from "sonner";
 const GoogleButton = ({ loading }: { loading: boolean }) => {
   const handleGoogleLogin = async () => {
     try {
+      console.log("Starting Google login process...");
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -17,16 +18,25 @@ const GoogleButton = ({ loading }: { loading: boolean }) => {
       });
       
       if (error) {
+        console.error("Detailed Google login error:", {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        });
+        
         if (error.message.includes("OAuth")) {
-          toast.error("Google login is not properly configured. Please contact support.");
+          toast.error("Google login configuration error. Please contact support.");
+        } else if (error.message.includes("CORS")) {
+          toast.error("Cross-origin error. Please check URL configuration.");
+        } else if (error.message.includes("redirect_uri_mismatch")) {
+          toast.error("Redirect URL mismatch. Please check configuration.");
         } else {
           toast.error(error.message);
         }
-        console.error("Google login error:", error);
         return;
       }
     } catch (error: any) {
-      console.error("Google login error:", error);
+      console.error("Unexpected Google login error:", error);
       toast.error("Failed to connect with Google. Please try again.");
     }
   };
