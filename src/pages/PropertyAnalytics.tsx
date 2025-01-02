@@ -16,74 +16,67 @@ const PropertyAnalytics = () => {
   const { data: property, isLoading: propertyLoading } = useQuery({
     queryKey: ["property", id],
     queryFn: async () => {
+      if (!id?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        throw new Error("Invalid property ID format");
+      }
+
       const { data, error } = await supabase
         .from("properties")
         .select("*")
         .eq("id", id)
         .single();
+
       if (error) throw error;
+      if (!data) throw new Error("Property not found");
       return data;
+    },
+    retry: false,
+    onError: (error) => {
+      toast({
+        title: "Error loading property",
+        description: error instanceof Error ? error.message : "Failed to load property details",
+        variant: "destructive",
+      });
     },
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["property-analytics", id],
     queryFn: async () => {
+      if (!id?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        throw new Error("Invalid property ID format");
+      }
+
       const { data, error } = await supabase
         .from("property_analytics")
         .select("*")
         .eq("property_id", id)
         .single();
+
       if (error) throw error;
       return data;
     },
-  });
-
-  const handleGenerateReport = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Authentication required",
-          description: "Please sign in to generate an AI report",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const response = await fetch('/api/create-report-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          propertyId: id,
-          userId: user.id,
-          returnUrl: window.location.href,
-        }),
-      });
-
-      const { url } = await response.json();
-      window.location.href = url;
-    } catch (error: any) {
+    enabled: !!property, // Only run this query if we have a valid property
+    retry: false,
+    onError: (error) => {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Error loading analytics",
+        description: error instanceof Error ? error.message : "Failed to load property analytics",
         variant: "destructive",
       });
-    }
-  };
+    },
+  });
 
   if (propertyLoading || analyticsLoading) {
     return <AnalyticsSkeleton />;
   }
 
-  if (!property || !analytics) {
+  if (!property) {
     return (
       <Card className="glass-card p-6">
         <BackButton className="mb-4" />
         <p className="text-center text-muted-foreground">
-          No analytics data available for this property
+          Property not found or invalid ID format
         </p>
       </Card>
     );
@@ -99,13 +92,13 @@ const PropertyAnalytics = () => {
       <div className="space-y-6">
         <AnalyticsHeader
           propertyTitle={property?.title}
-          propertyId={id as string}
+          propertyId={id}
           onGenerateReport={handleGenerateReport}
         />
         <AnalyticsTabs
           analytics={analytics}
           property={property}
-          propertyId={id as string}
+          propertyId={id}
         />
       </div>
     </motion.div>
