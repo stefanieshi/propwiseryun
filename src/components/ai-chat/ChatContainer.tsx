@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -52,16 +53,22 @@ export function ChatContainer() {
   };
 
   return (
-    <Card className="flex flex-col h-[600px] p-4">
+    <Card className="flex flex-col h-[600px] p-4 relative">
       <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            Start a conversation with your AI real estate consultant or select a prompt above
+            <p className="mb-2">Start a conversation with your AI real estate consultant</p>
+            <p className="text-sm">Ask about property analysis, market trends, or investment advice</p>
           </div>
         ) : (
           messages.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))
+        )}
+        {isLoading && (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
         )}
       </ScrollArea>
       <div className="mt-4">

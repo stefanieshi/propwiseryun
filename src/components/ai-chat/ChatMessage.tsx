@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Building2, User } from "lucide-react";
 
 interface ChatMessageProps {
   message: {
@@ -13,17 +14,25 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div className={cn("flex gap-3 mb-4", isUser && "flex-row-reverse")}>
-      <Avatar>
+      <Avatar className="h-8 w-8">
         <AvatarImage src={isUser ? "/placeholder.svg" : "/og-image.svg"} />
-        <AvatarFallback>{isUser ? "U" : "AI"}</AvatarFallback>
+        <AvatarFallback>
+          {isUser ? (
+            <User className="h-4 w-4" />
+          ) : (
+            <Building2 className="h-4 w-4" />
+          )}
+        </AvatarFallback>
       </Avatar>
       <div
         className={cn(
-          "rounded-lg px-4 py-2 max-w-[80%]",
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+          "rounded-lg px-4 py-2 max-w-[80%] shadow-sm",
+          isUser 
+            ? "bg-primary text-primary-foreground" 
+            : "bg-muted"
         )}
       >
-        {message.content}
+        <div className="text-sm whitespace-pre-wrap">{message.content}</div>
       </div>
     </div>
   );
