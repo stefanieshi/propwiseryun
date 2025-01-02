@@ -2,59 +2,57 @@ import { useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
-import GoogleButton from "@/components/auth/GoogleButton";
+import { Link } from "react-router-dom";
 
 const AuthPage = () => {
   const [loading, setLoading] = useState(false);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md glass-effect">
+      <Card className="w-full max-w-md border-0 shadow-none">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            Welcome to Propwise
+          <CardTitle className="text-4xl font-bold text-[#1A1F2C]">
+            Log in
           </CardTitle>
-          <CardDescription>
-            Your AI-powered real estate advisor
-          </CardDescription>
+          <p className="text-2xl text-muted-foreground">
+            Log into your account
+          </p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <GoogleButton loading={loading} />
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+          <Tabs defaultValue="login" className="space-y-4">
+            <TabsContent value="login">
+              <LoginForm loading={loading} setLoading={setLoading} />
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-muted-foreground flex gap-2">
+                    Don't have an account?
+                    <Link to="/auth?tab=register" className="text-primary hover:underline">
+                      Sign up
+                    </Link>
+                  </div>
+                  <Link to="/forgot-password" className="text-sm text-muted-foreground hover:underline">
+                    Forgot your password
+                  </Link>
+                </div>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
+            </TabsContent>
+            
+            <TabsContent value="register">
+              <RegisterForm loading={loading} setLoading={setLoading} />
+              <div className="mt-4 text-sm text-muted-foreground flex gap-2">
+                Already have an account?
+                <Link to="/auth?tab=login" className="text-primary hover:underline">
+                  Log in
+                </Link>
               </div>
-            </div>
-
-            <Tabs defaultValue="login" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login">
-                <LoginForm loading={loading} setLoading={setLoading} />
-              </TabsContent>
-
-              <TabsContent value="register">
-                <RegisterForm loading={loading} setLoading={setLoading} />
-              </TabsContent>
-            </Tabs>
-          </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

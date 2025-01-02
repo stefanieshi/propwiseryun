@@ -40,46 +40,54 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
 
   return (
     <div className="space-y-6">
-      <GoogleButton loading={loading} />
-      
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-base font-semibold text-[#1A1F2C]">Email</label>
+          <Input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="h-12 rounded-lg border-gray-200"
+            required
+            disabled={loading}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-base font-semibold text-[#1A1F2C]">Password</label>
+          <Input
+            type="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="h-12 rounded-lg border-gray-200"
+            required
+            disabled={loading}
+          />
+        </div>
+        <Button 
+          type="submit" 
+          className="w-full h-12 text-base bg-[#6366F1] hover:bg-[#5558F0]" 
+          disabled={loading}
+        >
+          Log In
+        </Button>
+      </form>
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <span className="w-full border-t border-gray-200" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
+        <div className="relative flex justify-center text-sm uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with email
+            or
           </span>
         </div>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-4">
-        <div className="space-y-2">
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="bg-secondary/50"
-            required
-            disabled={loading}
-          />
-        </div>
-        <div className="space-y-2">
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="bg-secondary/50"
-            required
-            disabled={loading}
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          Sign in
-        </Button>
-      </form>
+      <div className="space-y-3">
+        <GoogleButton loading={loading} />
+      </div>
     </div>
   );
 };
