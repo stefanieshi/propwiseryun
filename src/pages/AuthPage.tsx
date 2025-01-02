@@ -29,7 +29,7 @@ const AuthPage = () => {
       {/* Content */}
       <Card className="w-full max-w-md border-0 shadow-none bg-secondary-900/80 backdrop-blur-sm relative z-10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-4xl font-bold bg-gradient-to-r from-[#9b87f5] to-primary bg-clip-text text-transparent">
+          <CardTitle className="text-4xl font-bold text-[#9b87f5]">
             Log in
           </CardTitle>
           <p className="text-2xl text-muted-foreground">
