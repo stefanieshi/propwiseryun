@@ -25,7 +25,7 @@ const GoogleButton = ({ loading }: { loading: boolean }) => {
   return (
     <Button
       variant="outline"
-      className="w-full h-12 text-base font-medium border-2 hover:bg-secondary/50 bg-white dark:bg-secondary/50"
+      className="w-full h-12 text-base font-medium border-2 hover:bg-gray-50"
       onClick={handleGoogleLogin}
       disabled={loading}
     >

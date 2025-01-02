@@ -17,7 +17,7 @@ const AuthPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md border-0 shadow-none">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-4xl font-bold text-[#1A1F2C] dark:text-white">
+          <CardTitle className="text-4xl font-bold text-[#1A1F2C]">
             Log in
           </CardTitle>
           <p className="text-2xl text-muted-foreground">
@@ -32,7 +32,7 @@ const AuthPage = () => {
                 <div className="flex justify-between items-center">
                   <div className="text-sm text-muted-foreground flex gap-2">
                     Don't have an account?
-                    <Link to="/auth?tab=register" className="text-[#9b87f5] hover:underline">
+                    <Link to="/auth?tab=register" className="text-primary hover:underline">
                       Sign up
                     </Link>
                   </div>
@@ -47,7 +47,7 @@ const AuthPage = () => {
               <RegisterForm loading={loading} setLoading={setLoading} />
               <div className="mt-4 text-sm text-muted-foreground flex gap-2">
                 Already have an account?
-                <Link to="/auth?tab=login" className="text-[#9b87f5] hover:underline">
+                <Link to="/auth?tab=login" className="text-primary hover:underline">
                   Log in
                 </Link>
               </div>
