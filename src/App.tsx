@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import { ComparisonProvider } from "./contexts/ComparisonContext";
 import SideNav from "./components/SideNav";
+import LandingPage from "./pages/LandingPage";
 import Index from "./pages/Index";
 import ViewedProperties from "./pages/ViewedProperties";
 import ComparisonPage from "./pages/ComparisonPage";
@@ -85,10 +86,11 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={!isAuthenticated ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
               <Route
                 path="/auth"
                 element={
-                  isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />
+                  isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />
                 }
               />
               <Route
@@ -97,8 +99,8 @@ const App = () => {
                   isAuthenticated ? (
                     <AppLayout>
                       <Routes>
+                        <Route path="/dashboard" element={<Index />} />
                         <Route path="/area-research" element={<AreaResearch />} />
-                        <Route path="/" element={<Index />} />
                         <Route path="/viewed-properties" element={<ViewedProperties />} />
                         <Route path="/comparison" element={<ComparisonPage />} />
                         <Route path="/property/:id/analytics" element={<PropertyAnalytics />} />
@@ -109,7 +111,7 @@ const App = () => {
                       </Routes>
                     </AppLayout>
                   ) : (
-                    <Navigate to="/auth" replace />
+                    <Navigate to="/" replace />
                   )
                 }
               />
