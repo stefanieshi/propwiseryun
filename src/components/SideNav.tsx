@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAuth } from "@supabase/auth-helpers-react";
 
 interface SideNavProps {
   onCollapsedChange?: (collapsed: boolean) => void;
@@ -22,7 +21,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
 
   const menuItems = [
     { icon: Map, label: "Area Research", href: "/area-research" },
-    { icon: Home, label: "Property research", href: "/" },
+    { icon: Home, label: "Property research", href: "/dashboard" },
     { icon: CreditCard, label: "Mortgage", href: "/mortgage" },
     { icon: FileText, label: "Conveyancing", href: "/conveyancing" },
     { icon: BarChart2, label: "AI consultant", href: "/ai-consultant" },
