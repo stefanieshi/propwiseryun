@@ -14,6 +14,7 @@ import {
   Linkedin,
   Instagram
 } from "lucide-react";
+import PricingSection from "@/components/landing/PricingSection";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -184,6 +185,9 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Footer */}
       <footer className="bg-secondary/5 py-12">
