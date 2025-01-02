@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import GoogleButton from "./GoogleButton";
 
@@ -67,7 +67,7 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
         </div>
         <Button 
           type="submit" 
-          className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#9b87f5]/80 text-white" 
+          className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#7E69AB] text-white" 
           disabled={loading}
         >
           Log In
@@ -87,20 +87,6 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
 
       <div className="space-y-3">
         <GoogleButton loading={loading} />
-      </div>
-
-      <div className="mt-4 space-y-2">
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground flex gap-2">
-            Don't have an account?
-            <Link to="/auth?tab=register" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
-              Sign up
-            </Link>
-          </div>
-          <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#9b87f5]">
-            Forgot your password?
-          </Link>
-        </div>
       </div>
     </div>
   );
