@@ -7,9 +7,10 @@ import { toast } from "sonner";
 import GoogleButton from "./GoogleButton";
 
 const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loading: boolean) => void }) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -22,7 +23,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: `${firstName} ${lastName}`.trim(),
           },
         },
       });
@@ -46,17 +47,31 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
   return (
     <div className="space-y-6">
       <form onSubmit={handleSignUp} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-base font-semibold text-[#1A1F2C] dark:text-white">Full Name</label>
-          <Input
-            type="text"
-            placeholder="Your full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
-            required
-            disabled={loading}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-base font-semibold text-[#1A1F2C] dark:text-white">First Name</label>
+            <Input
+              type="text"
+              placeholder="Your first name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-base font-semibold text-[#1A1F2C] dark:text-white">Last Name</label>
+            <Input
+              type="text"
+              placeholder="Your last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
+              required
+              disabled={loading}
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <label className="text-base font-semibold text-[#1A1F2C] dark:text-white">Email</label>
@@ -82,13 +97,16 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
             disabled={loading}
             minLength={6}
           />
+          <p className="text-sm text-muted-foreground">
+            At least: 8 characters, 1 number, 1 upper, 1 lower
+          </p>
         </div>
         <Button 
           type="submit" 
           className="w-full h-12 text-base bg-[#40E0D0] hover:bg-[#20B2AA] text-white" 
           disabled={loading}
         >
-          Create account
+          Create Account
         </Button>
       </form>
 

@@ -31,11 +31,13 @@ const AuthPage = () => {
       {/* Content */}
       <Card className="w-full max-w-md border-0 shadow-none bg-secondary-900/80 backdrop-blur-sm relative z-10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-4xl font-bold text-[#40E0D0]">
-            {defaultTab === "login" ? "Log in" : "Sign up"}
+          <CardTitle className="text-4xl font-bold text-center text-[#40E0D0]">
+            {defaultTab === "login" ? "Welcome Back" : "Sign Up for Free"}
           </CardTitle>
-          <p className="text-2xl text-muted-foreground">
-            {defaultTab === "login" ? "Log into your account" : "Create your account"}
+          <p className="text-xl text-center text-muted-foreground">
+            {defaultTab === "login" 
+              ? "Log into your account" 
+              : "Take control of your property search"}
           </p>
         </CardHeader>
         <CardContent>
@@ -64,8 +66,8 @@ const AuthPage = () => {
             
             <TabsContent value="register">
               <RegisterForm loading={loading} setLoading={setLoading} />
-              <div className="mt-4 text-sm text-muted-foreground flex gap-2">
-                Already have an account?
+              <div className="mt-4 text-sm text-muted-foreground text-center">
+                Already have an account?{" "}
                 <Link to="/auth?tab=login" className="text-[#40E0D0] hover:text-[#20B2AA]">
                   Log in
                 </Link>
