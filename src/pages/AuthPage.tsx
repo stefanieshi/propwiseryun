@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,10 +8,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const AuthPage = () => {
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "login";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary-900/80 p-4 relative">
@@ -30,14 +32,19 @@ const AuthPage = () => {
       <Card className="w-full max-w-md border-0 shadow-none bg-secondary-900/80 backdrop-blur-sm relative z-10">
         <CardHeader className="space-y-1">
           <CardTitle className="text-4xl font-bold text-[#40E0D0]">
-            Log in
+            {defaultTab === "login" ? "Log in" : "Sign up"}
           </CardTitle>
           <p className="text-2xl text-muted-foreground">
-            Log into your account
+            {defaultTab === "login" ? "Log into your account" : "Create your account"}
           </p>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="space-y-4">
+          <Tabs defaultValue={defaultTab} className="space-y-4">
+            <TabsList className="hidden">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
+            
             <TabsContent value="login">
               <LoginForm loading={loading} setLoading={setLoading} />
               <div className="mt-4 space-y-2">
@@ -49,7 +56,7 @@ const AuthPage = () => {
                     </Link>
                   </div>
                   <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#40E0D0]">
-                    Forgot your password
+                    Forgot your password?
                   </Link>
                 </div>
               </div>
