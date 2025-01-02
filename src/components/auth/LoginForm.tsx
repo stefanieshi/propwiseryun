@@ -67,7 +67,7 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
         </div>
         <Button 
           type="submit" 
-          className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#7E69AB] text-white" 
+          className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#9b87f5]/80 text-white" 
           disabled={loading}
         >
           Log In

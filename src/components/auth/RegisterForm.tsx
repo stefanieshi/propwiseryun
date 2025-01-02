@@ -46,7 +46,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
           placeholder="Full Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="bg-secondary/50"
+          className="h-12 rounded-lg border-gray-200 bg-secondary/50"
           required
           disabled={loading}
         />
@@ -57,7 +57,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="bg-secondary/50"
+          className="h-12 rounded-lg border-gray-200 bg-secondary/50"
           required
           disabled={loading}
         />
@@ -68,13 +68,17 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="bg-secondary/50"
+          className="h-12 rounded-lg border-gray-200 bg-secondary/50"
           required
           disabled={loading}
           minLength={6}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button 
+        type="submit" 
+        className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#9b87f5]/80 text-white" 
+        disabled={loading}
+      >
         Create account
       </Button>
     </form>
