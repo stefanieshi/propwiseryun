@@ -67,7 +67,7 @@ const AuthPage = () => {
             <TabsContent value="register">
               <RegisterForm loading={loading} setLoading={setLoading} />
               <div className="mt-4 text-sm text-muted-foreground text-center">
-                Already have an account?{" "}
+                Already have an account?
                 <Link to="/auth?tab=login" className="text-[#40E0D0] hover:text-[#20B2AA]">
                   Log in
                 </Link>
