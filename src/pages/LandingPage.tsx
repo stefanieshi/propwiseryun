@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
-  Robot, 
+  Bot, 
   Building2, 
   Scale, 
   ArrowRight, 
@@ -20,7 +20,7 @@ const LandingPage = () => {
 
   const features = [
     {
-      icon: Robot,
+      icon: Bot,
       title: "AI Property Advisor",
       description: "Find your dream home effortlessly with our AI-driven property recommendations"
     },
