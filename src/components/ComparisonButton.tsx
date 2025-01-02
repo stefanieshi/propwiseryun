@@ -22,13 +22,14 @@ export function ComparisonButton() {
           variant="outline"
           size="icon"
           onClick={clearSelection}
-          className="rounded-full bg-background shadow-lg hover:bg-background/90 border-2 border-primary animate-pulse"
+          className="rounded-full bg-background/95 shadow-lg hover:bg-background/80 border-2 border-primary animate-pulse"
         >
           <X className="h-5 w-5 text-primary" />
         </Button>
         <Button
-          className="rounded-full shadow-lg bg-gradient-primary hover:opacity-90 transition-all duration-300 
-                     py-6 px-8 text-lg font-semibold animate-glow"
+          className="rounded-full shadow-xl bg-gradient-primary hover:opacity-90 transition-all duration-300 
+                     py-6 px-8 text-lg font-semibold animate-glow scale-105 hover:scale-110
+                     border-2 border-primary/20 backdrop-blur-sm"
           onClick={() => navigate("/comparison")}
         >
           <Scale className="mr-3 h-5 w-5" />
