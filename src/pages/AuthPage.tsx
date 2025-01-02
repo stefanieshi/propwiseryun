@@ -29,7 +29,7 @@ const AuthPage = () => {
       {/* Content */}
       <Card className="w-full max-w-md border-0 shadow-none bg-secondary-900/80 backdrop-blur-sm relative z-10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-4xl font-bold text-[#9b87f5]">
+          <CardTitle className="text-4xl font-bold text-[#40E0D0]">
             Log in
           </CardTitle>
           <p className="text-2xl text-muted-foreground">
@@ -44,11 +44,11 @@ const AuthPage = () => {
                 <div className="flex justify-between items-center">
                   <div className="text-sm text-muted-foreground flex gap-2">
                     Don't have an account?
-                    <Link to="/auth?tab=register" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
+                    <Link to="/auth?tab=register" className="text-[#40E0D0] hover:text-[#20B2AA]">
                       Sign up
                     </Link>
                   </div>
-                  <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#9b87f5]">
+                  <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#40E0D0]">
                     Forgot your password
                   </Link>
                 </div>
@@ -59,7 +59,7 @@ const AuthPage = () => {
               <RegisterForm loading={loading} setLoading={setLoading} />
               <div className="mt-4 text-sm text-muted-foreground flex gap-2">
                 Already have an account?
-                <Link to="/auth?tab=login" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
+                <Link to="/auth?tab=login" className="text-[#40E0D0] hover:text-[#20B2AA]">
                   Log in
                 </Link>
               </div>
