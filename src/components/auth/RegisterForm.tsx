@@ -13,6 +13,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("Starting email registration process...");
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -24,6 +25,12 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
       });
       
       if (error) {
+        console.error("Registration error:", {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        });
+        
         if (error.message.includes("already registered")) {
           toast.error("This email is already registered. Please try logging in instead.");
         } else {
@@ -33,6 +40,9 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
       }
       
       toast.success("Registration successful! Please check your email for verification.");
+    } catch (error: any) {
+      console.error("Unexpected registration error:", error);
+      toast.error("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
