@@ -16,8 +16,17 @@ const GoogleButton = ({ loading }: { loading: boolean }) => {
         },
       });
       
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("OAuth")) {
+          toast.error("Google login is not properly configured. Please contact support.");
+        } else {
+          toast.error(error.message);
+        }
+        console.error("Google login error:", error);
+        return;
+      }
     } catch (error: any) {
+      console.error("Google login error:", error);
       toast.error("Failed to connect with Google. Please try again.");
     }
   };
