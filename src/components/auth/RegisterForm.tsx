@@ -41,47 +41,40 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
   return (
     <form onSubmit={handleRegister} className="space-y-4">
       <div className="space-y-2">
-        <label className="text-base font-semibold text-secondary-800">Full Name</label>
         <Input
           type="text"
           placeholder="Full Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="h-12 rounded-lg border-gray-200 bg-secondary-50/50 backdrop-blur-sm"
+          className="bg-secondary/50"
           required
           disabled={loading}
         />
       </div>
       <div className="space-y-2">
-        <label className="text-base font-semibold text-secondary-800">Email</label>
         <Input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 rounded-lg border-gray-200 bg-secondary-50/50 backdrop-blur-sm"
+          className="bg-secondary/50"
           required
           disabled={loading}
         />
       </div>
       <div className="space-y-2">
-        <label className="text-base font-semibold text-secondary-800">Password</label>
         <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-12 rounded-lg border-gray-200 bg-secondary-50/50 backdrop-blur-sm"
+          className="bg-secondary/50"
           required
           disabled={loading}
           minLength={6}
         />
       </div>
-      <Button 
-        type="submit" 
-        className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#8b77e5] text-white" 
-        disabled={loading}
-      >
+      <Button type="submit" className="w-full" disabled={loading}>
         Create account
       </Button>
     </form>
