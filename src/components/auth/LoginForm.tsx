@@ -42,32 +42,32 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
     <div className="space-y-6">
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-base font-semibold text-[#1A1F2C]">Email</label>
+          <label className="text-base font-semibold text-secondary-800">Email</label>
           <Input
             type="email"
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 rounded-lg border-gray-200"
+            className="h-12 rounded-lg border-gray-200 bg-secondary-50/50 backdrop-blur-sm"
             required
             disabled={loading}
           />
         </div>
         <div className="space-y-2">
-          <label className="text-base font-semibold text-[#1A1F2C]">Password</label>
+          <label className="text-base font-semibold text-secondary-800">Password</label>
           <Input
             type="password"
             placeholder="Your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 rounded-lg border-gray-200"
+            className="h-12 rounded-lg border-gray-200 bg-secondary-50/50 backdrop-blur-sm"
             required
             disabled={loading}
           />
         </div>
         <Button 
           type="submit" 
-          className="w-full h-12 text-base bg-[#6366F1] hover:bg-[#5558F0]" 
+          className="w-full h-12 text-base bg-[#9b87f5] hover:bg-[#8b77e5] text-white" 
           disabled={loading}
         >
           Log In
