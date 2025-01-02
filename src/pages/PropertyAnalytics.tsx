@@ -31,13 +31,9 @@ const PropertyAnalytics = () => {
       return data;
     },
     retry: false,
-    onError: (error) => {
-      toast({
-        title: "Error loading property",
-        description: error instanceof Error ? error.message : "Failed to load property details",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      errorMessage: "Failed to load property details"
+    }
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
@@ -56,16 +52,47 @@ const PropertyAnalytics = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!property, // Only run this query if we have a valid property
+    enabled: !!property,
     retry: false,
-    onError: (error) => {
+    meta: {
+      errorMessage: "Failed to load property analytics"
+    }
+  });
+
+  const handleGenerateReport = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to generate an AI report",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch('/api/create-report-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          propertyId: id,
+          userId: user.id,
+          returnUrl: window.location.href,
+        }),
+      });
+
+      const { url } = await response.json();
+      window.location.href = url;
+    } catch (error: any) {
       toast({
-        title: "Error loading analytics",
-        description: error instanceof Error ? error.message : "Failed to load property analytics",
+        title: "Error",
+        description: error.message,
         variant: "destructive",
       });
-    },
-  });
+    }
+  };
 
   if (propertyLoading || analyticsLoading) {
     return <AnalyticsSkeleton />;
