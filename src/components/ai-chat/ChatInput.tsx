@@ -78,7 +78,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
       <div className="flex justify-end mb-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full md:w-[300px] justify-between">
               <span>Select a prompt</span>
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
