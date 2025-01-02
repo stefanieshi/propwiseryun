@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import GoogleButton from "./GoogleButton";
 
@@ -95,10 +95,10 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
             className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
-            minLength={6}
+            minLength={8}
           />
           <p className="text-sm text-muted-foreground">
-            At least: 8 characters, 1 number, 1 upper, 1 lower
+            * At least: 8 characters, 1 number, 1 upper, 1 lower
           </p>
         </div>
         <Button 
@@ -123,6 +123,21 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
 
       <div className="space-y-3">
         <GoogleButton loading={loading} />
+      </div>
+
+      <div className="mt-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link to="/auth?tab=login" className="text-[#40E0D0] hover:text-[#20B2AA]">
+            Log in
+          </Link>
+        </p>
+        <p className="text-xs text-muted-foreground mt-4">
+          By continuing, you agree to our{" "}
+          <a href="#" className="text-[#40E0D0] hover:text-[#20B2AA]">Terms of Service</a>
+          {" "}and{" "}
+          <a href="#" className="text-[#40E0D0] hover:text-[#20B2AA]">Privacy Policy</a>
+        </p>
       </div>
     </div>
   );
