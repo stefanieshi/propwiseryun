@@ -22,20 +22,17 @@ export function ComparisonButton() {
           variant="outline"
           size="icon"
           onClick={clearSelection}
-          className="rounded-full bg-background/95 shadow-lg hover:bg-background/80 border-2 border-[#9b87f5] animate-pulse"
+          className="rounded-full bg-background shadow-lg hover:bg-background/90 border-2 border-primary animate-pulse"
         >
-          <X className="h-5 w-5 text-[#9b87f5]" />
+          <X className="h-5 w-5 text-primary" />
         </Button>
         <Button
-          className="rounded-full shadow-xl bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:opacity-90 transition-all duration-300 
-                     py-6 px-8 text-xl font-bold animate-glow scale-105 hover:scale-110
-                     border-2 border-[#9b87f5]/20 backdrop-blur-sm"
+          className="rounded-full shadow-lg bg-gradient-primary hover:opacity-90 transition-all duration-300 
+                     py-6 px-8 text-lg font-semibold animate-glow"
           onClick={() => navigate("/comparison")}
         >
           <Scale className="mr-3 h-5 w-5" />
-          <span className="text-white tracking-wide">
-            Compare {selectedProperties.length} Properties
-          </span>
+          Compare {selectedProperties.length} Properties
         </Button>
       </motion.div>
     </AnimatePresence>
