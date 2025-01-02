@@ -37,8 +37,10 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
         return;
       }
 
-      toast.success("Registration successful! Please check your email to verify your account.");
+      toast.success("Registration successful! You can now log in with your credentials.");
       navigate("/auth?tab=login");
+    } catch (error: any) {
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
