@@ -7,7 +7,7 @@ const PricingSection = () => {
   const plans = [
     {
       name: "Basic",
-      price: "£9.99",
+      price: "£20",
       description: "Perfect for getting started",
       features: [
         "Basic property search",
@@ -20,7 +20,7 @@ const PricingSection = () => {
     },
     {
       name: "Pro",
-      price: "£29.99",
+      price: "£50",
       description: "Best for serious buyers",
       features: [
         "Advanced property search",
