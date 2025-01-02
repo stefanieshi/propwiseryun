@@ -88,6 +88,20 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
       <div className="space-y-3">
         <GoogleButton loading={loading} />
       </div>
+
+      <div className="mt-4 space-y-2">
+        <div className="flex justify-between items-center">
+          <div className="text-sm text-muted-foreground flex gap-2">
+            Don't have an account?
+            <Link to="/auth?tab=register" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
+              Sign up
+            </Link>
+          </div>
+          <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#9b87f5]">
+            Forgot your password?
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

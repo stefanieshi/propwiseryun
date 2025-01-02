@@ -40,29 +40,10 @@ const AuthPage = () => {
           <Tabs defaultValue="login" className="space-y-4">
             <TabsContent value="login">
               <LoginForm loading={loading} setLoading={setLoading} />
-              <div className="mt-4 space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-muted-foreground flex gap-2">
-                    Don't have an account?
-                    <Link to="/auth?tab=register" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
-                      Sign up
-                    </Link>
-                  </div>
-                  <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-[#9b87f5]">
-                    Forgot your password
-                  </Link>
-                </div>
-              </div>
             </TabsContent>
             
             <TabsContent value="register">
               <RegisterForm loading={loading} setLoading={setLoading} />
-              <div className="mt-4 text-sm text-muted-foreground flex gap-2">
-                Already have an account?
-                <Link to="/auth?tab=login" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
-                  Log in
-                </Link>
-              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

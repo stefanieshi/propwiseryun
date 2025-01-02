@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loading: boolean) => void }) => {
   const [email, setEmail] = useState("");
@@ -81,6 +82,12 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
       >
         Create account
       </Button>
+      <div className="mt-4 text-sm text-muted-foreground flex gap-2">
+        Already have an account?
+        <Link to="/auth?tab=login" className="text-[#9b87f5] hover:text-[#9b87f5]/80">
+          Log in
+        </Link>
+      </div>
     </form>
   );
 };
