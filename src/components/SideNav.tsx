@@ -29,8 +29,7 @@ const SideNav = ({ onCollapsedChange }: SideNavProps) => {
   ];
 
   const handleLogoClick = () => {
-    // Force navigation to root and reload to ensure proper rendering
-    window.location.href = '/';
+    navigate('/');
   };
 
   const NavLink = ({ item, isCollapsed }) => {
