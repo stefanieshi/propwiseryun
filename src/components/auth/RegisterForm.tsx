@@ -53,7 +53,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
             placeholder="Your full name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50"
+            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
           />
@@ -65,7 +65,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50"
+            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
           />
@@ -77,7 +77,7 @@ const RegisterForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
             placeholder="Create a password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50"
+            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
             minLength={6}

@@ -48,7 +48,7 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50"
+            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
           />
@@ -60,7 +60,7 @@ const LoginForm = ({ loading, setLoading }: { loading: boolean; setLoading: (loa
             placeholder="Your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 rounded-lg border-gray-200 bg-secondary/50"
+            className="h-12 rounded-lg border-gray-200 bg-secondary/50 text-white placeholder:text-gray-400"
             required
             disabled={loading}
           />
