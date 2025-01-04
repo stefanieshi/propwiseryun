@@ -5,73 +5,14 @@ import { Property, UserProgress } from "@/types";
 import PropertyCard from "@/components/PropertyCard";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Home,
   FileText,
-  LayoutDashboard,
   CheckCircle,
 } from "lucide-react";
-
-const sampleProperties: Property[] = [
-  {
-    id: "1",
-    title: "Luxury Kitchen Apartment",
-    price: 2500000,
-    location: "Central London",
-    bedrooms: 3,
-    bathrooms: 2,
-    sqft: 2000,
-    property_type: "Apartment",
-    description: "Modern apartment with stunning kitchen and natural lighting",
-    image_url: "/lovable-uploads/40b689a6-12a5-4e9d-9f98-61dac7376731.png",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: "2",
-    title: "Garden Terrace House",
-    price: 3500000,
-    location: "North London",
-    bedrooms: 4,
-    bathrooms: 3,
-    sqft: 3000,
-    property_type: "House",
-    description: "Beautiful house with spacious garden and terrace",
-    image_url: "/lovable-uploads/2223284a-1a67-4d4f-bb74-60fdb31adda0.png",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: "3",
-    title: "Riverside Apartments",
-    price: 1800000,
-    location: "Thames Bank",
-    bedrooms: 2,
-    bathrooms: 2,
-    sqft: 1500,
-    property_type: "Apartment",
-    description: "Modern apartments with riverside views",
-    image_url: "/lovable-uploads/cc8e1d8a-b412-4cd4-80bb-6a16c1def4a2.png",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: "4",
-    title: "Modern Architectural Marvel",
-    price: 4500000,
-    location: "Hampstead",
-    bedrooms: 5,
-    bathrooms: 4,
-    sqft: 4000,
-    property_type: "House",
-    description: "Unique modern design with panoramic views",
-    image_url: "/lovable-uploads/42ca702d-9604-4405-ad47-928c9dc888a4.png",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  }
-];
+import QuickActions from "@/components/home/QuickActions";
+import EarlyAccessSection from "@/components/home/EarlyAccessSection";
 
 const Index = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -168,38 +109,11 @@ const Index = () => {
           </div>
         </Card>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <FileText className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Saved Reports</h3>
-                <p className="text-sm text-muted-foreground">
-                  View your saved AI analysis reports
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/saved-reports")}>
-                View Reports
-              </Button>
-            </div>
-          </Card>
+        {/* Early Access Section */}
+        <EarlyAccessSection />
 
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <LayoutDashboard className="h-8 w-8 text-primary mb-2" />
-                <h3 className="text-lg font-semibold">Comparison Dashboards</h3>
-                <p className="text-sm text-muted-foreground">
-                  View saved property comparisons
-                </p>
-              </div>
-              <Button variant="outline" onClick={() => navigate("/comparison")}>
-                View Dashboards
-              </Button>
-            </div>
-          </Card>
-        </div>
+        {/* Quick Actions */}
+        <QuickActions />
 
         {/* Saved Properties */}
         <div>
