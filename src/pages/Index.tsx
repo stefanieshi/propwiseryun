@@ -6,6 +6,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import {
   Home,
   FileText,
@@ -34,8 +35,14 @@ const Index = () => {
         return;
       }
 
-      // For now, we'll use our sample properties instead of fetching from Supabase
-      setProperties(sampleProperties);
+      // Fetch properties from Supabase instead of using sample data
+      const { data: propertiesData, error: propertiesError } = await supabase
+        .from("properties")
+        .select("*")
+        .limit(3);
+
+      if (propertiesError) throw propertiesError;
+      setProperties(propertiesData || []);
 
       // Fetch user progress
       const { data: progressData, error: progressError } = await supabase
