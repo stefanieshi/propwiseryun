@@ -21,23 +21,26 @@ const GoogleButton = ({ loading }: { loading: boolean }) => {
         console.error("Detailed Google login error:", {
           message: error.message,
           status: error.status,
-          name: error.name
+          name: error.name,
+          stack: error.stack
         });
         
         if (error.message.includes("OAuth")) {
-          toast.error("Google login configuration error. Please contact support.");
+          toast.error("Google login configuration error. Please try again later.");
         } else if (error.message.includes("CORS")) {
           toast.error("Cross-origin error. Please check URL configuration.");
         } else if (error.message.includes("redirect_uri_mismatch")) {
           toast.error("Redirect URL mismatch. Please check configuration.");
         } else {
-          toast.error(error.message);
+          toast.error("Failed to connect with Google. Please try again.");
         }
         return;
       }
+
+      console.log("Google login initiated successfully");
     } catch (error: any) {
       console.error("Unexpected Google login error:", error);
-      toast.error("Failed to connect with Google. Please try again.");
+      toast.error("An unexpected error occurred. Please try again later.");
     }
   };
 
