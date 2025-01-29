@@ -18,6 +18,8 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
 
   useEffect(() => {
     const loadImageUrl = async () => {
+      console.log('Loading image for property:', property.id, 'Image URL:', property.image_url);
+      
       if (property.image_url) {
         try {
           const { data: { publicUrl } } = supabase
@@ -25,16 +27,20 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             .from('properties')
             .getPublicUrl(property.image_url);
           
+          console.log('Generated public URL:', publicUrl);
           setImageUrl(publicUrl);
         } catch (error) {
-          console.error('Error loading image:', error);
-          setImageUrl(''); // Set to empty string or a default placeholder image
+          console.error('Error loading image for property:', property.id, error);
+          setImageUrl('/placeholder.svg');
         }
+      } else {
+        console.log('No image URL provided for property:', property.id);
+        setImageUrl('/placeholder.svg');
       }
     };
 
     loadImageUrl();
-  }, [property.image_url]);
+  }, [property.image_url, property.id]);
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group relative">
@@ -43,6 +49,10 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           src={imageUrl || '/placeholder.svg'}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            console.error('Image failed to load:', imageUrl);
+            (e.target as HTMLImageElement).src = '/placeholder.svg';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
         <Button
