@@ -4,6 +4,8 @@ import { Property } from "@/types";
 import { Home, Bed, Bath, Square, TrendingUp, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useComparison } from "@/contexts/ComparisonContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 
 interface PropertyCardProps {
   property: Property;
@@ -12,12 +14,33 @@ interface PropertyCardProps {
 const PropertyCard = ({ property }: PropertyCardProps) => {
   const navigate = useNavigate();
   const { togglePropertySelection, isSelected } = useComparison();
+  const [imageUrl, setImageUrl] = useState<string>("");
+
+  useEffect(() => {
+    const loadImageUrl = async () => {
+      if (property.image_url) {
+        try {
+          const { data: { publicUrl } } = supabase
+            .storage
+            .from('properties')
+            .getPublicUrl(property.image_url);
+          
+          setImageUrl(publicUrl);
+        } catch (error) {
+          console.error('Error loading image:', error);
+          setImageUrl(''); // Set to empty string or a default placeholder image
+        }
+      }
+    };
+
+    loadImageUrl();
+  }, [property.image_url]);
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:scale-105 glass-effect group relative">
       <div className="relative">
         <img
-          src={property.image_url || ''}
+          src={imageUrl || '/placeholder.svg'}
           alt={property.title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
