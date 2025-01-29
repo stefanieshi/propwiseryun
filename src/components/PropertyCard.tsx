@@ -20,21 +20,30 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     const loadImageUrl = async () => {
       console.log('Loading image for property:', property.id, 'Image URL:', property.image_url);
       
-      if (property.image_url) {
-        try {
-          const { data: { publicUrl } } = supabase
-            .storage
-            .from('properties')
-            .getPublicUrl(property.image_url);
-          
-          console.log('Generated public URL:', publicUrl);
-          setImageUrl(publicUrl);
-        } catch (error) {
-          console.error('Error loading image for property:', property.id, error);
-          setImageUrl('/placeholder.svg');
-        }
-      } else {
+      if (!property.image_url) {
         console.log('No image URL provided for property:', property.id);
+        setImageUrl('/placeholder.svg');
+        return;
+      }
+
+      // Check if the image_url is an external URL (starts with http/https)
+      if (property.image_url.startsWith('http')) {
+        console.log('Using external URL directly:', property.image_url);
+        setImageUrl(property.image_url);
+        return;
+      }
+
+      // If not an external URL, treat it as a Supabase storage path
+      try {
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('properties')
+          .getPublicUrl(property.image_url);
+        
+        console.log('Generated Supabase public URL:', publicUrl);
+        setImageUrl(publicUrl);
+      } catch (error) {
+        console.error('Error loading image for property:', property.id, error);
         setImageUrl('/placeholder.svg');
       }
     };
