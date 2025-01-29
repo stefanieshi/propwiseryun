@@ -33,12 +33,17 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         return;
       }
 
-      // If not an external URL, treat it as a Supabase storage path
+      // If not an external URL, get the public URL from Supabase storage
       try {
+        // Remove any leading slash as getPublicUrl expects paths without them
+        const storagePath = property.image_url.startsWith('/') 
+          ? property.image_url.slice(1) 
+          : property.image_url;
+        
         const { data: { publicUrl } } = supabase
           .storage
           .from('properties')
-          .getPublicUrl(property.image_url);
+          .getPublicUrl(storagePath);
         
         console.log('Generated Supabase public URL:', publicUrl);
         setImageUrl(publicUrl);
