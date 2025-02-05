@@ -32,12 +32,12 @@ const AuthPage = () => {
       <Card className="w-full max-w-xl border-0 shadow-none bg-secondary-900/80 backdrop-blur-sm relative z-10">
         <CardHeader className="space-y-1">
           <CardTitle className="text-6xl font-bold text-center text-[#40E0D0] mb-4">
-            {defaultTab === "login" ? "Welcome Back" : "Sign Up for Free"}
+            {defaultTab === "login" ? "Welcome Back!" : "Sign Up for Free"}
           </CardTitle>
           <p className="text-3xl text-center text-muted-foreground">
             {defaultTab === "login" 
               ? "Log into your account" 
-              : "Take control of your property search"}
+              : "Take control of your property search "}
           </p>
         </CardHeader>
         <CardContent>
