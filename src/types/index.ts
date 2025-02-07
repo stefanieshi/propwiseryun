@@ -21,7 +21,6 @@ export interface Property {
   time_on_market?: string;
   created_at: string;
   updated_at: string;
-  is_favorite?: boolean;
 }
 
 export interface UserProgress {

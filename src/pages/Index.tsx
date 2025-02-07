@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,21 +35,14 @@ const Index = () => {
         return;
       }
 
-      // Fetch properties and favorite status
+      // Fetch properties from Supabase instead of using sample data
       const { data: propertiesData, error: propertiesError } = await supabase
         .from("properties")
-        .select("*, favorite_properties!inner(user_id)")
+        .select("*")
         .limit(3);
 
       if (propertiesError) throw propertiesError;
-
-      // Transform the data to include is_favorite flag
-      const propertiesWithFavorites = propertiesData?.map(property => ({
-        ...property,
-        is_favorite: property.favorite_properties?.some(fp => fp.user_id === user.id) || false
-      }));
-
-      setProperties(propertiesWithFavorites || []);
+      setProperties(propertiesData || []);
 
       // Fetch user progress
       const { data: progressData, error: progressError } = await supabase
